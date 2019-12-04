@@ -1,18 +1,13 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
+from . import db, app
 
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'hierkommtnochmalwasgutesreinhaha'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://software-projekt:Hallo123@localhost/neurodex'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+api_blueprint = Blueprint('api', __name__, url_prefix="/api")
 
 class User(db.Model):
     id = db.Column(db.String(50), primary_key=True)
@@ -41,7 +36,7 @@ def token_required(f):
 
     return decorated
 
-@app.route('/user', methods=['GET'])
+@api_blueprint.route('/users', methods=['GET'])
 @token_required
 def get_all_users(current_user):
 
@@ -57,7 +52,7 @@ def get_all_users(current_user):
 
     return jsonify({'users' : output})
 
-@app.route('/user', methods=['GET'])
+@api_blueprint.route('/user/<id>', methods=['GET'])
 @token_required
 def get_one_user(current_user, id):
     user = User.query.filter_by(id=id).first()
@@ -72,9 +67,10 @@ def get_one_user(current_user, id):
 
     return jsonify({'user' : user_data})
 
-@app.route('/user', methods=['POST'])
+@api_blueprint.route('/user', methods=['POST'])
 def create_user():
-    data = request.get_json()
+    data = request.form
+    print(request.form)
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
 
@@ -84,7 +80,7 @@ def create_user():
 
     return jsonify({'message' : 'New user created!'})
 
-@app.route('/user', methods=['PUT'])
+@api_blueprint.route('/user', methods=['PUT'])
 @token_required
 def promote_user(current_user):
 
@@ -105,9 +101,9 @@ def promote_user(current_user):
 
     return jsonify({'message' : 'The user has been promoted!'})
 
-@app.route('/user/<id>', methods=['PUT'])
+@api_blueprint.route('/user/<id>', methods=['PUT'])
 @token_required
-def promote_user(current_user, id):
+def promote_user_by_id(current_user, id):
 
     if current_user.admin:
         data = request.get_json()
@@ -130,7 +126,7 @@ def promote_user(current_user, id):
         return jsonify({'message' : 'You are not permitted to do that!'})
 
 
-@app.route('/user', methods=['DELETE'])
+@api_blueprint.route('/user', methods=['DELETE'])
 @token_required
 def delete_user(current_user):
 
@@ -144,7 +140,7 @@ def delete_user(current_user):
 
     return jsonify({'message' : 'The user has been deleted!'})
 
-@app.route('/login')
+@api_blueprint.route('/login')
 def login():
     auth = request.authorization
 
