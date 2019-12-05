@@ -1,12 +1,13 @@
-from flask import Flask, jsonify, send_from_directory, Blueprint
 from backend.api import api_blueprint
 from . import app
 
 app.register_blueprint(api_blueprint)
 
+
 @app.route('/<path:path>')
 def build(path):
     return app.send_static_file(path)
+
 
 @app.route('/')
 def index():

@@ -2,5 +2,9 @@
 	"python.pythonPath": "venv/bin/python3.7",
 	"python.linting.pylintEnabled": false,
 	"python.linting.enabled": true,
-	"python.linting.flake8Enabled": true
+	"python.linting.flake8Enabled": true,
+	"eslint.validate": [
+		"typescript",
+		"typescriptreact"
+	]
 }
