@@ -7,6 +7,11 @@ const Navigation: React.FC = () => {
 	const { isAuthenticated, user, deauthenticate } = useContext(AuthContext);
 	const history = useHistory();
 
+	/**
+	 * Triggers the logout of the AuthContext
+	 * 
+	 * If the logout is successful the current route is changed to /login
+	 */
 	const handleLogout = async () => {
 		const loggedOut = await deauthenticate();
 		if(loggedOut) {
