@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../contexts/auth';
+import { useHistory } from "react-router-dom";
 
 const Navigation: React.FC = () => {
+	const { isAuthenticated, user, deauthenticate } = useContext(AuthContext);
+	const history = useHistory();
+
+	/**
+	 * Triggers the logout of the AuthContext
+	 * 
+	 * If the logout is successful the current route is changed to /login
+	 */
+	const handleLogout = async () => {
+		const loggedOut = await deauthenticate();
+		if(loggedOut) {
+			history.push('/login');
+		}
+	}
+
 	return (
 		<nav className="flex items-center justify-between flex-wrap bg-blue-500 p-3">
 			<div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -9,16 +26,29 @@ const Navigation: React.FC = () => {
 					Neurodex
 				</Link>
 			</div>
+			<div className="block">
+				{!isAuthenticated && (
+					<Link
+						className="flex items-center px-5 py-2 rounded border-gray-300 text-white font-bold hover:bg-blue-400 focus:outline-none hover:shadow-md"
+						to="/login"
+					>
+						Login
+					</Link>
+				)}
+				{isAuthenticated && user && (
+					<>
+						<button
+							className="flex items-center px-5 py-2 rounded border-gray-300 text-white font-bold hover:bg-blue-400 focus:outline-none hover:shadow-md"
+							onClick={handleLogout}
+						>
+							Logout {user.name}
+						</button>
+					</>
+				)}
+			</div>
 			<div className="block lg:hidden">
 				<button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-					<svg
-						className="fill-current h-3 w-3"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<title>Menu</title>
-						<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-					</svg>
+					<i className="material-icons">menu</i>
 				</button>
 			</div>
 		</nav>
