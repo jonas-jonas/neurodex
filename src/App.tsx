@@ -4,7 +4,7 @@ import Navigation from './components/Navigation';
 import { AuthContextProvider } from './contexts/auth';
 import Homepage from './pages/Homepage';
 import LoginPage from './pages/LoginPage';
-import Modelpage from './pages/ModelPage';
+import Modelpage from './pages/Modelpage';
 
 const App: React.FC = () => {
 	return (
