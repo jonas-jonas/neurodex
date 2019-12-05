@@ -1,17 +1,14 @@
+from flask import send_from_directory
 from backend.api import api_blueprint
-from . import app
+from . import app, BUILD_ROOT
 
 app.register_blueprint(api_blueprint)
 
 
-@app.route('/<path:path>')
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/<path>')
 def build(path):
-    return app.send_static_file(path)
-
-
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
+    return send_from_directory(BUILD_ROOT, path)
 
 
 if __name__ == '__main__':

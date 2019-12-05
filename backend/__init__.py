@@ -2,10 +2,9 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-STATIC_ROOT = os.path.join(os.pardir, 'build')
-app = Flask(__name__, static_folder=STATIC_ROOT)
-
-app = Flask(__name__)
+BUILD_ROOT = os.path.join(os.getcwd(), 'build')
+STATIC_DIR = os.path.join(BUILD_ROOT, 'static')
+app = Flask(__name__, static_folder=STATIC_DIR)
 
 app.config['SECRET_KEY'] = 'hierkommtnochmalwasgutesreinhaha'
 
