@@ -134,9 +134,9 @@ type LoginFieldProps = {
 const LoginField = React.forwardRef<HTMLInputElement, LoginFieldProps>(
 	(props, ref) => {
 		const inputClasses = classnames(
-			'shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-orange-400',
+			'shadow appearance-none border border-2 border-l-4 rounded-sm w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-orange-400',
 			{
-				'border-red-500': !!props.validationMessage
+				'border-error border-0': !!props.validationMessage
 			}
 		);
 
@@ -155,7 +155,7 @@ const LoginField = React.forwardRef<HTMLInputElement, LoginFieldProps>(
 					required={props.required}
 				/>
 				{props.validationMessage && (
-					<p className="text-red-500 text-xs italic">
+					<p className="text-error text-s italic">
 						{props.validationMessage}
 					</p>
 				)}
