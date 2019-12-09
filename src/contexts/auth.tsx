@@ -10,7 +10,7 @@ type AuthContextData = {
 /**
  * DB User object
  */
-type User = {
+export type User = {
 	id: string;
 	name: string;
 	admin: boolean;
