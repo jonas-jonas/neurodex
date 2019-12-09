@@ -51,6 +51,10 @@ module.exports = {
         800: '#4d2200',
         900: '#1a0b00',
       },
+      whiteShade: {
+        0: '#ffffff',
+        100: '#EBEBEC'
+      }
     },
     spacing: {
       px: '1px',
@@ -118,7 +122,9 @@ module.exports = {
       outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
       none: 'none',
     },
-    container: {},
+    container: {
+      center: true,
+    },
     cursor: {
       auto: 'auto',
       default: 'default',
