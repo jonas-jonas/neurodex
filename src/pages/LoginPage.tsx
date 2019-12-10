@@ -11,8 +11,80 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
 
+enum LoginPageState {
+	LOGIN,
+	REGISTER
+}
+
 const LoginPage: React.FC = () => {
-	const { isAuthenticated, authenticate } = useContext(AuthContext);
+	const { isAuthenticated } = useContext(AuthContext);
+	const [loginPageState, setLoginPageState] = useState<LoginPageState>(
+		LoginPageState.REGISTER
+	);
+
+	// If the user is already authenticated, he shouldn't see this page
+	if (isAuthenticated) {
+		return <Redirect to="/" />;
+	}
+	return (
+		<div className="w-full max-w-xs mx-auto pt-8">
+			<div className="bg-white shadow-md rounded mb-4 mx-auto">
+				<div className="w-full">
+					<LoginPageStateButton
+						state={LoginPageState.LOGIN}
+						currentState={loginPageState}
+						onClick={setLoginPageState}
+					>
+						LOGIN
+					</LoginPageStateButton>
+					<LoginPageStateButton
+						state={LoginPageState.REGISTER}
+						currentState={loginPageState}
+						onClick={setLoginPageState}
+					>
+						REGISTRIEREN
+					</LoginPageStateButton>
+				</div>
+				<div className="px-8 pt-6 pb-8">
+					{loginPageState === LoginPageState.LOGIN && <LoginForm />}
+					{loginPageState === LoginPageState.REGISTER && (
+						<RegisterForm setLoginPageState={setLoginPageState} />
+					)}
+				</div>
+			</div>
+		</div>
+	);
+};
+
+type LoginPageStateButtonProps = {
+	state: LoginPageState;
+	currentState: LoginPageState;
+	onClick: (value: LoginPageState) => any;
+};
+
+const LoginPageStateButton: React.FC<LoginPageStateButtonProps> = React.memo(
+	({ state, currentState, onClick, children }) => {
+		const classes = classnames(
+			'w-1/2 py-4 font-bold tracking-tight text-gray-700',
+			{
+				'bg-gray-100 shadow-inner': state !== currentState
+			}
+		);
+
+		const handleOnClick = () => {
+			onClick(state);
+		};
+
+		return (
+			<button className={classes} onClick={handleOnClick}>
+				{children}
+			</button>
+		);
+	}
+);
+
+const LoginForm: React.FC = () => {
+	const { authenticate } = useContext(AuthContext);
 	const [validationMessage, setValidationMessage] = useState<string>();
 
 	/**
@@ -54,70 +126,47 @@ const LoginPage: React.FC = () => {
 
 	/** ref of the password input field */
 	const passwordRef = useRef<HTMLInputElement>(null);
-
-	// If the user is already authenticated, he shouldn't see this page
-	if (isAuthenticated) {
-		return <Redirect to="/" />;
-	}
-	return (
-		<div className="w-full max-w-xs mx-auto pt-8">
-			<form
-				className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto"
-				onSubmit={handleAuthenticate}
-			>
-				<h2 className="text-gray-700 text-xl font-bold mb-4">Login</h2>
-				<LoginField
-					label="Username"
-					name="username"
-					placeholder="Username"
-					ref={userNameRef}
-				/>
-				<LoginField
-					label="Password"
-					onChange={handlePasswordChange}
-					name="password"
-					placeholder="*********"
-					type="password"
-					ref={passwordRef}
-					validationMessage={validationMessage}
-					required
-				/>
-				<div className="flex items-center justify-between">
-					<LoginButton disabled={!!validationMessage} />
-					<Link
-						className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-						to="/"
-					>
-						Forgot Password?
-					</Link>
-				</div>
-			</form>
-		</div>
-	);
-};
-
-type SignInProps = {
-	disabled: boolean;
-};
-
-/**
- * The login button on the login page
- *
- * @param props The props passed to the button
- */
-const LoginButton: React.FC<SignInProps> = props => {
 	// The button should look "disabled" if the button is disabled
-	const classes = classnames(
+	const loginButtonClasses = classnames(
 		'bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline',
 		{
-			'opacity-50 cursor-not-allowed': props.disabled
+			'opacity-50 cursor-not-allowed': !!validationMessage
 		}
 	);
-
 	return (
-		<button className={classes} {...props} type="submit">
-			Login
-		</button>
+		<form onSubmit={handleAuthenticate}>
+			<FormField
+				label="Username"
+				name="username"
+				placeholder="Username"
+				ref={userNameRef}
+			/>
+			<FormField
+				label="Password"
+				onChange={handlePasswordChange}
+				name="password"
+				placeholder="*********"
+				type="password"
+				ref={passwordRef}
+				validationMessage={validationMessage}
+				required
+			/>
+			<div className="flex items-center justify-between">
+				<button
+					className={loginButtonClasses}
+					disabled={!!validationMessage}
+					type="submit"
+				>
+					Login
+				</button>
+				<Link
+					className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+					to="/"
+				>
+					Forgot Password?
+				</Link>
+			</div>
+		</form>
 	);
 };
 
@@ -131,7 +180,7 @@ type LoginFieldProps = {
 	required?: boolean;
 };
 
-const LoginField = React.forwardRef<HTMLInputElement, LoginFieldProps>(
+const FormField = React.forwardRef<HTMLInputElement, LoginFieldProps>(
 	(props, ref) => {
 		const inputClasses = classnames(
 			'shadow appearance-none border border-2 border-l-4 rounded-sm w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-orange-400',
@@ -155,13 +204,80 @@ const LoginField = React.forwardRef<HTMLInputElement, LoginFieldProps>(
 					required={props.required}
 				/>
 				{props.validationMessage && (
-					<p className="text-error text-s italic">
-						{props.validationMessage}
-					</p>
+					<p className="text-error text-s italic">{props.validationMessage}</p>
 				)}
 			</div>
 		);
 	}
 );
+
+type RegisterFormProps = {
+	setLoginPageState: (value: LoginPageState) => any;
+};
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
+	const { authenticate } = useContext(AuthContext);
+	const [validationMessage, setValidationMessage] = useState<string>();
+
+	/** ref of the username input field */
+	const userNameRef = useRef<HTMLInputElement>(null);
+
+	/** ref of the password input field */
+	const passwordRef = useRef<HTMLInputElement>(null);
+	// The button should look "disabled" if the button is disabled
+	const loginButtonClasses = classnames(
+		'bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline',
+		{
+			'opacity-50 cursor-not-allowed': !!validationMessage
+		}
+	);
+	return (
+		<form>
+			<FormField
+				label="Username"
+				name="username"
+				placeholder="Username"
+				ref={userNameRef}
+			/>
+			<FormField
+				label="Password"
+				// onChange={handlePasswordChange}
+				name="password"
+				placeholder="*********"
+				type="password"
+				ref={passwordRef}
+				validationMessage={validationMessage}
+				required
+			/>
+
+			<FormField
+				label="Password wiederholen"
+				// onChange={handlePasswordChange}
+				name="password"
+				placeholder="*********"
+				type="password"
+				ref={passwordRef}
+				validationMessage={validationMessage}
+				required
+			/>
+			<div className="flex items-center justify-between">
+				<button
+					className={loginButtonClasses}
+					disabled={!!validationMessage}
+					type="submit"
+				>
+					Registieren
+				</button>
+				<button
+					className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+					type="button"
+					onClick={() => setLoginPageState(LoginPageState.LOGIN)}
+				>
+					Lieber einloggen?
+				</button>
+			</div>
+		</form>
+	);
+};
 
 export default LoginPage;
