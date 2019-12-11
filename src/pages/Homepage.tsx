@@ -4,31 +4,34 @@ import {
 	faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useState } from 'react';
+import { DateTime, Settings } from 'luxon';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { AuthContext } from '../contexts/auth';
-import { Model, ModelContext } from '../contexts/modelcontext';
-
-const dummyModels = [
-	{
-		name: 'Modelname',
-		id: 'asd',
-		created: new Date(),
-		updated: new Date()
-	},
-	{
-		name: 'Modelname',
-		id: 'asd2',
-		created: new Date(),
-		updated: new Date()
-	}
-];
+import { api } from '../util/api';
+import { Model } from '../data/model';
+Settings.defaultLocale = 'de';
 
 const Homepage: React.FC = () => {
 	const { isAuthenticated } = useContext(AuthContext);
-	const { createNewModel } = useContext(ModelContext);
 	const [creatingNewModel, setCreatingNewModel] = useState(false);
 	const history = useHistory();
+	const [models, setModels] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const loadModels = async () => {
+			setLoading(true);
+			const response = await api.get('models');
+			if (response.status === 200) {
+				const models = await response.json();
+				setModels(models);
+			}
+			setLoading(false);
+		};
+		loadModels();
+	}, []);
 
 	/**
 	 * Handles the click on the "new" button
@@ -37,9 +40,23 @@ const Homepage: React.FC = () => {
 	 */
 	const handleNewModel = async () => {
 		setCreatingNewModel(true);
-		const id = await createNewModel();
+		const result = await Swal.fire({
+			title: 'Modellname',
+			input: 'text',
+			inputAttributes: {
+				autocapitalize: 'off',
+				placeholder: 'Name'
+			},
+			customClass: { popup: 'shadow' },
+			confirmButtonText: 'Erstellen'
+		});
+		if (result.value) {
+			const data = new FormData();
+			data.append('name', result.value);
+			const { id } = await api.post('model/create', { body: data }).json();
+			history.push('/model/' + id);
+		}
 		setCreatingNewModel(false);
-		history.push('/model/' + id);
 	};
 
 	if (!isAuthenticated) {
@@ -48,7 +65,7 @@ const Homepage: React.FC = () => {
 	return (
 		<div className="container py-3">
 			<div className="flex justify-between items-center ">
-				<h1 className="text-3xl">{dummyModels.length} Models</h1>
+				<h1 className="text-3xl">{models.length} Models</h1>
 				<button
 					className="p-3"
 					title="Neues modell"
@@ -62,9 +79,18 @@ const Homepage: React.FC = () => {
 				</button>
 			</div>
 
-			{dummyModels.map((model: Model) => {
-				return <ModelCard model={model} key={model.id} />;
-			})}
+			{loading && (
+				<div className="flex items-center justify-center h-48">
+					<div className="block text-center text-gray-300">
+						<FontAwesomeIcon icon={faSpinner} spin={true} />
+						<h2>Loading models...</h2>
+					</div>
+				</div>
+			)}
+			{!loading &&
+				models.map((model: Model) => {
+					return <ModelCard model={model} key={model.id} />;
+				})}
 		</div>
 	);
 };
@@ -82,7 +108,8 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 			<div className="">
 				<h2 className="text-xl font-bold">{model.name}</h2>
 				<i className="text-gray-300">
-					Du · vor 2 Stunden bearbeitet · vor 3 Stunden erstellt
+					Du · {DateTime.fromISO(model.updated).toRelative()} bearbeitet ·{' '}
+					{DateTime.fromISO(model.created).toRelative()} erstellt
 				</i>
 			</div>
 			<FontAwesomeIcon icon={faArrowRight} />
