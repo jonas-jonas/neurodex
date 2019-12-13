@@ -1,18 +1,20 @@
-from flask import request, jsonify, make_response, Blueprint
-import uuid
-from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from backend.data.models import User
-from . import app, db
-from backend.util import token_required
-import jwt
+import uuid
 
-api_blueprint = Blueprint('api', __name__, url_prefix="/api")
+import jwt
+from flask import Blueprint, jsonify, make_response, request
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from backend import app, db
+from backend.data.models import User
+from backend.util import token_required
+
+user_blueprint = Blueprint('api', __name__, url_prefix="/api")
 
 token_key = 'x-access-token'
 
 
-@api_blueprint.route('/users', methods=['GET'])
+@user_blueprint.route('/users', methods=['GET'])
 @token_required
 def get_all_users(current_user):
 
@@ -29,13 +31,13 @@ def get_all_users(current_user):
     return jsonify({'users': output})
 
 
-@api_blueprint.route('/user', methods=['GET'])
+@user_blueprint.route('/user', methods=['GET'])
 @token_required
 def get_current_user(current_user):
     return jsonify({'user': current_user.to_dict()})
 
 
-@api_blueprint.route('/user/<id>', methods=['GET'])
+@user_blueprint.route('/user/<id>', methods=['GET'])
 @token_required
 def get_one_user(current_user, id):
     user = db.session.query(User).filter_by(id=id).first()
@@ -43,15 +45,10 @@ def get_one_user(current_user, id):
     if not user:
         return jsonify({'message': 'No user found!'}), 404
 
-    user_data = {}
-    user_data['id'] = user.id
-    user_data['name'] = user.name
-    user_data['admin'] = user.admin
-
     return jsonify({'user': user.to_dict()})
 
 
-@api_blueprint.route('/user', methods=['POST'])
+@user_blueprint.route('/user', methods=['POST'])
 def create_user():
     data = request.form
 
@@ -65,7 +62,7 @@ def create_user():
     return jsonify({'message': 'New user created!'})
 
 
-@api_blueprint.route('/user', methods=['PUT'])
+@user_blueprint.route('/user', methods=['PUT'])
 @token_required
 def promote_user(current_user):
 
@@ -88,7 +85,7 @@ def promote_user(current_user):
     return jsonify({'message': 'The user has been promoted!'})
 
 
-@api_blueprint.route('/user/<id>', methods=['PUT'])
+@user_blueprint.route('/user/<id>', methods=['PUT'])
 @token_required
 def promote_user_by_id(current_user, id):
 
@@ -114,7 +111,7 @@ def promote_user_by_id(current_user, id):
         return jsonify({'message': 'You are not permitted to do that!'}), 401
 
 
-@api_blueprint.route('/user', methods=['DELETE'])
+@user_blueprint.route('/user', methods=['DELETE'])
 @token_required
 def delete_user(current_user):
 
@@ -129,7 +126,7 @@ def delete_user(current_user):
     return jsonify({'message': 'The user has been deleted!'})
 
 
-@api_blueprint.route('/login', methods=['POST'])
+@user_blueprint.route('/login', methods=['POST'])
 def login():
     auth = request.form
 
@@ -155,7 +152,7 @@ def login():
     return jsonify(message='Username or password incorrect'), 401
 
 
-@api_blueprint.route('/logout', methods=['GET'])
+@user_blueprint.route('/logout', methods=['GET'])
 @token_required
 def logout(current_user):
     response = make_response()

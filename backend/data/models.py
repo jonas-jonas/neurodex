@@ -1,7 +1,6 @@
-from sqlalchemy import (TIMESTAMP, Column, ForeignKey, String, Text, Boolean)
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-
 
 Base = declarative_base()
 
@@ -28,14 +27,5 @@ class Model(Base):
     id = Column(Text, primary_key=True, nullable=False)
     name = Column(Text, nullable=False)
     owner = Column(String, ForeignKey('user.id'))
-    created_at = Column(TIMESTAMP(timezone=False),
-                        nullable=False, server_default=func.now())
-    updated_at = Column(TIMESTAMP(timezone=False), nullable=False,
-                        server_default=func.now(), onupdate=func.now())
-
-    def __init__(self, id, name, owner):
-        self.id = id
-        self.name = name,
-        self.owner = owner,
-        # self.created_at = func.now()
-        # self.updated_at = func.now()
+    created_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now())
+    updated_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())

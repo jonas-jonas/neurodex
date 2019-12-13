@@ -1,8 +1,10 @@
-from flask import request, jsonify
-import jwt
-from . import app, db
-from backend.data.models import User
 from functools import wraps
+
+import jwt
+from flask import jsonify, request
+
+from backend import app, db
+from backend.data.models import User
 
 token_key = 'x-access-token'
 
@@ -20,10 +22,9 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = db.session.query(
-                User).filter_by(id=data['id']).first()
+            current_user = db.session.query(User).filter_by(id=data['id']).first()
         except:
-            return jsonify({'message': 'Token is invalid!'}), 401
+            return jsonify({'message': 'Token could not be validated!'}), 401
 
         return f(current_user, *args, **kwargs)
 

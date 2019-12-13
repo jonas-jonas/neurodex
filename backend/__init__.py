@@ -1,7 +1,7 @@
 import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
 
 BUILD_ROOT = os.path.join(os.getcwd(), 'build')
 STATIC_DIR = os.path.join(BUILD_ROOT, 'static')

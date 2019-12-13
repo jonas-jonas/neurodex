@@ -1,14 +1,12 @@
 from flask import send_from_directory
-from backend.api import api_blueprint
-from backend.model import model_blueprint
-from . import app, BUILD_ROOT, db
-from sqlalchemy import create_engine
+
+from backend import BUILD_ROOT, app, db
+from backend.controller.model_controller import model_blueprint
+from backend.controller.user_controller import user_blueprint
 from backend.data.models import Base
 
-app.register_blueprint(api_blueprint)
+app.register_blueprint(user_blueprint)
 app.register_blueprint(model_blueprint)
-
-engine = create_engine('postgresql://postgres:docker@localhost/postgres', echo=True)
 
 
 @app.before_first_request
