@@ -10,6 +10,7 @@ app.register_blueprint(model_blueprint)
 
 engine = create_engine('postgresql://postgres:docker@localhost/postgres', echo=True)
 
+
 @app.before_first_request
 def setup():
     Base.metadata.create_all(bind=db.engine)
