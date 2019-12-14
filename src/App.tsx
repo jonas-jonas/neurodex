@@ -14,7 +14,7 @@ const App: React.FC = () => {
 				<PageContextProvider>
 					<Navigation />
 					<Switch>
-						<Route path="/model/:id">
+						<Route path="/model/:modelId">
 							<Modelpage />
 						</Route>
 						<Route path="/login">
