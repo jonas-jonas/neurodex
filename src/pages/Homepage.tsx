@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { AuthContext } from '../contexts/auth';
 import { api } from '../util/api';
 import { Model } from '../data/model';
+import LoadingIndicator from '../components/LoadingIndicator';
 Settings.defaultLocale = 'de';
 
 interface ModelsData {
@@ -59,8 +60,8 @@ const Homepage: React.FC = () => {
 			data.append('name', result.value);
 			const response = await api.post('model', { body: data });
 			if(response.status === 200) {
-				const { model } = await response.json();
-				history.push('/model/' + model.id);
+				const { id } = await response.json();
+				history.push('/model/' + id);
 			}
 		}
 		setCreatingNewModel(false);
@@ -87,12 +88,7 @@ const Homepage: React.FC = () => {
 			</div>
 
 			{loading && (
-				<div className="flex items-center justify-center h-48">
-					<div className="block text-center text-gray-300">
-						<FontAwesomeIcon icon={faSpinner} spin={true} />
-						<h2>Loading models...</h2>
-					</div>
-				</div>
+				<LoadingIndicator text="Loading models..." />
 			)}
 			{!loading &&
 				models.map((model: Model) => {
