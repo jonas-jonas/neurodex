@@ -2,6 +2,8 @@ from functools import wraps
 
 import jwt
 from flask import jsonify, request
+from flask.json import JSONEncoder
+from datetime import datetime
 
 from backend import app, db
 from backend.data.models import User
@@ -29,3 +31,17 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+
+
+class CustomJSONEncoder(JSONEncoder):
+
+    def default(self, obj):
+        try:
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            iterable = iter(obj)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        return JSONEncoder.default(self, obj)

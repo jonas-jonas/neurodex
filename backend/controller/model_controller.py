@@ -26,12 +26,12 @@ def get_all_models(current_user):
 def create_model(current_user):
     data = request.form
 
-    new_model = Model(id=str(uuid.uuid4()), name=data['name'], owner=current_user.id)
+    new_model = Model(id=str(uuid.uuid4()), name=data['name'], user_id=current_user.id)
 
     db.session.add(new_model)
     db.session.commit()
 
-    return jsonify({'message': 'New model created!'})
+    return jsonify({'model': new_model.to_dict()})
 
 
 @model_blueprint.route('/model/<id>', methods=['PUT'])

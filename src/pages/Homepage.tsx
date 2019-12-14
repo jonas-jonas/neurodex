@@ -57,8 +57,11 @@ const Homepage: React.FC = () => {
 		if (result.value) {
 			const data = new FormData();
 			data.append('name', result.value);
-			const { id } = await api.post('model/create', { body: data }).json();
-			history.push('/model/' + id);
+			const response = await api.post('model', { body: data });
+			if(response.status === 200) {
+				const { model } = await response.json();
+				history.push('/model/' + model.id);
+			}
 		}
 		setCreatingNewModel(false);
 	};
@@ -113,8 +116,8 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 			<div className="">
 				<h2 className="text-xl font-bold">{model.name}</h2>
 				<i className="text-gray-300">
-					Du · {DateTime.fromHTTP(model.updated).toRelative()} bearbeitet ·{' '}
-					{DateTime.fromISO(model.created).toRelative()} erstellt
+					Du · {DateTime.fromISO(model.updatedAt).toRelative()} bearbeitet ·{' '}
+					{DateTime.fromISO(model.createdAt).toRelative()} erstellt
 				</i>
 			</div>
 			<FontAwesomeIcon icon={faArrowRight} />

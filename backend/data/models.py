@@ -36,5 +36,5 @@ class Model(Base):
             'name': self.name,
             'userId': self.user_id,
             'createdAt': self.created_at,
-            'updateAt': self.updated_at
+            'updatedAt': self.updated_at
         }
