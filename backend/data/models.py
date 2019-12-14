@@ -14,11 +14,11 @@ class User(Base):
     admin = Column(Boolean, nullable=False)
 
     def to_dict(self):
-        user_data = {}
-        user_data['id'] = self.id
-        user_data['username'] = self.username
-        user_data['admin'] = self.admin
-        return user_data
+        return {
+            'id': self.id,
+            'username': self.username,
+            'admin': self.admin
+        }
 
 
 class Model(Base):
@@ -26,6 +26,15 @@ class Model(Base):
 
     id = Column(Text, primary_key=True, nullable=False)
     name = Column(Text, nullable=False)
-    owner = Column(String, ForeignKey('user.id'))
+    user_id = Column(String, ForeignKey('user.id'))
     created_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'userId': self.user_id,
+            'createdAt': self.created_at,
+            'updateAt': self.updated_at
+        }

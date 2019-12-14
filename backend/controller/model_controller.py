@@ -14,11 +14,9 @@ token_key = 'x-access-token'
 @model_blueprint.route('/models', methods=['GET'])
 @token_required
 def get_all_models(current_user):
-    models = db.session.query(Model).filter_by(owner=current_user.id).first()
-    # if models is not None:
-    output = []
-    if models is not None:
-        output = [dict(model) for model in models]
+    models = db.session.query(Model).filter_by(user_id=current_user.id).all()
+
+    output = [model.to_dict() for model in models]
 
     return jsonify({'models': output})
 

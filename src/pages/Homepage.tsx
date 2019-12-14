@@ -13,11 +13,15 @@ import { api } from '../util/api';
 import { Model } from '../data/model';
 Settings.defaultLocale = 'de';
 
+interface ModelsData {
+	models: Model[];
+}
+
 const Homepage: React.FC = () => {
 	const { isAuthenticated } = useContext(AuthContext);
 	const [creatingNewModel, setCreatingNewModel] = useState(false);
 	const history = useHistory();
-	const [models, setModels] = useState([]);
+	const [models, setModels] = useState<Model[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -25,8 +29,8 @@ const Homepage: React.FC = () => {
 			setLoading(true);
 			const response = await api.get('models');
 			if (response.status === 200) {
-				const models = await response.json();
-				setModels(models);
+				const data: ModelsData = await response.json();
+				setModels(data.models);
 			}
 			setLoading(false);
 		};
@@ -100,6 +104,7 @@ type ModelCardProps = {
 };
 
 const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
+	console.log(model);
 	return (
 		<Link
 			className="bg-white rounded py-2 px-5 mb-3 shadow border-b-4 border-transparent hover:border-blue-500 flex items-center justify-between"
@@ -108,7 +113,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 			<div className="">
 				<h2 className="text-xl font-bold">{model.name}</h2>
 				<i className="text-gray-300">
-					Du · {DateTime.fromISO(model.updated).toRelative()} bearbeitet ·{' '}
+					Du · {DateTime.fromHTTP(model.updated).toRelative()} bearbeitet ·{' '}
 					{DateTime.fromISO(model.created).toRelative()} erstellt
 				</i>
 			</div>
@@ -116,5 +121,9 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 		</Link>
 	);
 };
+
+const parseDate = (date: string) => {
+	return DateTime.fromFormat(date, 'EEE');
+}
 
 export default Homepage;
