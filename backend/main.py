@@ -1,8 +1,19 @@
 from flask import send_from_directory
-from backend.api import api_blueprint
-from . import app, BUILD_ROOT
 
-app.register_blueprint(api_blueprint)
+from backend import BUILD_ROOT, app, db
+from backend.controller.model_controller import model_blueprint
+from backend.controller.user_controller import user_blueprint
+from backend.data.models import Base
+from backend.util import CustomJSONEncoder
+
+app.register_blueprint(user_blueprint)
+app.register_blueprint(model_blueprint)
+app.json_encoder = CustomJSONEncoder
+
+
+@app.before_first_request
+def setup():
+    Base.metadata.create_all(bind=db.engine)
 
 
 @app.route('/', defaults={'path': 'index.html'})
