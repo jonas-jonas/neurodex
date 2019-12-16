@@ -41,9 +41,14 @@ export const AuthContextProvider: React.FC = ({ children }) => {
 		 * Fetches the current user from the api.
 		 */
 		const fetchCurrentUser = async (): Promise<void> => {
-			const data = await api.get('user');
-			const authenticationResponse: AuthenticationResponse = await data.json();
-			setUser(authenticationResponse.user);
+			try {
+				const data = await api.get('user');
+				const authenticationResponse: AuthenticationResponse = await data.json();
+				setUser(authenticationResponse.user);
+
+			} catch (error) {
+				console.log(error);
+			}
 		};
 		fetchCurrentUser();
 	}, []);
@@ -63,15 +68,18 @@ export const AuthContextProvider: React.FC = ({ children }) => {
 			const data = new FormData();
 			data.append('username', name);
 			data.append('password', password);
-			const response = await api.post('login', {
-				body: data
-			});
-			if (response.status === 200) {
-				const authenticationResponse: AuthenticationResponse = await response.json();
-				setUser(authenticationResponse.user);
+			try {
+				const response = await api.post('login', {
+					body: data
+				});
+				if (response.status === 200) {
+					const authenticationResponse: AuthenticationResponse = await response.json();
+					setUser(authenticationResponse.user);
+				}
+				return response;
+			} catch (error) {
+				return error.response;
 			}
-			// TODO: Handle errors?
-			return response;
 		};
 		return login();
 	};
