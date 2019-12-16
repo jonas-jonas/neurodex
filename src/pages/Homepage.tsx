@@ -35,8 +35,10 @@ const Homepage: React.FC = () => {
 			}
 			setLoading(false);
 		};
-		loadModels();
-	}, []);
+		if(isAuthenticated) {
+			loadModels();
+		}
+	}, [isAuthenticated]);
 
 	/**
 	 * Handles the click on the "new" button
