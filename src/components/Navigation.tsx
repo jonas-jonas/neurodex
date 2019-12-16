@@ -59,9 +59,10 @@ type UserMenuProps = {
 };
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
+	console.log(user);
 	return (
 		<div className="flex">
-			<UserMenuEntry>{user.name}</UserMenuEntry>
+			<UserMenuEntry>{user.username}</UserMenuEntry>
 			<UserMenuEntry onClick={onLogout} raised>
 				Logout
 			</UserMenuEntry>
@@ -79,7 +80,7 @@ const UserMenuEntry: React.FC<UserMenuEntryProps> = ({
 	children,
 	raised
 }) => {
-	const classes = classNames('px-5 py-2 rounded ml-3', {
+	const classes = classNames('px-5 py-2 rounded ml-3 focus:outline-none', {
 		'shadow text-white font-bold bg-blue-400 focus:outline-none hover:shadow-md hover:bg-blue-300': raised,
 		'text-gray-700': !raised,
 		'cursor-default': !onClick
