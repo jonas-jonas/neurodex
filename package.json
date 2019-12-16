@@ -32,7 +32,7 @@
     "build:style": "tailwind build src/styles/index.css -o src/styles/tailwind.css",
     "start": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -48,6 +48,14 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "mutationobserver-shim": "^0.3.3"
+  },
+  "jest":{
+    "transformIgnorePatterns": [
+      "node_modules/(?!ky)/"
     ]
   }
 }
