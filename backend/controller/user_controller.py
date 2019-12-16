@@ -52,10 +52,17 @@ def get_one_user(current_user, id):
 def create_user():
     data = request.form
 
+    if data['password'] != data['repeatPassword']:
+        # Status Code might not be correct
+        return jsonify({'message': 'Passwörter stimmen nicht überein', 'field': 'repeatPassword'}), 400
+
+    username = data['username']
+    if db.session.query(User.id).filter_by(username=username).scalar() is not None:
+        return jsonify({'message': 'Username ist bereits vergeben', 'field': 'username'}), 400
+
     hashed_password = generate_password_hash(data['password'], method='sha256')
 
-    new_user = User(id=str(uuid.uuid4()),
-                    username=data['username'], password=hashed_password, admin=False)
+    new_user = User(id=str(uuid.uuid4()), username=username, password=hashed_password, admin=False)
     db.session.add(new_user)
     db.session.commit()
 
@@ -74,8 +81,7 @@ def promote_user(current_user):
         return jsonify({'message': 'No user found!'}), 404
 
     if data['password'] is not None and data['password'] != '':
-        user.password = generate_password_hash(
-            data['password'], method='sha256')
+        user.password = generate_password_hash(data['password'], method='sha256')
 
     if data['username'] is not None and data['password'] != '':
         user.username = data['username']
