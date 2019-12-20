@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
 	};
 
 	return (
-		<nav className="flex items-center justify-between flex-wrap bg-white py-2 px-5 border-blue-500 border-b-4 shadow">
+		<nav className="flex items-center justify-between flex-wrap bg-white py-2 px-5 border-blue-500 border-b-4 shadow fixed w-full">
 			<div className="block">
 				<Link className="font-semibold text-xl tracking-tight" to="/">
 					<img

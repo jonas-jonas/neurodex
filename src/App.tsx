@@ -13,17 +13,19 @@ const App: React.FC = () => {
 			<Router>
 				<PageContextProvider>
 					<Navigation />
-					<Switch>
-						<Route path="/model/:modelId">
-							<Modelpage />
-						</Route>
-						<Route path="/login">
-							<LoginPage />
-						</Route>
-						<Route path="/">
-							<Homepage />
-						</Route>
-					</Switch>
+					<div className="pt-16 h-screen">
+						<Switch>
+							<Route path="/model/:modelId">
+								<Modelpage />
+							</Route>
+							<Route path="/login">
+								<LoginPage />
+							</Route>
+							<Route path="/">
+								<Homepage />
+							</Route>
+						</Switch>
+					</div>
 				</PageContextProvider>
 			</Router>
 		</AuthContextProvider>
