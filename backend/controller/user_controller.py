@@ -3,9 +3,8 @@ import uuid
 
 import jwt
 from flask import Blueprint, jsonify, make_response, request
-from werkzeug.security import check_password_hash, generate_password_hash
 
-from backend import app, db
+from backend import app, db, bcrypt
 from backend.data.models import User
 from backend.util import token_required
 
@@ -60,7 +59,7 @@ def create_user():
     if db.session.query(User.id).filter_by(username=username).scalar() is not None:
         return jsonify({'message': 'Username ist bereits vergeben', 'field': 'username'}), 400
 
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
     new_user = User(id=str(uuid.uuid4()), username=username, password=hashed_password, admin=False)
     db.session.add(new_user)
@@ -81,7 +80,7 @@ def promote_user(current_user):
         return jsonify({'message': 'No user found!'}), 404
 
     if data['password'] is not None and data['password'] != '':
-        user.password = generate_password_hash(data['password'], method='sha256')
+        user.password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
     if data['username'] is not None and data['password'] != '':
         user.username = data['username']
@@ -104,8 +103,7 @@ def promote_user_by_id(current_user, id):
             return jsonify({'message': 'No user found!'}), 404
 
         if data['password'] is not None and data['password'] != '':
-            user.password = generate_password_hash(
-                data['password'], method='sha256')
+            user.password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
         if data['username'] is not None and data['password'] != '':
             user.username = data['username']
@@ -144,7 +142,7 @@ def login():
     if not user:
         return jsonify(message='Username not found'), 404
 
-    if check_password_hash(user.password, auth['password']):
+    if bcrypt.check_password_hash(user.password, auth['password']):
         key_data = {
             'id': user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
