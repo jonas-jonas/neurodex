@@ -69,23 +69,23 @@ const Modelpage: React.FC = props => {
 			<div className="w-7/12 flex">
 
 				<Panel>
-					<div className="px-3 py-2 border-b bg-white rounded-t">
+					<div className="px-3 py-2 rounded-t">
 						<h2 className="text-lg font-bold">Layers</h2>
 					</div>
-					<div className="p-2 flex-grow overflow-y-scroll" >
+					<div className="p-2 flex-grow overflow-y-auto" >
 						{availableLayers.map((layer) => {
 							return <LayerCard {...layer} key={layer.displayName} />
 						})}
 					</div>
 				</Panel>
 				<Panel>
-					<div className="px-3 py-2 flex items-center justify-between border-b bg-white rounded-t">
+					<div className="px-3 py-2 flex items-center justify-between rounded-t">
 						<h2 className="text-lg font-bold font-mono">__init__</h2>
 						<button title="Clear all" className=" px-1" >
 							<FontAwesomeIcon icon={faUndo} />
 						</button>
 					</div>
-					<div className="p-2 overflow-y-scroll h-full">
+					<div className="p-2 overflow-y-auto h-full">
 						{model.layers.map((layer) => {
 							return <ConstructorCard {...layer} />
 						})}
@@ -93,13 +93,13 @@ const Modelpage: React.FC = props => {
 				</Panel>
 
 				<Panel>
-					<div className="px-3 py-2 bg-blue-800 rounded-t text-white flex items-center justify-between">
+					<div className="px-3 py-2 flex items-center justify-between rounded-t">
 						<h2 className="text-lg font-bold font-mono">forward</h2>
 					</div>
 					<div>Body</div>
 				</Panel>
 			</div>
-			<div className="flex-grow h-full rounded px-3 py-2 overflow-y-scroll">
+			<div className="flex-grow h-full rounded px-3 py-2 overflow-y-auto">
 				<SyntaxHighlighter language="python" showLineNumbers style={docco}>
 					{`class Model(nn.Module):
 	def __init__(self):
@@ -124,10 +124,10 @@ const LayerCard: React.FC<LayerType> = ({ displayName }) => {
 
 const ConstructorCard: React.FC<Layer> = ({ type, data }: { type: LayerType, data: object }) => {
 
-	return <div className="shadow rounded mb-2 font-mono bg-white">
-		<div className="px-3 py-1 bg-orange-500 rounded-t text-white flex justify-between items-center cursor-move">
+	return <div className="shadow rounded mb-2 font-mono bg-white border">
+		<div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move bg-blue-800 text-white">
 			<div className="pr-3">
-				<input type="text" className="w-full bg-orange-500" value="linear1" />
+				<input type="text" className="w-full bg-blue-800" value="linear1" />
 				<span className="text-xs">{type.displayName}</span>
 			</div>
 			<button className="focus:outline-none">
@@ -157,7 +157,7 @@ type PanelProps = {
 
 const Panel: React.FC<PanelProps> = ({ children }) => {
 	return <div className="px-2 w-2/6">
-		<div className="h-full flex flex-col border rounded">
+		<div className="h-full flex flex-col border rounded bg-whiteShaded-100 shadow" style={{backgroundColor: '#F1F1F1'}}>
 			{children}
 		</div>
 	</div>
