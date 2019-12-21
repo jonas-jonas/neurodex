@@ -5,9 +5,12 @@ from backend.controller.model_controller import model_blueprint
 from backend.controller.user_controller import user_blueprint
 from backend.data.models import Base
 from backend.util import CustomJSONEncoder
+from backend.controller.error_controller import page_not_found, internal_error
 
 app.register_blueprint(user_blueprint)
 app.register_blueprint(model_blueprint)
+app.register_error_handler(404, page_not_found)
+app.register_error_handler(500, internal_error)
 app.json_encoder = CustomJSONEncoder
 
 
