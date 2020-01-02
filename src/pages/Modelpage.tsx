@@ -1,64 +1,31 @@
-import { faPlus, faTimes, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import LoadingIndicator from '../components/LoadingIndicator';
-import { PageContext } from '../contexts/pagecontext';
-import { Layer, LayerType, Model } from '../data/model';
+import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
+import LoadingIndicator from '../components/utility/LoadingIndicator';
+import { ModelContext, ModelContextProvider } from '../contexts/modelcontext';
+import { LayerType } from '../data/models';
 import { api } from '../util/api';
+import { Panel } from '../components/utility/Panel';
 
 SyntaxHighlighter.registerLanguage('python', python);
 
-const Modelpage: React.FC = props => {
-	const { setPageTitle } = useContext(PageContext);
-	const { modelId } = useParams();
-	const [model, setModel] = useState<Model>();
+const Modelpage: React.FC = () => {
 
-	const availableLayers: LayerType[] = useMemo(() => {
-		return [{
-			displayName: 'torch.nn.Linear',
-			description: "",
-			params: [
-				{
-					name: 'in_features',
-					type: 'number'
-				},
-				{
-					name: 'out_features',
-					type: 'number'
-				},
-				{
-					name: 'bias',
-					type: 'boolean'
-				}
-			]
-		}];
-	}, []);
+	const { model, setModel, availableLayers } = useContext(ModelContext);
 
-	useEffect(() => {
-		const fetchModel = async () => {
-			const response = await api.get('model/' + modelId);
-			if (response.status === 200) {
-				const { model }: { model: Model } = await response.json();
-				setPageTitle(model.name);
-				model.layers = [
-					{
-						type: availableLayers[0],
-						data: {
-							[availableLayers[0].params[0].name]: '3',
-							[availableLayers[0].params[1].name]: '3',
-							[availableLayers[0].params[2].name]: false
-						}
-					}
-				]
-				setModel(model);
-			}
-		}
-		fetchModel()
-	}, [modelId, setPageTitle]);
+	const handleLayerAdd = async (id: string) => {
+		const data = new FormData();
+		data.append('layerId', id);
+		const response = await api.post('model/' + model?.id + '/layer', { body: data });
+
+		const json = await response.json();
+		setModel(json.model);
+	}
 
 	if (!model) {
 		return <div className="container">
@@ -67,30 +34,17 @@ const Modelpage: React.FC = props => {
 	} else {
 		return <div className="flex h-full flex-auto pb-2">
 			<div className="w-7/12 flex">
-
 				<Panel>
 					<div className="px-3 py-2 rounded-t">
 						<h2 className="text-lg font-bold">Layers</h2>
 					</div>
 					<div className="p-2 flex-grow overflow-y-auto" >
-						{availableLayers.map((layer) => {
-							return <LayerCard {...layer} key={layer.displayName} />
+						{availableLayers.map((layerType) => {
+							return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />
 						})}
 					</div>
 				</Panel>
-				<Panel>
-					<div className="px-3 py-2 flex items-center justify-between rounded-t">
-						<h2 className="text-lg font-bold font-mono">__init__</h2>
-						<button title="Clear all" className=" px-1" >
-							<FontAwesomeIcon icon={faUndo} />
-						</button>
-					</div>
-					<div className="p-2 overflow-y-auto h-full">
-						{model.layers.map((layer) => {
-							return <ConstructorCard {...layer} />
-						})}
-					</div>
-				</Panel>
+				<ModelLayerPanel />
 
 				<Panel>
 					<div className="px-3 py-2 flex items-center justify-between rounded-t">
@@ -115,52 +69,32 @@ const Modelpage: React.FC = props => {
 	}
 };
 
-const LayerCard: React.FC<LayerType> = ({ displayName }) => {
-	return <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded cursor-pointer select-none border-2 border-transparent hover:underline focus:border-gray-100 flex justify-between items-center">
-		<h2 className="font-mono mr-1">{displayName}</h2>
-		<FontAwesomeIcon icon={faPlus} />
+type LayerCardProps = {
+	layerType: LayerType;
+	onAdd: (id: string) => void;
+}
+
+const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
+
+	const handleAdd = () => {
+		onAdd(layerType.id);
+	}
+
+	return <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded cursor-pointer select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
+		<h2 className="font-mono mr-1">{layerType.id}</h2>
+		<button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd}>
+			<FontAwesomeIcon icon={faPlus} />
+		</button>
 	</div>
 }
 
-const ConstructorCard: React.FC<Layer> = ({ type, data }: { type: LayerType, data: object }) => {
+const ModelpageWrapper = () => {
 
-	return <div className="shadow rounded mb-2 font-mono bg-white border">
-		<div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move bg-blue-800 text-white">
-			<div className="pr-3">
-				<input type="text" className="w-full bg-blue-800" value="linear1" />
-				<span className="text-xs">{type.displayName}</span>
-			</div>
-			<button className="focus:outline-none">
-				<FontAwesomeIcon icon={faTimes} />
-			</button>
-		</div>
-		<div className="p-3">
-			<table className="table-auto">
-				<tbody>
-					{Object.entries(data).map((param) => {
-						return <tr>
-							<td>{param[0]}</td>
-							<td>
-								<input type="number" className="w-full border" value={param[1]} />
-							</td>
-						</tr>
-					})}
-				</tbody>
-			</table>
-		</div>
-	</div>
+	const { modelId } = useParams();
+
+	return <ModelContextProvider modelId={modelId}>
+		<Modelpage />
+	</ModelContextProvider>
 }
 
-type PanelProps = {
-
-}
-
-const Panel: React.FC<PanelProps> = ({ children }) => {
-	return <div className="px-2 w-2/6">
-		<div className="h-full flex flex-col border rounded bg-whiteShaded-100 shadow" style={{backgroundColor: '#F1F1F1'}}>
-			{children}
-		</div>
-	</div>
-}
-
-export default Modelpage;
+export default ModelpageWrapper;

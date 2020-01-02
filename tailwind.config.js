@@ -53,7 +53,8 @@ module.exports = {
       },
       whiteShade: {
         0: '#ffffff',
-        100: '#EBEBEC'
+        100: '#F1F1F1',
+        200: '#EBEBEC'
       }
     },
     spacing: {
