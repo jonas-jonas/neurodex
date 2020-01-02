@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { api } from '../util/api';
+import { User } from '../data/models';
 
 type AuthContextData = {
 	user?: User;
@@ -8,14 +9,6 @@ type AuthContextData = {
 	deauthenticate: () => Promise<boolean>;
 };
 
-/**
- * DB User object
- */
-export type User = {
-	id: string;
-	username: string;
-	admin: boolean;
-};
 /**
  * Data sent by the authentication endpoint
  */

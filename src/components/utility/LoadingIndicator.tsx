@@ -3,10 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 type LoadingIndicatorProps = {
+	/** The text to be displayed */
 	text: String;
 }
 
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({text}) => {
+/**
+ * A loading indicator that displays a spinner and some @param text.
+ */
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ text }) => {
 
 	return <div className="flex items-center justify-center h-48">
 		<div className="block text-center text-gray-300">

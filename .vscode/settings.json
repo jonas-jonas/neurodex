@@ -18,8 +18,16 @@
 		"**/.DS_Store": true,
 		"**/__pycache__": true
 	},
-	"eslint.validate": [
-		"typescript",
-		"typescriptreact"
-	]
+	"editor.formatOnSave": false,
+	"[javascript]": {
+		"editor.formatOnSave": true
+	},
+	"[typescript]": {
+		"editor.formatOnSave": true
+	},
+	"[typescriptreact]": {
+		"editor.formatOnSave": true
+	},
+	"prettier.jsxSingleQuote": false,
+	"prettier.singleQuote": true,
 }

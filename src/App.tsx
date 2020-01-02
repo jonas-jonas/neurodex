@@ -5,7 +5,7 @@ import { AuthContextProvider } from './contexts/auth';
 import { PageContextProvider } from './contexts/pagecontext';
 import Homepage from './pages/Homepage';
 import LoginPage from './pages/LoginPage';
-import Modelpage from './pages/Modelpage';
+import ModelpageWrapper from './pages/Modelpage';
 
 const App: React.FC = () => {
 	return (
@@ -13,17 +13,19 @@ const App: React.FC = () => {
 			<Router>
 				<PageContextProvider>
 					<Navigation />
-					<Switch>
-						<Route path="/model/:modelId">
-							<Modelpage />
-						</Route>
-						<Route path="/login">
-							<LoginPage />
-						</Route>
-						<Route path="/">
-							<Homepage />
-						</Route>
-					</Switch>
+					<div className="pt-16 h-screen">
+						<Switch>
+							<Route path="/model/:modelId">
+								<ModelpageWrapper />
+							</Route>
+							<Route path="/login">
+								<LoginPage />
+							</Route>
+							<Route path="/">
+								<Homepage />
+							</Route>
+						</Switch>
+					</div>
 				</PageContextProvider>
 			</Router>
 		</AuthContextProvider>

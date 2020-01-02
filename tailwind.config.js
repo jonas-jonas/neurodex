@@ -53,7 +53,8 @@ module.exports = {
       },
       whiteShade: {
         0: '#ffffff',
-        100: '#EBEBEC'
+        100: '#F1F1F1',
+        200: '#EBEBEC'
       }
     },
     spacing: {
@@ -96,7 +97,7 @@ module.exports = {
     },
     borderColor: theme => ({
       ...theme('colors'),
-      default: theme('colors.gray.300', 'currentColor'),
+      default: theme('colors.gray.200', 'currentColor'),
     }),
     borderRadius: {
       none: '0',
@@ -210,6 +211,10 @@ module.exports = {
       ...theme('spacing'),
       full: '100%',
       screen: '100vh',
+      '0': '0',
+      '1/4': '25vh',
+      '1/2': '50vh',
+      '3/4': '75vh',
     }),
     inset: {
       '0': '0',
@@ -244,6 +249,11 @@ module.exports = {
     maxHeight: {
       full: '100%',
       screen: '100vh',
+      '0': '0',
+      '1/4': '25%',
+      '1/2': '50%',
+      '3/4': '75%',
+      'full': '100%',
     },
     maxWidth: {
       xs: '20rem',

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext, User } from '../contexts/auth';
-import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
+import React, { useContext } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { AuthContext } from '../contexts/auth';
 import { PageContext } from '../contexts/pagecontext';
+import { User } from '../data/models';
 
 const Navigation: React.FC = () => {
 	const { pageTitle } = useContext(PageContext);
@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
 	};
 
 	return (
-		<nav className="flex items-center justify-between flex-wrap bg-white py-2 px-5 border-blue-500 border-b-4 shadow">
+		<nav className="flex items-center justify-between flex-wrap bg-white py-2 px-5 border-blue-500 border-b-4 shadow fixed w-full">
 			<div className="block">
 				<Link className="font-semibold text-xl tracking-tight" to="/">
 					<img
@@ -59,7 +59,6 @@ type UserMenuProps = {
 };
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
-	console.log(user);
 	return (
 		<div className="flex">
 			<UserMenuEntry>{user.username}</UserMenuEntry>

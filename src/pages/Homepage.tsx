@@ -10,8 +10,8 @@ import { Link, Redirect, useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../contexts/auth';
 import { api } from '../util/api';
-import { Model } from '../data/model';
-import LoadingIndicator from '../components/LoadingIndicator';
+import { Model } from '../data/models';
+import LoadingIndicator from '../components/utility/LoadingIndicator';
 Settings.defaultLocale = 'de';
 
 interface ModelsData {
@@ -28,14 +28,14 @@ const Homepage: React.FC = () => {
 	useEffect(() => {
 		const loadModels = async () => {
 			setLoading(true);
-			const response = await api.get('models');
+			const response = await api.get('model');
 			if (response.status === 200) {
 				const data: ModelsData = await response.json();
 				setModels(data.models);
 			}
 			setLoading(false);
 		};
-		if(isAuthenticated) {
+		if (isAuthenticated) {
 			loadModels();
 		}
 	}, [isAuthenticated]);
@@ -61,7 +61,7 @@ const Homepage: React.FC = () => {
 			const data = new FormData();
 			data.append('name', result.value);
 			const response = await api.post('model', { body: data });
-			if(response.status === 200) {
+			if (response.status === 200) {
 				const { id } = await response.json();
 				history.push('/model/' + id);
 			}
@@ -122,9 +122,5 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 		</Link>
 	);
 };
-
-const parseDate = (date: string) => {
-	return DateTime.fromFormat(date, 'EEE');
-}
 
 export default Homepage;
