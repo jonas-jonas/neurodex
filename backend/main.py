@@ -21,10 +21,10 @@ def setup():
     Base.metadata.create_all(bind=db.engine)
 
 
-@app.route('/', defaults={'path': 'index.html'})
-@app.route('/<path>')
-def build(path):
-    return send_from_directory(BUILD_ROOT, path)
+@app.route('/')
+@app.route('/<path:path>')
+def build(path=None):
+    return send_from_directory(BUILD_ROOT, 'index.html')
 
 
 if __name__ == '__main__':
