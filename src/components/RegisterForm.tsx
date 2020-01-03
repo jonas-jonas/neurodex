@@ -17,7 +17,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
 
 	// The button should look "disabled" if the button is disabled
 	const loginButtonClasses = classNames(
-		'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
+		'font-bold py-1 px-3 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
 		{
 			'opacity-50 cursor-not-allowed': !(formState.dirty && formState.isValid)
 		}
@@ -83,7 +83,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
 					type="submit"
 					onClick={handleSubmit(handleRegister)}
 				>
-					Registieren
+					Registrieren
 				</button>
 				<button
 					className="inline-block align-baseline font-bold text-sm text-blue-800 hover:text-blue-800 hover:underline focus:outline-none"
