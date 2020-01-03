@@ -42,10 +42,10 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
 	return <div className="rounded mb-2 font-mono bg-white border select-none relative">
 		<div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move bg-blue-800 text-white">
 			<div className="pr-3">
-				<input type="text" className="w-full bg-blue-800 p-0" defaultValue={modelLayer.layerName} />
+				<input type="text" className="w-full bg-blue-800 p-0" defaultValue={modelLayer.layerName} placeholder="Layername" />
 				<span className="text-xs">{modelLayer.layerType.id}</span>
 			</div>
-			<button className="focus:outline-none" onClick={handleDeleteButtonClick}>
+			<button className="focus:outline-none" onClick={handleDeleteButtonClick} title={"Layer " + modelLayer.layerName + " löschen"}>
 				<FontAwesomeIcon icon={faTimes} />
 			</button>
 		</div>
@@ -53,10 +53,13 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
 			<table className="table-auto">
 				<tbody>
 					{modelLayer.layerType.parameters.map((parameter) => {
-						return <tr key={parameter.name}>
-							<td>{parameter.name}</td>
+						const id = modelLayer.id + '-' + parameter.name;
+						return <tr key={id} data-testid={"parameters-" + modelLayer.id}>
 							<td>
-								<ParameterInput parameter={parameter} updateData={handleDataUpdate} data={modelLayer.parameterData[parameter.name]} />
+								<label htmlFor={id}>{parameter.name}</label>
+							</td>
+							<td>
+								<ParameterInput parameter={parameter} updateData={handleDataUpdate} data={modelLayer.parameterData[parameter.name]} id={id} />
 							</td>
 						</tr>
 					})}
