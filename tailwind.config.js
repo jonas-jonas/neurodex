@@ -149,13 +149,7 @@ module.exports = {
     },
     fontFamily: {
       sans: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        '"Noto Sans"',
+        'Inter',
         'sans-serif',
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
@@ -248,7 +242,6 @@ module.exports = {
       '1/4': '25%',
       '1/2': '50%',
       '3/4': '75%',
-      'full': '100%',
     },
     maxWidth: {
       xs: '20rem',
