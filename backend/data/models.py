@@ -32,7 +32,7 @@ class Model(Base):
 
     id = Column(Text, primary_key=True, nullable=False)
     name = Column(Text, nullable=False)
-    user_id = Column(String, ForeignKey('user.id'))
+    user_id = Column(String, ForeignKey('user.id', ondelete='CASCADE'))
     created_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
     layers = relationship("ModelLayer", order_by="ModelLayer.position",
@@ -57,11 +57,11 @@ class ModelLayer(Base):
     __tablename__ = 'model_layer'
 
     id = Column(Integer, primary_key=True)
-    model_id = Column(Text, ForeignKey('model.id'))
-    layer_id = Column(Text, ForeignKey('layer_type.id'))
+    model_id = Column(Text, ForeignKey('model.id', ondelete='CASCADE'))
+    layer_id = Column(Text, ForeignKey('layer_type.id', ondelete='CASCADE'))
     layer_name = Column(Text, nullable=False)
     position = Column(Integer, nullable=False)
-    parameter_data = relationship("ModelLayerParameterData")
+    parameter_data = relationship("ModelLayerParameterData", passive_deletes=True)
     model = relationship("Model", back_populates="layers")
     layer_type = relationship("LayerType")
 
@@ -80,7 +80,7 @@ class ModelLayerParameterData(Base):
     """Represents parameter data of a parameter in a layer."""
     __tablename__ = 'model_layer_parameter_data'
 
-    model_layer_id = Column(Integer, ForeignKey("model_layer.id"), primary_key=True)
+    model_layer_id = Column(Integer, ForeignKey("model_layer.id", ondelete='CASCADE'), primary_key=True)
     parameter_name = Column(Text, nullable=False, primary_key=True)
     value = Column(Text, nullable=False)
 
@@ -99,7 +99,7 @@ class LayerType(Base):
     id = Column(Text, primary_key=True, nullable=False)
     description = Column(Text)
     layer_name = Column(Text)
-    parameters = relationship('LayerParameter')
+    parameters = relationship('LayerParameter', passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -114,7 +114,7 @@ class LayerParameter(Base):
     """Represents a parameter in a layer."""
     __tablename__ = 'layer_parameter'
 
-    layer_type_id = Column(Text, ForeignKey('layer_type.id'), primary_key=True)
+    layer_type_id = Column(Text, ForeignKey('layer_type.id', ondelete="CASCADE"), primary_key=True)
     name = Column(Text, nullable=False, primary_key=True,)
     type = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
