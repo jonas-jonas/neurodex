@@ -25,7 +25,7 @@ const LoginForm: React.FC = () => {
 
 	// The button should look "disabled" if the button is disabled
 	const loginButtonClasses = classnames(
-		'bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-sm focus:outline-none focus:shadow-outline',
+		'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
 		{
 			'opacity-50 cursor-not-allowed': !formState.isValid
 		}
@@ -57,7 +57,7 @@ const LoginForm: React.FC = () => {
 					Login
 				</button>
 				<Link
-					className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+					className="inline-block align-baseline font-bold text-sm text-blue-800 hover:text-blue-800 hover:underline"
 					to="/"
 				>
 					Forgot Password?

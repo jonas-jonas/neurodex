@@ -113,7 +113,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 		>
 			<div className="">
 				<h2 className="text-xl font-bold">{model.name}</h2>
-				<i className="text-gray-300">
+				<i className="text-gray-600">
 					Du · {DateTime.fromISO(model.updatedAt).toRelative()} bearbeitet ·{' '}
 					{DateTime.fromISO(model.createdAt).toRelative()} erstellt
 				</i>

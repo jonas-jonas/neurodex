@@ -1,5 +1,7 @@
+import { faChevronDown, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
 import { PageContext } from '../contexts/pagecontext';
@@ -16,6 +18,7 @@ const Navigation: React.FC = () => {
 	 * If the logout is successful the current route is changed to /login
 	 */
 	const handleLogout = async () => {
+		console.log('??');
 		const loggedOut = await deauthenticate();
 		if (loggedOut) {
 			history.push('/login');
@@ -39,7 +42,7 @@ const Navigation: React.FC = () => {
 			<div className="block">
 				{!isAuthenticated && (
 					<Link
-						className="flex items-center px-5 py-2 rounded text-white font-bold bg-blue-400 focus:outline-none hover:shadow-md hover:bg-blue-300"
+						className="flex items-center px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100"
 						to="/login"
 					>
 						Login
@@ -59,15 +62,64 @@ type UserMenuProps = {
 };
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
+
+	const [expanded, setExpanded] = useState(false);
+
+	const handleUserMenuClick = () => {
+		setExpanded(!expanded);
+	}
+
 	return (
-		<div className="flex">
-			<UserMenuEntry>{user.username}</UserMenuEntry>
-			<UserMenuEntry onClick={onLogout} raised>
-				Logout
-			</UserMenuEntry>
+		<div className="relative">
+			<button className="px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mb-2" onClick={handleUserMenuClick}>
+				<span className="uppercase mr-3">
+					{user.username}
+				</span>
+				<FontAwesomeIcon icon={faChevronDown} />
+			</button>
+			{expanded && <UserMenuPopup onLogout={onLogout} toggleMenu={setExpanded} />}
 		</div>
 	);
 };
+
+type UserMenuPopupProps = {
+	onLogout: () => void;
+	toggleMenu: (expanded: boolean) => void;
+}
+
+const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) => {
+
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const closePopup = (e: MouseEvent) => {
+			const target = e.target as HTMLElement;
+			if (!menuRef.current?.contains(target)) {
+				toggleMenu(false);
+			}
+		}
+		document.body.addEventListener('click', closePopup);
+		return () => {
+			document.body.removeEventListener('click', closePopup);
+		}
+	}, [toggleMenu]);
+
+
+	return <div className="absolute bg-white right-0 rounded shadow w-48" ref={menuRef}>
+		<Link to="/account" className="block p-2 px-5 hover:bg-gray-200 w-full text-left">
+			<FontAwesomeIcon icon={faCog} />
+			<span className="pl-2">
+				Einstellungen
+			</span>
+		</Link>
+		<button onClick={onLogout} className="block p-2 px-5 hover:bg-gray-200 w-full text-left focus:outline-none">
+			<FontAwesomeIcon icon={faSignOutAlt} />
+			<span className="pl-2">
+				Logout
+			</span>
+		</button>
+	</div>
+}
 
 type UserMenuEntryProps = {
 	onClick?: () => void;
@@ -80,7 +132,7 @@ const UserMenuEntry: React.FC<UserMenuEntryProps> = ({
 	raised
 }) => {
 	const classes = classNames('px-5 py-2 rounded ml-3 focus:outline-none', {
-		'shadow text-white font-bold bg-blue-400 focus:outline-none hover:shadow-md hover:bg-blue-300': raised,
+		'shadow text-white font-bold bg-blue-800 focus:outline-none hover:shadow-md hover:bg-blue-300': raised,
 		'text-gray-700': !raised,
 		'cursor-default': !onClick
 	});

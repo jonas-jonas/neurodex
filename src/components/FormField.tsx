@@ -15,7 +15,7 @@ type FormFieldProps = {
 const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
 	(props, ref) => {
 		const inputClasses = classnames(
-			'shadow appearance-none border border-2 border-l-4 rounded-sm w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-orange-400',
+			'shadow appearance-none border border-l-4 border-blue-800 rounded-sm w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:border-orange-400',
 			{
 				'border-error border-0': !!props.validationMessage
 			}

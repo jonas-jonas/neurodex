@@ -39,10 +39,10 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
 		}
 	}
 
-	return <div className="rounded mb-2 font-mono bg-white border select-none relative">
-		<div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move bg-blue-800 text-white">
+	return <div className="rounded mb-2 font-mono bg-white select-none relative border border-blue-800">
+		<div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move border-b border-blue-800 bg-blue-800 text-white">
 			<div className="pr-3">
-				<input type="text" className="w-full bg-blue-800 p-0" defaultValue={modelLayer.layerName} placeholder="Layername" />
+				<input type="text" className="w-full p-0 bg-blue-800" defaultValue={modelLayer.layerName} placeholder="Layername" />
 				<span className="text-xs">{modelLayer.layerType.id}</span>
 			</div>
 			<button className="focus:outline-none" onClick={handleDeleteButtonClick} title={"Layer " + modelLayer.layerName + " löschen"}>
