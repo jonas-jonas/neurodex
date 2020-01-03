@@ -1,6 +1,5 @@
 import { faChevronDown, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classNames from 'classnames';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
@@ -120,27 +119,5 @@ const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) =
 		</button>
 	</div>
 }
-
-type UserMenuEntryProps = {
-	onClick?: () => void;
-	raised?: boolean;
-};
-
-const UserMenuEntry: React.FC<UserMenuEntryProps> = ({
-	onClick,
-	children,
-	raised
-}) => {
-	const classes = classNames('px-5 py-2 rounded ml-3 focus:outline-none', {
-		'shadow text-white font-bold bg-blue-800 focus:outline-none hover:shadow-md hover:bg-blue-300': raised,
-		'text-gray-700': !raised,
-		'cursor-default': !onClick
-	});
-	return (
-		<button className={classes} onClick={onClick}>
-			{children}
-		</button>
-	);
-};
 
 export default Navigation;
