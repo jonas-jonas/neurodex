@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import FormField from './FormField';
+import FormField from '../../components/FormField';
 
 let container: HTMLDivElement | null = null;
 beforeEach(() => {
@@ -39,7 +39,7 @@ it('Renders with validation message', () => {
 	ReactDOM.render(<FormField label="test" name="test" validationMessage="message" />, container);
 	const messageElement = container?.querySelector('div p.text-error');
 	expect(messageElement?.textContent).toBe('message');
-	
+
 	const input = container?.querySelector('div input');
 	expect(input?.classList).toContain('border-error');
 })

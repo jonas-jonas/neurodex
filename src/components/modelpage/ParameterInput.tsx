@@ -2,6 +2,7 @@ import React from 'react';
 import { LayerParameter } from '../../data/models';
 
 type ParameterInputProps = {
+	id: string;
 	parameter: LayerParameter;
 	updateData: (parameterName: string, newData: string) => Promise<void>;
 	data: number | boolean | string;
@@ -29,7 +30,7 @@ const ParameterInput: React.FC<ParameterInputProps> = props => {
  *
  * @param {ParameterInputProps} - The properties of this element
  */
-const NumberParameterInput: React.FC<ParameterInputProps> = ({ parameter, updateData, data }: ParameterInputProps) => {
+const NumberParameterInput: React.FC<ParameterInputProps> = ({ parameter, updateData, data, id }: ParameterInputProps) => {
 
 	const onBlurHandler = async (e: React.FocusEvent<HTMLInputElement>) => {
 		let value = (e.target as HTMLInputElement).value;
@@ -41,7 +42,7 @@ const NumberParameterInput: React.FC<ParameterInputProps> = ({ parameter, update
 		}
 	}
 
-	return <input type={parameter.type} className="w-full border px-2" defaultValue={data as number} onBlur={onBlurHandler} placeholder={parameter.defaultValue} />;
+	return <input type={parameter.type} className="w-full border px-2" defaultValue={data as number} onBlur={onBlurHandler} placeholder={parameter.defaultValue} title={parameter.name} id={id} />;
 }
 
 /**
