@@ -2,17 +2,13 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import CodeBlock from '../components/modelpage/CodeBlock';
 import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
+import { Panel } from '../components/utility/Panel';
 import { ModelContext, ModelContextProvider } from '../contexts/modelcontext';
 import { LayerType } from '../data/models';
 import { api } from '../util/api';
-import { Panel } from '../components/utility/Panel';
-
-SyntaxHighlighter.registerLanguage('python', python);
 
 const Modelpage: React.FC = () => {
 
@@ -53,16 +49,8 @@ const Modelpage: React.FC = () => {
 					<div>Body</div>
 				</Panel>
 			</div>
-			<div className="flex-grow h-full rounded px-3 py-2 overflow-y-auto">
-				<SyntaxHighlighter language="python" showLineNumbers style={docco}>
-					{`class Model(nn.Module):
-	def __init__(self):
-		super(Model, self).__init__()
-		self.linear = nn.Linear(128, 3000)
-			
-	def forward(self, inputs):
-		return 0`}
-				</SyntaxHighlighter>
+			<div className="flex-grow h-full rounded px-1 overflow-y-auto">
+				<CodeBlock model={model} />
 			</div>
 
 		</div>

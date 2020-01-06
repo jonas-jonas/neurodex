@@ -7033,6 +7033,11 @@ video {
   z-index: auto;
 }
 
+pre {
+  -moz-tab-size: 4;
+       tab-size: 4;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;
