@@ -38,9 +38,8 @@ export const AuthContextProvider: React.FC = ({ children }) => {
 				const data = await api.get('user');
 				const authenticationResponse: AuthenticationResponse = await data.json();
 				setUser(authenticationResponse.user);
-
 			} catch (error) {
-				console.log(error);
+				setUser(undefined);
 			}
 		};
 		fetchCurrentUser();
@@ -83,12 +82,13 @@ export const AuthContextProvider: React.FC = ({ children }) => {
 	 */
 	const deauthenticate = () => {
 		const logout = async (): Promise<boolean> => {
-			const response = await api.get('logout');
-			if (response.status === 200) {
+			try {
+				const response = await api.get('logout');
+				return response.status === 200;
+			} finally {
 				setUser(undefined);
 				return true;
 			}
-			return false;
 		};
 		return logout();
 	};

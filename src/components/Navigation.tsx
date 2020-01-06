@@ -17,7 +17,6 @@ const Navigation: React.FC = () => {
 	 * If the logout is successful the current route is changed to /login
 	 */
 	const handleLogout = async () => {
-		console.log('??');
 		const loggedOut = await deauthenticate();
 		if (loggedOut) {
 			history.push('/login');

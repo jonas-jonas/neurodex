@@ -35,10 +35,13 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
 		 * Fetches all available layers into the state
 		 */
 		const fetchLayers = async () => {
-			const response = await api.get('layer');
-			if (response.status === 200) {
-				const json = await response.json();
-				setAvailableLayers(json.layers);
+			try {
+				const response = await api.get('layer');
+				const { layers } = await response.json();
+				setAvailableLayers(layers);
+			} catch (error) {
+				//TODO: Handle error
+				setAvailableLayers([]);
 			}
 		}
 
