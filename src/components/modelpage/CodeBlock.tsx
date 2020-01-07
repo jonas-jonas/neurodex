@@ -21,7 +21,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
 		return model.layers.map((layer: ModelLayer) => {
 			const params = layer.layerType.parameters.map((parameter: LayerParameter) => {
 				const name = parameter.name;
-				const value = layer.parameterData[name];
+				const value = layer.parameterData[name] || parameter.defaultValue;
 				return `${name}=${JSToPython[value] || value}`;
 			}).join(', ');
 			// The indentation is to correctly indent every line of layers
@@ -30,7 +30,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
 
 	}, [model.layers]);
 
-	return <SyntaxHighlighter language="python" showLineNumbers style={vs} className="font-mono text-lg font-bold">
+	return <SyntaxHighlighter language="python" showLineNumbers style={vs} className="font-mono text-lg font-bold rounded">
 		{`class ${model.name}(torch.nn.Module):
 	def __init__(self):
 		super(${model.name}, self).__init__()
