@@ -1,7 +1,7 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useState } from 'react';
-import { ModelContext } from '../../contexts/modelcontext';
+import React, { useState } from 'react';
+import { useModelContext } from '../../contexts/modelcontext';
 import { ActivationFunction, ModelFunction } from '../../data/models';
 import LoadingIndicator from '../utility/LoadingIndicator';
 import ParameterInput from './ParameterInput';
@@ -11,30 +11,37 @@ type ForwardCardProps = {
 };
 
 const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
-  const {
-    activationFunctions,
-    deleteModelFunction,
-    updateModelFunctionActivator,
-    updateModelFunctionData
-  } = useContext(ModelContext);
+  const { activationFunctions, updateModel } = useModelContext();
   const [updating, setUpdating] = useState(false);
 
   const handleFunctionChange = async (e: React.ChangeEvent) => {
     setUpdating(true);
     const id = (e.target as HTMLSelectElement).value;
-    await updateModelFunctionActivator(currentFunction.id, Number(id));
+    await updateModel({
+      type: 'UPDATE_MODEL_FUNCTION_ACTIVATOR',
+      functionId: currentFunction.id,
+      modelFunctionId: Number(id)
+    });
     setUpdating(false);
   };
 
   const handleDeleteButtonClick = async () => {
     setUpdating(true);
-    await deleteModelFunction(currentFunction.id);
+    await updateModel({
+      type: 'DELETE_MODEL_FUNCTION',
+      modelFunctionId: currentFunction.id
+    });
     setUpdating(false);
   };
 
   const handleDataChange = async (parameterName: string, data: any) => {
     setUpdating(true);
-    await updateModelFunctionData(currentFunction.id, parameterName, data);
+    await updateModel({
+      type: 'UPDATE_MODEL_FUNCTION_DATA',
+      modelFunctionId: currentFunction.id,
+      parameterName: parameterName,
+      newData: data
+    });
     setUpdating(false);
   };
 

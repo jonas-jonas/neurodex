@@ -1,69 +1,39 @@
 import React from 'react';
-import { LayerType, Model, ModelLayer } from '../../data/models';
 import { ModelContext } from '../../contexts/modelcontext';
-
-type ModelContextProps = {
-	model?: Model;
-	setModel: (model: Model) => void;
-	availableLayers: LayerType[];
-	deleteLayer: (layerId: number) => Promise<boolean>;
-	updateLayer: (
-		layerId: number,
-		parameterName: string,
-		newValue: string
-	) => Promise<boolean>;
-	updateOrder: (modelLayerId: number, newIndex: number) => Promise<boolean>;
-};
+import { ModelLayer } from '../../data/models';
+import { Actions } from '../../util/api';
 
 type MockModelContextProvider = {
-	layers?: ModelLayer[];
-	deleteLayer?: (layerId: number) => Promise<boolean>;
-	updateLayer?: (
-		layerId: number,
-		parameterName: string,
-		newValue: string
-	) => Promise<boolean>;
-	updateOrder?: (modelLayerId: number, newIndex: number) => Promise<boolean>;
+  layers?: ModelLayer[];
+  updateModel?: (action: Actions) => Promise<boolean>;
 };
 
-const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
-	children,
-	layers,
-	deleteLayer,
-	updateLayer,
-	updateOrder
-}) => {
-	return (
-		<ModelContext.Provider
-			value={{
-				model: {
-					id: 'some-id',
-					name: 'model-name',
-					user: {
-						id: 'test-user-id',
-						username: 'test-user',
-						admin: false
-					},
-					createdAt: '2019-12-30 18:13:18.889242',
-					updatedAt: '2019-12-30 18:13:18.889242',
-					layers: layers || [],
-					functions: []
-				},
-				setModel: () => { },
-				availableLayers: [],
-				activationFunctions: [],
-				deleteLayer: deleteLayer || jest.fn(),
-				updateLayer: updateLayer || jest.fn(),
-				updateOrder: updateOrder || jest.fn(),
-				addModelFunction: jest.fn(),
-				deleteModelFunction: jest.fn(),
-				updateModelFunctionActivator: jest.fn(),
-				updateModelFunctionData: jest.fn()
-			}}
-		>
-			{children}
-		</ModelContext.Provider>
-	);
+const MockModelContextProvider: React.FC<MockModelContextProvider> = ({ children, layers, updateModel }) => {
+  return (
+    <ModelContext.Provider
+      value={{
+        model: {
+          id: 'some-id',
+          name: 'model-name',
+          user: {
+            id: 'test-user-id',
+            username: 'test-user',
+            admin: false
+          },
+          createdAt: '2019-12-30 18:13:18.889242',
+          updatedAt: '2019-12-30 18:13:18.889242',
+          layers: layers || [],
+          functions: []
+        },
+        updateModel: updateModel || jest.fn(),
+        setModel: () => {},
+        availableLayers: [],
+        activationFunctions: []
+      }}
+    >
+      {children}
+    </ModelContext.Provider>
+  );
 };
 
 export default MockModelContextProvider;

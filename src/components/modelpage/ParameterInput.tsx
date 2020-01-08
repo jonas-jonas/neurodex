@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { ModelContext } from '../../contexts/modelcontext';
+import React from 'react';
+import { useModelContext } from '../../contexts/modelcontext';
 import { ActivationFunctionParameter, LayerParameter } from '../../data/models';
 
 type ParameterInputProps = {
@@ -94,7 +94,7 @@ const BooleanParameterInput: React.FC<ParameterInputProps> = ({
 };
 
 const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, data, id }) => {
-  const { model } = useContext(ModelContext);
+  const { model } = useModelContext();
 
   const onChangeHandler = (e: React.ChangeEvent) => {
     const layerId = (e.target as HTMLSelectElement).value;
@@ -104,7 +104,7 @@ const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, dat
   return (
     <select id={id} className="w-full border px-2" value={String(data)} onChange={onChangeHandler}>
       {!data && <option value=""></option>}
-      {model?.layers.map(layer => {
+      {model.layers.map(layer => {
         return (
           <option value={layer.id} key={layer.id}>
             {layer.layerName}

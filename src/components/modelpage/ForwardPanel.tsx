@@ -1,15 +1,18 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext } from 'react';
-import { ModelContext } from '../../contexts/modelcontext';
+import React from 'react';
+import { useModelContext } from '../../contexts/modelcontext';
 import { Panel } from '../utility/Panel';
 import ForwardCard from './ForwardCard';
 
 const ForwardPanel = () => {
-  const { activationFunctions, model, addModelFunction } = useContext(ModelContext);
+  const { activationFunctions, model, updateModel } = useModelContext();
 
   const handleAddClick = () => {
-    addModelFunction(activationFunctions[0].id);
+    updateModel({
+      type: 'ADD_MODEL_FUNCTION',
+      activationFunctionId: activationFunctions[0].id
+    });
   };
 
   return (
@@ -22,7 +25,7 @@ const ForwardPanel = () => {
       </div>
       <div className="overflow-y-auto h-full">
         <div className="p-2 overflow-y-auto h-full">
-          {model?.functions.map(func => (
+          {model.functions.map(func => (
             <ForwardCard currentFunction={func} key={func.id} />
           ))}
         </div>

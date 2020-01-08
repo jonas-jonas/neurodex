@@ -1,8 +1,8 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { SortableElement } from 'react-sortable-hoc';
-import { ModelContext } from '../../contexts/modelcontext';
+import { useModelContext } from '../../contexts/modelcontext';
 import { ModelLayer } from '../../data/models';
 import LoadingIndicator from '../utility/LoadingIndicator';
 import ParameterInput from './ParameterInput';
@@ -12,14 +12,17 @@ type ModelLayerCardProps = {
 };
 
 const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
-  const { deleteLayer, updateLayer } = useContext(ModelContext);
+  const { updateModel } = useModelContext();
 
   const [updating, setUpdating] = useState(false);
 
   const handleDeleteButtonClick = async () => {
     if (!updating) {
       setUpdating(true);
-      const result = await deleteLayer(modelLayer.id);
+      const result = await updateModel({
+        type: 'DELETE_LAYER',
+        modelLayerId: modelLayer.id
+      });
       if (result) {
         //TODO: Show notification if deleting failed?
       }
@@ -30,7 +33,12 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
   const handleDataUpdate = async (parameterName: string, newData: string) => {
     if (!updating) {
       setUpdating(true);
-      const result = await updateLayer(modelLayer.id, parameterName, newData);
+      const result = await updateModel({
+        type: 'UPDATE_LAYER',
+        modelLayerId: modelLayer.id,
+        parameterName: parameterName,
+        newValue: newData
+      });
       if (result) {
         //TODO: Show notification if deleting failed?
       }

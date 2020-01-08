@@ -1,58 +1,49 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import CodeBlock from '../components/modelpage/CodeBlock';
+import ForwardPanel from '../components/modelpage/ForwardPanel';
 import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { Panel } from '../components/utility/Panel';
-import { ModelContext, ModelContextProvider } from '../contexts/modelcontext';
+import { ModelContextProvider, useModelContext } from '../contexts/modelcontext';
 import { LayerType } from '../data/models';
 import { api } from '../util/api';
-import ForwardPanel from '../components/modelpage/ForwardPanel';
+import { PageContext } from '../contexts/pagecontext';
 
 const Modelpage: React.FC = () => {
-  const { model, setModel, availableLayers } = useContext(ModelContext);
+  const { model, availableLayers, updateModel } = useModelContext();
 
   const handleLayerAdd = async (id: string) => {
-    const data = new FormData();
-    data.append('layerId', id);
-    const response = await api.post('model/' + model?.id + '/layer', { body: data });
-
-    const json = await response.json();
-    setModel(json.model);
+    await updateModel({
+      type: 'ADD_LAYER',
+      layerTypeId: id
+    });
   };
 
-  if (!model) {
-    return (
-      <div className="container">
-        <LoadingIndicator text="Loading model..." />
-      </div>
-    );
-  } else {
-    return (
-      <div className="flex h-full flex-auto pb-2">
-        <div className="w-7/12 flex">
-          <Panel>
-            <div className="px-3 py-2 rounded-t">
-              <h2 className="text-lg font-bold">Layers</h2>
-            </div>
-            <div className="p-2 flex-grow overflow-y-auto">
-              {availableLayers.map(layerType => {
-                return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
-              })}
-            </div>
-          </Panel>
-          <ModelLayerPanel />
+  return (
+    <div className="flex h-full flex-auto pb-2">
+      <div className="w-7/12 flex">
+        <Panel>
+          <div className="px-3 py-2 rounded-t">
+            <h2 className="text-lg font-bold">Layers</h2>
+          </div>
+          <div className="p-2 flex-grow overflow-y-auto">
+            {availableLayers.map(layerType => {
+              return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
+            })}
+          </div>
+        </Panel>
+        <ModelLayerPanel />
 
-          <ForwardPanel />
-        </div>
-        <div className="flex-grow h-full rounded px-1 overflow-y-auto">
-          <CodeBlock model={model} />
-        </div>
+        <ForwardPanel />
       </div>
-    );
-  }
+      <div className="flex-grow h-full rounded px-1 overflow-y-auto">
+        <CodeBlock model={model} />
+      </div>
+    </div>
+  );
 };
 
 type LayerCardProps = {
@@ -77,12 +68,41 @@ const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
 
 const ModelpageWrapper = () => {
   const { modelId } = useParams();
+  const [model, setModel] = useState();
+  const { setPageTitle } = useContext(PageContext);
 
-  return (
-    <ModelContextProvider modelId={modelId}>
-      <Modelpage />
-    </ModelContextProvider>
-  );
+  useEffect(() => {
+    /**
+     * Fetches the current model object
+     */
+    const fetchModel = async () => {
+      const response = await api.get('model/' + modelId);
+      if (response.status === 200) {
+        const { model } = await response.json();
+        setPageTitle(model.name);
+        setModel(model);
+      }
+    };
+    fetchModel();
+
+    return () => {
+      setPageTitle('');
+    };
+  }, [modelId, setPageTitle]);
+
+  if (!model) {
+    return (
+      <div className="container">
+        <LoadingIndicator text="Loading model..." />
+      </div>
+    );
+  } else {
+    return (
+      <ModelContextProvider initialModel={model}>
+        <Modelpage />
+      </ModelContextProvider>
+    );
+  }
 };
 
 export default ModelpageWrapper;

@@ -1,13 +1,13 @@
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import arrayMove from 'array-move';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
-import { ModelContext } from '../../contexts/modelcontext';
+import { useModelContext } from '../../contexts/modelcontext';
+import { ModelLayer } from '../../data/models';
 import LoadingIndicator from '../utility/LoadingIndicator';
 import { Panel } from '../utility/Panel';
 import ModelLayerCard from './ModelLayerCard';
-import { ModelLayer } from '../../data/models';
-import arrayMove from 'array-move';
 
 const SortableModelLayerPanel = SortableContainer(({ children }: { children: ReactNode }) => {
   return <div className="p-2 overflow-y-auto h-full">{children}</div>;
@@ -16,7 +16,7 @@ const SortableModelLayerPanel = SortableContainer(({ children }: { children: Rea
 const ModelLayerPanel: React.FC = () => {
   const [updating, setUpdating] = useState(false);
 
-  const { model, updateOrder } = useContext(ModelContext);
+  const { model, updateModel } = useModelContext();
 
   const [layers, setLayers] = useState<ModelLayer[]>([]);
 
@@ -33,7 +33,7 @@ const ModelLayerPanel: React.FC = () => {
       setUpdating(true);
       /** Update the local cache of layers with the updated order */
       setLayers(arrayMove(layers, oldIndex, newIndex));
-      await updateOrder(modelLayer.id, newIndex);
+      await updateModel({ type: 'UPDATE_LAYER_ORDER', modelLayerId: modelLayer.id, newIndex: newIndex });
       setUpdating(false);
     }
   };

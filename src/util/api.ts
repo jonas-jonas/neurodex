@@ -5,6 +5,15 @@ export const api = ky.extend({
   prefixUrl: '/api'
 });
 
+const addLayer = async (modelId: string, layerTypeId: string) => {
+  const data = new FormData();
+  data.append('layerId', layerTypeId);
+  const response = await api.post('model/' + modelId + '/layer', { body: data });
+
+  const { model } = await response.json();
+  return model;
+};
+
 const deleteLayer = async (modelId: string, layerId: number): Promise<Model> => {
   const response = await api.delete('model/' + modelId + '/layer/' + layerId);
   const { model } = await response.json();
@@ -82,7 +91,90 @@ const updateModelFunctionData = async (
   return model;
 };
 
+export const dispatchModelApi = async (modelId: string, action: Actions) => {
+  switch (action.type) {
+    case 'ADD_LAYER':
+      return await addLayer(modelId, action.layerTypeId);
+    case 'DELETE_LAYER':
+      return await actions.deleteLayer(modelId, action.modelLayerId);
+    case 'UPDATE_LAYER':
+      return await actions.updateLayer(modelId, action.modelLayerId, action.parameterName, action.newValue);
+    case 'UPDATE_LAYER_ORDER':
+      return await actions.updateOrder(modelId, action.modelLayerId, action.newIndex);
+    case 'ADD_MODEL_FUNCTION':
+      return await actions.addFunction(modelId, action.activationFunctionId);
+    case 'DELETE_MODEL_FUNCTION':
+      return await actions.deleteFunction(modelId, action.modelFunctionId);
+    case 'UPDATE_MODEL_FUNCTION_ACTIVATOR':
+      return await actions.updateModelFunctionActivator(modelId, action.modelFunctionId, action.functionId);
+    case 'UPDATE_MODEL_FUNCTION_DATA':
+      return await actions.updateModelFunctionData(
+        modelId,
+        action.modelFunctionId,
+        action.parameterName,
+        action.newData
+      );
+  }
+};
+
+type AddLayer = {
+  type: 'ADD_LAYER';
+  layerTypeId: string;
+};
+
+type DeleteLayer = {
+  type: 'DELETE_LAYER';
+  modelLayerId: number;
+};
+
+type UpdateLayer = {
+  type: 'UPDATE_LAYER';
+  modelLayerId: number;
+  parameterName: string;
+  newValue: string;
+};
+
+type UpdateLayerOrder = {
+  type: 'UPDATE_LAYER_ORDER';
+  modelLayerId: number;
+  newIndex: number;
+};
+
+type AddModelFunction = {
+  type: 'ADD_MODEL_FUNCTION';
+  activationFunctionId: number;
+};
+
+type DeleteModelFunction = {
+  type: 'DELETE_MODEL_FUNCTION';
+  modelFunctionId: number;
+};
+
+type UpdateModelFunctionActivator = {
+  type: 'UPDATE_MODEL_FUNCTION_ACTIVATOR';
+  modelFunctionId: number;
+  functionId: number;
+};
+
+type UpdateModelFunctionData = {
+  type: 'UPDATE_MODEL_FUNCTION_DATA';
+  modelFunctionId: number;
+  parameterName: string;
+  newData: string;
+};
+
+export type Actions =
+  | AddLayer
+  | DeleteLayer
+  | UpdateLayer
+  | UpdateLayerOrder
+  | AddModelFunction
+  | DeleteModelFunction
+  | UpdateModelFunctionActivator
+  | UpdateModelFunctionData;
+
 export const actions = {
+  addLayer,
   deleteLayer,
   updateLayer,
   updateOrder,
