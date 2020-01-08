@@ -63,5 +63,9 @@
     "transformIgnorePatterns": [
       "node_modules/(?!ky)/"
     ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true
   }
 }
