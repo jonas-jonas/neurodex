@@ -12,6 +12,7 @@ export type Model = {
 	createdAt: string;
 	updatedAt: string;
 	layers: ModelLayer[];
+	functions: ModelFunction[];
 };
 
 export type ModelLayer = {
@@ -38,4 +39,23 @@ export type LayerParameter = {
 	name: string;
 	type: string;
 	defaultValue: string;
+}
+
+export type ActivationFunction = {
+	id: number;
+	name: string;
+	description: string;
+	parameters: ActivationFunctionParameter[];
+}
+
+export type ActivationFunctionParameter = {
+	type: string;
+	name: string;
+	defaultValue: string;
+}
+
+export type ModelFunction = {
+	id: number;
+	function: ActivationFunction;
+	parameterData: Record<string, string>;
 }
