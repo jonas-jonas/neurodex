@@ -101,7 +101,7 @@ class LayerType(Base):
 
     id = Column(Text, primary_key=True, nullable=False)
     description = Column(Text)
-    layer_name = Column(Text)
+    layer_name = Column(Text, nullable=False)
     parameters = relationship('LayerParameter', passive_deletes=True)
 
     def to_dict(self):
