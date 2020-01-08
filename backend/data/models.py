@@ -179,13 +179,67 @@ class ModelFunction(Base):
         return {
             'id': self.id,
             'function': self.function.to_dict(),
-            'parameterData': {data.parameter_name: data.value for data in self.parameter_data}
+            'parameterData': {data.key(): data.value.to_dict() for data in self.parameter_data}
         }
 
 
 class ModelFunctionParameterData(Base):
-    __tablename__ = "model_function_parameter_Data"
+    __tablename__ = "model_function_parameter_data"
 
     model_function_id = Column(Integer, ForeignKey("model_function.id", ondelete='CASCADE'), primary_key=True)
-    parameter_name = Column(Text, nullable=False, primary_key=True)
-    value = Column(Text, nullable=False)
+    activation_function_parameter_id = Column(Integer, ForeignKey("activation_function_parameter.id",
+                                                                  ondelete='CASCADE'), nullable=False, primary_key=True)
+    value_id = Column(Integer, ForeignKey("value.id"))
+
+    activation_function_parameter = relationship('ActivationFunctionParameter')
+    value = relationship('Value')
+
+    def key(self):
+        return self.activation_function_parameter.name
+
+
+class Value(Base):
+    __tablename__ = 'value'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    type = Column(String(50))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'value',
+        'polymorphic_on': type
+    }
+
+
+class LayerValue(Value):
+    __tablename__ = "layer_value"
+
+    id = Column(Integer, ForeignKey('value.id'), primary_key=True)
+    value_id = Column(Integer, ForeignKey("model_layer.id"))
+    value = relationship("ModelLayer")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'layer_value',
+    }
+
+    def to_dict(self):
+        return {
+            'value': f'self.{self.value.layer_name}',
+            'id': self.value_id
+        }
+
+
+class PrimitiveValue(Value):
+    __tablename__ = "primitive_value"
+
+    id = Column(Integer, ForeignKey('value.id'), primary_key=True)
+    value = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'primitive_value',
+    }
+
+    def to_dict(self):
+        return {
+            'value': self.value,
+        }

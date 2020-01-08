@@ -3,9 +3,10 @@ import uuid
 from flask import Blueprint, jsonify, request
 
 from backend import db
-from backend.data.models import (LayerType, Model, ModelFunction,
+from backend.data.models import (ActivationFunctionParameter, LayerType,
+                                 LayerValue, Model, ModelFunction,
                                  ModelFunctionParameterData, ModelLayer,
-                                 ModelLayerParameterData)
+                                 ModelLayerParameterData, PrimitiveValue)
 from backend.util import token_required
 
 model_blueprint = Blueprint('model', __name__, url_prefix="/api/model")
@@ -203,12 +204,6 @@ def update_activator(current_user, model_id, function_id):
 
     return jsonify({'model': model.to_dict()}), 200
 
-# <model_id>/functions/<function_id>/data
-# <model_id>/functions/<model_function_id>/data/<parameter_name>
-# <model_id>/functions/<model_function_id>/data/inputs
-
-# request.form['value'] = "None1"
-
 
 @model_blueprint.route('/<model_id>/functions/<model_function_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
@@ -230,16 +225,27 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
     """
     data = request.form
 
+    model_function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
+
+    function_id = model_function.function.id
+
+    param = db.session.query(ActivationFunctionParameter).filter_by(id=function_id, name=parameter_name).first()
+
+    if param.type == "layer":
+        value = LayerValue(value_id=data['value'])
+    else:
+        value = PrimitiveValue(value=data['value'])
+
     param_data = db.session.query(ModelFunctionParameterData).filter_by(
-        model_function_id=model_function_id, parameter_name=parameter_name).first()
+        model_function_id=model_function_id, activation_function_parameter_id=param.id).first()
 
     if(param_data is None):
         param_data = ModelFunctionParameterData(model_function_id=model_function_id,
-                                                parameter_name=parameter_name, value=data['value'])
+                                                activation_function_parameter_id=param.id, value=value)
 
         db.session.add(param_data)
     else:
-        param_data.value = data['value']
+        param_data.value = value
 
     db.session.commit()
 
