@@ -8,28 +8,28 @@ import LoginPage from './pages/LoginPage';
 import ModelpageWrapper from './pages/Modelpage';
 
 const App: React.FC = () => {
-	return (
-		<AuthContextProvider>
-			<Router>
-				<PageContextProvider>
-					<Navigation />
-					<div className="pt-16 h-screen">
-						<Switch>
-							<Route path="/model/:modelId">
-								<ModelpageWrapper />
-							</Route>
-							<Route path="/login">
-								<LoginPage />
-							</Route>
-							<Route path="/">
-								<Homepage />
-							</Route>
-						</Switch>
-					</div>
-				</PageContextProvider>
-			</Router>
-		</AuthContextProvider>
-	);
+  return (
+    <AuthContextProvider>
+      <Router>
+        <PageContextProvider>
+          <Navigation />
+          <div className="pt-16 h-screen">
+            <Switch>
+              <Route path="/model/:modelId">
+                <ModelpageWrapper />
+              </Route>
+              <Route path="/login">
+                <LoginPage />
+              </Route>
+              <Route path="/">
+                <Homepage />
+              </Route>
+            </Switch>
+          </div>
+        </PageContextProvider>
+      </Router>
+    </AuthContextProvider>
+  );
 };
 
 export default App;
