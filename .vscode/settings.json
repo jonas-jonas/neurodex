@@ -30,4 +30,5 @@
 	},
 	"prettier.jsxSingleQuote": false,
 	"prettier.singleQuote": true,
+	"editor.tabSize": 2,
 }

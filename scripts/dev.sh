@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/bin/bash
+
+if [ -z "${VIRTUAL_ENV}" ]; then
+	source ./venv/bin/activate
+fi
 
 export DATABASE_URL="postgresql://postgres:docker@localhost/postgres"
 

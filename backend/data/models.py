@@ -37,6 +37,8 @@ class Model(Base):
     updated_at = Column(TIMESTAMP(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
     layers = relationship("ModelLayer", order_by="ModelLayer.position",
                           collection_class=ordering_list('position'))
+    functions = relationship("ModelFunction", order_by="ModelFunction.position",
+                             collection_class=ordering_list('position'))
 
     def to_dict(self):
         return {
@@ -45,7 +47,8 @@ class Model(Base):
             'userId': self.user_id,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at,
-            'layers': [layer.to_dict() for layer in self.layers]
+            'layers': [layer.to_dict() for layer in self.layers],
+            'functions': [function.to_dict() for function in self.functions],
         }
 
 
@@ -124,4 +127,119 @@ class LayerParameter(Base):
             'name': self.name,
             'type': self.type,
             'defaultValue': self.default_value
+        }
+
+
+class ActivationFunction(Base):
+    __tablename__ = "activation_function"
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+    description = Column(Text)
+    parameters = relationship("ActivationFunctionParameter", passive_deletes=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'parameters': [param.to_dict() for param in self.parameters]
+        }
+
+
+class ActivationFunctionParameter(Base):
+    __tablename__ = "activation_function_parameter"
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete="CASCADE"))
+    type = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    default_value = Column(Text, nullable=False)
+
+    def to_dict(self):
+        return {
+            'type': self.type,
+            'name': self.name,
+            'defaultValue': self.default_value
+        }
+
+
+class ModelFunction(Base):
+    __tablename__ = "model_function"
+
+    id = Column(Integer, primary_key=True)
+    model_id = Column(Text, ForeignKey('model.id', ondelete='CASCADE'))
+    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete='CASCADE'))
+    position = Column(Integer, nullable=False)
+    parameter_data = relationship("ModelFunctionParameterData", passive_deletes=True)
+    model = relationship("Model", back_populates="functions")
+    function = relationship("ActivationFunction")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'function': self.function.to_dict(),
+            'parameterData': {data.key(): data.value.to_dict() for data in self.parameter_data}
+        }
+
+
+class ModelFunctionParameterData(Base):
+    __tablename__ = "model_function_parameter_data"
+
+    model_function_id = Column(Integer, ForeignKey("model_function.id", ondelete='CASCADE'), primary_key=True)
+    activation_function_parameter_id = Column(Integer, ForeignKey("activation_function_parameter.id",
+                                                                  ondelete='CASCADE'), nullable=False, primary_key=True)
+    value_id = Column(Integer, ForeignKey("value.id"))
+
+    activation_function_parameter = relationship('ActivationFunctionParameter')
+    value = relationship('Value')
+
+    def key(self):
+        return self.activation_function_parameter.name
+
+
+class Value(Base):
+    __tablename__ = 'value'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    type = Column(String(50))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'value',
+        'polymorphic_on': type
+    }
+
+
+class LayerValue(Value):
+    __tablename__ = "layer_value"
+
+    id = Column(Integer, ForeignKey('value.id'), primary_key=True)
+    value_id = Column(Integer, ForeignKey("model_layer.id"))
+    value = relationship("ModelLayer")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'layer_value',
+    }
+
+    def to_dict(self):
+        return {
+            'value': f'self.{self.value.layer_name}',
+            'id': self.value_id
+        }
+
+
+class PrimitiveValue(Value):
+    __tablename__ = "primitive_value"
+
+    id = Column(Integer, ForeignKey('value.id'), primary_key=True)
+    value = Column(String)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'primitive_value',
+    }
+
+    def to_dict(self):
+        return {
+            'value': self.value,
         }

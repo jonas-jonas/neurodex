@@ -9,6 +9,7 @@ import { Panel } from '../components/utility/Panel';
 import { ModelContext, ModelContextProvider } from '../contexts/modelcontext';
 import { LayerType } from '../data/models';
 import { api } from '../util/api';
+import ForwardPanel from '../components/modelpage/ForwardPanel';
 
 const Modelpage: React.FC = () => {
 
@@ -42,12 +43,7 @@ const Modelpage: React.FC = () => {
 				</Panel>
 				<ModelLayerPanel />
 
-				<Panel>
-					<div className="px-3 py-2 flex items-center justify-between rounded-t">
-						<h2 className="text-lg font-bold font-mono">forward</h2>
-					</div>
-					<div>Body</div>
-				</Panel>
+				<ForwardPanel />
 			</div>
 			<div className="flex-grow h-full rounded px-1 overflow-y-auto">
 				<CodeBlock model={model} />
@@ -56,6 +52,7 @@ const Modelpage: React.FC = () => {
 		</div>
 	}
 };
+
 
 type LayerCardProps = {
 	layerType: LayerType;

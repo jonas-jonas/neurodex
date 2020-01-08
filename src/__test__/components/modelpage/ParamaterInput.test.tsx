@@ -123,3 +123,46 @@ it('Data update is not triggered on blur of number input if data is equal', () =
 
 	expect(updateData.mock.calls.length).toEqual(0);
 });
+
+it('Data update is not triggered on blur of number input if data is equal', () => {
+	const updateData = jest.fn((name, value) => Promise.resolve());
+	const props = {
+		id: 'random-id',
+		parameter: {
+			name: 'some-parameter',
+			type: 'number',
+			defaultValue: '3'
+		},
+		updateData: updateData,
+		data: '128'
+	}
+
+	render(<ParameterInput {...props} />);
+
+
+	const input = screen.getByTitle('some-parameter');
+	fireEvent.change(input, { target: { value: '' } });
+	fireEvent.blur(input);
+
+	expect(updateData.mock.calls.length).toEqual(1);
+	expect(updateData.mock.calls[0][1]).toBe('3');
+});
+
+
+it('Null is returned when non-supported type is passed', () => {
+	const updateData = jest.fn((name, value) => Promise.resolve());
+	const props = {
+		id: 'random-id',
+		parameter: {
+			name: 'some-parameter',
+			type: 'random-type',
+			defaultValue: '3'
+		},
+		updateData: updateData,
+		data: '128'
+	}
+
+	const { container } = render(<ParameterInput {...props} />);
+	expect(container.childNodes.length).toEqual(0);
+});
+
