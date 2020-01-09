@@ -52,7 +52,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
   }, [model.functions]);
 
   return (
-    <div className="flex-grow h-full px-1 overflow-y-auto">
+    <div className="h-full px-1 overflow-y-auto w-5/12">
       <div className="rounded shadow">
         <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center shadow">
           <div className="flex items-center">
