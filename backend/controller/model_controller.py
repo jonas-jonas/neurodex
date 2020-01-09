@@ -229,7 +229,7 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
 
     function_id = model_function.function.id
 
-    param = db.session.query(ActivationFunctionParameter).filter_by(id=function_id, name=parameter_name).first()
+    param = db.session.query(ActivationFunctionParameter).filter_by(activation_function_id=function_id, name=parameter_name).first()
 
     if param.type == "layer":
         value = LayerValue(value_id=data['value'])
