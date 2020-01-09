@@ -57,6 +57,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
         placeholder="Username"
         ref={register({ required: true })}
         validationMessage={errors.username?.message}
+        autoFocus
       />
       <FormField
         label="Password"

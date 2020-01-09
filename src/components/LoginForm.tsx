@@ -37,6 +37,7 @@ const LoginForm: React.FC = () => {
         placeholder="Username"
         validationMessage={errors.username?.message}
         ref={register({ required: true })}
+        autoFocus
       />
       <FormField
         label="Password"
