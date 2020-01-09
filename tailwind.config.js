@@ -164,6 +164,7 @@ module.exports = {
         'serif',
       ],
       mono: [
+        '"Courier Prime"',
         'Menlo',
         'Monaco',
         'Consolas',
