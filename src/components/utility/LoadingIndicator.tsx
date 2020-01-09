@@ -13,7 +13,7 @@ type LoadingIndicatorProps = {
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ text }) => {
   return (
     <div className="flex items-center justify-center h-48">
-      <div className="block text-center text-gray-300">
+      <div className="block text-center text-gray-700">
         <FontAwesomeIcon icon={faSpinner} spin={true} />
         <h2>{text}</h2>
       </div>
