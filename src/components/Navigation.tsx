@@ -1,3 +1,4 @@
+import { faGithubSquare } from '@fortawesome/free-brands-svg-icons';
 import { faChevronDown, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -33,7 +34,16 @@ const Navigation: React.FC = () => {
       <div className="mr-6">
         <h2 className="font-bold uppercase">{pageTitle}</h2>
       </div>
-      <div className="block">
+      <div className="flex items-center">
+        <a
+          href="https://github.com/jonas-jonas/neurodex"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block p-1 mr-3 text-gray-600 hover:text-black"
+          title="Source Code anzeigen"
+        >
+          <FontAwesomeIcon icon={faGithubSquare} size={'lg'} />
+        </a>
         {!isAuthenticated && (
           <Link
             className="flex items-center px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100"
@@ -63,7 +73,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
   return (
     <div className="relative">
       <button
-        className="px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mb-2"
+        className="px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100"
         onClick={handleUserMenuClick}
       >
         <span className="uppercase mr-3">{user.username}</span>
@@ -96,7 +106,7 @@ const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) =
   }, [toggleMenu]);
 
   return (
-    <div className="absolute bg-white right-0 rounded shadow w-48" ref={menuRef}>
+    <div className="absolute bg-white right-0 rounded shadow w-48 mt-2" ref={menuRef}>
       <Link to="/account" className="block p-2 px-5 hover:bg-gray-200 w-full text-left">
         <FontAwesomeIcon icon={faCog} />
         <span className="pl-2">Einstellungen</span>
