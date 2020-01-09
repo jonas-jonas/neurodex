@@ -187,16 +187,16 @@ def remove_function(current_user, model_id, function_id):
     return jsonify({'model': model.to_dict()}), 200
 
 
-@model_blueprint.route('/<model_id>/functions/<function_id>/activator', methods=['PUT'])
+@model_blueprint.route('/<model_id>/functions/<model_function_id>/activator', methods=['PUT'])
 @token_required
-def update_activator(current_user, model_id, function_id):
+def update_activator(current_user, model_id, model_function_id):
     data = request.form
     activation_function_id = data['functionId']
 
     # function = db.session.query(ActivatorFunction).filter_by(id=activator_function_id).first()
 
     db.session.query(ModelFunction).filter_by(
-        id=function_id).update({'activation_function_id': activation_function_id})
+        id=model_function_id).update({'activation_function_id': activation_function_id})
 
     db.session.commit()
 

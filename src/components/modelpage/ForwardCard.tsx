@@ -19,8 +19,8 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
     const id = (e.target as HTMLSelectElement).value;
     await updateModel({
       type: 'UPDATE_MODEL_FUNCTION_ACTIVATOR',
-      functionId: currentFunction.id,
-      modelFunctionId: Number(id)
+      modelFunctionId: currentFunction.id,
+      functionId: Number(id)
     });
     setUpdating(false);
   };
@@ -46,43 +46,37 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
   };
 
   return (
-    <div className="rounded mb-2 font-mono bg-white select-none relative border border-blue-800">
-      <div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move border-b border-blue-800 bg-blue-800 text-white">
+    <div className="rounded mb-2 font-mono bg-white select-none relative border border-gray-300 shadow">
+      <div className="px-3 py-2 rounded-t flex justify-between items-center cursor-move border-b border-blue-800 bg-blue-800 text-white">
+        <label>Aktivator</label>
+        <select
+          className="w-full border px-2 py-1 text-blue-800 mx-2"
+          onChange={handleFunctionChange}
+          value={currentFunction.function.id}
+        >
+          {activationFunctions.map((func: ActivationFunction) => {
+            return (
+              <option value={func.id} key={func.id}>
+                {func.name}
+              </option>
+            );
+          })}
+        </select>
         <button className="focus:outline-none" onClick={handleDeleteButtonClick}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
       </div>
-      <div className="p-3">
-        <table className="table-auto w-full">
-          <tbody className="">
-            <tr className="border-b">
-              <td>
-                <label>Aktivator</label>
-              </td>
-              <td>
-                <select
-                  className="w-full border px-2"
-                  onChange={handleFunctionChange}
-                  value={currentFunction.function.id}
-                >
-                  {activationFunctions.map((func: ActivationFunction) => {
-                    return (
-                      <option value={func.id} key={func.id}>
-                        {func.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </td>
-            </tr>
+      <div className="py-2">
+        <table className="table-fixed w-full">
+          <tbody>
             {currentFunction.function.parameters.map(parameter => {
-              const id = '';
+              const id = currentFunction.id + '-' + parameter.name;
               return (
-                <tr className="border-b" key={id}>
-                  <td>
+                <tr key={id} className="hover:bg-gray-200">
+                  <td className="px-3 py-1">
                     <label htmlFor={id}>{parameter.name}</label>
                   </td>
-                  <td>
+                  <td className="px-3 py-1">
                     <ParameterInput
                       id={id}
                       parameter={parameter}

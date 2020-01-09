@@ -52,7 +52,7 @@ const NumberParameterInput: React.FC<ParameterInputProps> = ({
   return (
     <input
       type={parameter.type}
-      className="w-full border px-2"
+      className="w-full border px-2 py-1"
       defaultValue={data as number}
       onBlur={onBlurHandler}
       placeholder={parameter.defaultValue}
@@ -84,7 +84,7 @@ const BooleanParameterInput: React.FC<ParameterInputProps> = ({
   return (
     <input
       type="checkbox"
-      className="w-full border px-2"
+      className="w-full border px-2 py-1"
       defaultChecked={data === 'true'}
       onClick={onCheckHandler}
       title={parameter.name}
@@ -102,7 +102,7 @@ const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, dat
   };
 
   return (
-    <select id={id} className="w-full border px-2" value={String(data)} onChange={onChangeHandler}>
+    <select id={id} className="w-full border px-2 py-1" value={String(data)} onChange={onChangeHandler}>
       {!data && <option value=""></option>}
       {model.layers.map(layer => {
         return (
