@@ -31,8 +31,11 @@ def create_layer():
         A json string containing the newly created layer
     """
     data = request.form
+    id = data['id']
+    description = data['description']
+    layer_name = data['layerName']
 
-    layer = LayerType(id=data['id'], description=data['description'])
+    layer = LayerType(id=id, description=description, layer_name=layer_name)
 
     db.session.add(layer)
     db.session.commit()
