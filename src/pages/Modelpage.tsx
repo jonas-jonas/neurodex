@@ -15,33 +15,43 @@ import { PageContext } from '../contexts/pagecontext';
 const Modelpage: React.FC = () => {
   const { model, availableLayers, updateModel } = useModelContext();
 
+  const [addingLayer, setAddingLayer] = useState(false);
+
   const handleLayerAdd = async (id: string) => {
+    setAddingLayer(true);
     await updateModel({
       type: 'ADD_LAYER',
       layerTypeId: id
     });
+    setAddingLayer(false);
   };
 
   return (
     <div className="flex h-full flex-auto pb-2">
       <div className="w-7/12 flex">
         <Panel>
-          <div className="px-3 py-2 rounded-t">
+          <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center">
             <h2 className="text-lg font-bold">Layers</h2>
+            <span className="text-sm italic text-gray-800 font-semibold">
+              {availableLayers.length} Layer{availableLayers.length !== 1 && 's'} verfügbar
+            </span>
           </div>
           <div className="p-2 flex-grow overflow-y-auto">
             {availableLayers.map(layerType => {
               return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
             })}
+            {addingLayer && (
+              <div className="w-full bg-white opacity-75 absolute inset-0">
+                <LoadingIndicator text="Updating..." />
+              </div>
+            )}
           </div>
         </Panel>
         <ModelLayerPanel />
 
         <ForwardPanel />
       </div>
-      <div className="flex-grow h-full rounded px-1 overflow-y-auto">
-        <CodeBlock model={model} />
-      </div>
+      <CodeBlock model={model} />
     </div>
   );
 };
@@ -57,7 +67,7 @@ const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
   };
 
   return (
-    <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded cursor-pointer select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
+    <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
       <h2 className="font-mono mr-1">{layerType.id}</h2>
       <button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd}>
         <FontAwesomeIcon icon={faPlus} />

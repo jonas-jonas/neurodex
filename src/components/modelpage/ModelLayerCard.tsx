@@ -47,7 +47,7 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
   };
 
   return (
-    <div className="rounded mb-2 font-mono bg-white select-none relative border border-blue-800">
+    <div className="rounded mb-2 font-mono bg-white select-none relative border border-gray-300 shadow">
       <div className="px-3 py-1 rounded-t flex justify-between items-center cursor-move border-b border-blue-800 bg-blue-800 text-white">
         <div className="pr-3">
           <input
@@ -67,7 +67,7 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
         </button>
       </div>
       <div className="p-3">
-        <table className="table-auto">
+        <table className="table-fixed w-full">
           <tbody>
             {modelLayer.layerType.parameters.map(parameter => {
               const id = modelLayer.id + '-' + parameter.name;

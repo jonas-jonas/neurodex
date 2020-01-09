@@ -7,8 +7,8 @@ import React from 'react';
  */
 export const Panel: React.FC = ({ children }) => {
   return (
-    <div className="px-1 w-2/6 relative">
-      <div className="h-full flex flex-col bg-white rounded">{children}</div>
+    <div className="px-2 w-2/6 relative">
+      <div className="h-full flex flex-col bg-white rounded shadow">{children}</div>
     </div>
   );
 };

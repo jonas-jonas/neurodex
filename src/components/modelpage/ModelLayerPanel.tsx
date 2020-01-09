@@ -1,5 +1,3 @@
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import arrayMove from 'array-move';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
@@ -40,11 +38,8 @@ const ModelLayerPanel: React.FC = () => {
 
   return (
     <Panel>
-      <div className="px-3 py-2 flex items-center justify-between rounded-t">
+      <div className="px-3 py-2 flex items-center justify-between rounded-t bg-gray-100 border-b border-gray-700 shadow">
         <h2 className="text-lg font-bold font-mono">__init__</h2>
-        <button title="Clear all" className="px-1">
-          <FontAwesomeIcon icon={faTimesCircle} />
-        </button>
       </div>
       <div className="overflow-y-auto h-full">
         <SortableModelLayerPanel onSortEnd={handleOnSortEnd} distance={50}>

@@ -91,7 +91,6 @@ type ModelCardProps = {
 };
 
 const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
-  console.log(model);
   return (
     <Link
       className="bg-white rounded py-2 px-5 mb-3 shadow border-b-4 border-transparent hover:border-blue-500 flex items-center justify-between"

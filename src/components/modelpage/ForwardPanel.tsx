@@ -17,7 +17,7 @@ const ForwardPanel = () => {
 
   return (
     <Panel>
-      <div className="px-3 py-2 flex items-center justify-between rounded-t">
+      <div className="px-3 py-2 flex items-center justify-between rounded-t bg-gray-100 border-b border-gray-700 shadow">
         <h2 className="text-lg font-bold font-mono">forward</h2>
         <button title="Funktion hinzufügen" className="px-1" onClick={handleAddClick}>
           <FontAwesomeIcon icon={faPlus} />
