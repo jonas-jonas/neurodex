@@ -3,10 +3,12 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_compress import Compress
 
 BUILD_ROOT = os.path.join(os.getcwd(), 'build')
 STATIC_DIR = os.path.join(BUILD_ROOT, 'static')
 app = Flask(__name__, static_folder=STATIC_DIR)
+Compress(app)
 bcrypt = Bcrypt(app)
 
 app.config['SECRET_KEY'] = 'hierkommtnochmalwasgutesreinhaha'
