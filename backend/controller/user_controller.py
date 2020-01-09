@@ -33,7 +33,16 @@ def get_all_users(current_user):
 @user_blueprint.route('/user', methods=['GET'])
 @token_required
 def get_current_user(current_user):
-    return jsonify({'user': current_user.to_dict()})
+    # Refresh access token everytime the current user object is requested
+    key_data = {
+        'id': current_user.id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+    }
+    token = jwt.encode(key_data, app.config['SECRET_KEY'])
+
+    response = jsonify({'user': current_user.to_dict()})
+    response.set_cookie(token_key, token.decode('UTF-8'), httponly=True)
+    return response
 
 
 @user_blueprint.route('/user/<id>', methods=['GET'])
@@ -145,7 +154,7 @@ def login():
     if bcrypt.check_password_hash(user.password, auth['password']):
         key_data = {
             'id': user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }
         token = jwt.encode(key_data, app.config['SECRET_KEY'])
 
