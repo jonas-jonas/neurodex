@@ -1,0 +1,16 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:latest
+  web:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - '8081:8081'
+    environment:
+      - DATABASE_URL=postgresql://postgres:docker@postgres.local/postgres
+    depends_on:
+      - postgres
+    links:
+      - "postgres:postgres.local"
