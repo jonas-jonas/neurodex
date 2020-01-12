@@ -1,7 +1,7 @@
 FROM python:3.8.0-slim AS compile-image
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends build-essential gcc
+RUN apt-get install -y -qq --no-install-recommends build-essential gcc
 
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
