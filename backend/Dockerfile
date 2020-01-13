@@ -11,7 +11,7 @@ RUN pip install -r requirements.txt
 
 # ------
 
-FROM python:3.8.0-alpine AS runtime-image
+FROM python:3.8.0-slim AS runtime-image
 COPY --from=compile-image /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
