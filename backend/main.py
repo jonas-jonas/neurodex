@@ -1,13 +1,13 @@
 from flask import send_from_directory
 
 from backend import BUILD_ROOT, app, db
+from backend.controller.error_controller import internal_error, page_not_found
+from backend.controller.functions_controller import functions_blueprint
+from backend.controller.layer_controller import layer_blueprint
 from backend.controller.model_controller import model_blueprint
 from backend.controller.user_controller import user_blueprint
-from backend.controller.layer_controller import layer_blueprint
-from backend.controller.functions_controller import functions_blueprint
 from backend.data.models import Base
-from backend.util import CustomJSONEncoder
-from backend.controller.error_controller import page_not_found, internal_error
+from backend.util import CustomJSONEncoder, init_db
 
 app.register_blueprint(user_blueprint)
 app.register_blueprint(model_blueprint)
@@ -21,6 +21,7 @@ app.json_encoder = CustomJSONEncoder
 @app.before_first_request
 def setup():
     Base.metadata.create_all(bind=db.engine)
+    init_db()
 
 
 @app.route('/')

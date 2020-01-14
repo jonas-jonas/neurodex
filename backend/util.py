@@ -1,11 +1,13 @@
+import logging
+import uuid
+from datetime import datetime
 from functools import wraps
 
 import jwt
 from flask import jsonify, request
 from flask.json import JSONEncoder
-from datetime import datetime
 
-from backend import app, db
+from backend import app, bcrypt, db
 from backend.data.models import User
 
 token_key = 'x-access-token'
@@ -45,3 +47,13 @@ class CustomJSONEncoder(JSONEncoder):
         else:
             return list(iterable)
         return JSONEncoder.default(self, obj)
+
+
+def init_db():
+    if db.session.query(User).count() == 0:
+        # TODO: Remove password
+        pw = bcrypt.generate_password_hash('password').decode('utf8')
+        admin = User(id=str(uuid.uuid4()), username="admin", password=pw, admin=True)
+        db.session.add(admin)
+        db.session.commit()
+        logging.info(msg='Created initial admin user')
