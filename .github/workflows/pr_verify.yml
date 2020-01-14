@@ -1,5 +1,8 @@
-name: Coverage
-on: [push]
+name: Run Tests [on PR]
+on:
+  pull_request:
+    branches:
+      - master
 jobs:
   build:
     name: neurodex
@@ -12,8 +15,3 @@ jobs:
       - uses: borales/actions-yarn@v2.0.0
         with:
           cmd: test:ci # will run `yarn test` command
-      - name: Codecov
-        uses: codecov/codecov-action@v1.0.5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} #required
-          file: ./coverage/coverage-final.json #optional
