@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - docker-tests
+      - master
 jobs:
   build:
     name: neurodex
