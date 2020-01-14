@@ -19,6 +19,9 @@ const JSToPython: Record<string, string> = {
 
 const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
   const layers = useMemo(() => {
+    if (model.layers.length === 0) {
+      return '		# TODO: Layer einfügen';
+    }
     return model.layers
       .map((layer: ModelLayer) => {
         const params = layer.layerType.parameters
@@ -35,6 +38,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
   }, [model.layers]);
 
   const functions = useMemo(() => {
+    if (model.functions.length === 0) {
+      return '		# TODO: Funktionen einfügen';
+    }
     return model.functions
       .map((func: ModelFunction) => {
         const functions = func.function.parameters
