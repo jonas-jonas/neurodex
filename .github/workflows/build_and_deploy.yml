@@ -38,4 +38,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          script: /bin/bash -c "/app/docker/restart"
+          script: /bin/bash -c "/app/docker/restart.sh"
