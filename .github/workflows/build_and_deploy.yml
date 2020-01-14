@@ -34,10 +34,10 @@ jobs:
       - name: Copy docker-compose
         uses: appleboy/scp-action@master
         env:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
         with:
           source: "./docker-compose.prod.yml"
           target: "/app/docker/docker-compose.yml"
