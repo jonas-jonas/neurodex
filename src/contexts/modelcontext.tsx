@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivationFunction, LayerType, Model } from '../data/models';
 import { Actions, api, dispatchModelApi } from '../util/api';
+import { toast } from 'react-toastify';
 
 type ModelContextProps = {
   model: Model;
@@ -26,7 +27,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
       const newModel = await dispatchModelApi(model.id, action);
       setModel(newModel);
     } catch (error) {
-      //TODO: Maybe handle error?
+      toast.error('Fehler beim Update des Models');
       return false;
     }
     return true;
@@ -42,7 +43,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
         const { layers } = await response.json();
         setAvailableLayers(layers);
       } catch (error) {
-        //TODO: Handle error
+        toast.error('Fehler beim Laden der Layer');
         setAvailableLayers([]);
       }
     };
@@ -53,7 +54,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
         const { functions } = await response.json();
         setActivationFunctions(functions);
       } catch (error) {
-        //TODO: Handle error
+        toast.error('Fehler beim Laden der Aktivationsfunktionen');
         setActivationFunctions([]);
       }
     };

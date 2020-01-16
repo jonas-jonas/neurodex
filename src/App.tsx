@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import Navigation from './components/Navigation';
 import { AuthContextProvider } from './contexts/auth';
 import { PageContextProvider } from './contexts/pagecontext';
 import Homepage from './pages/Homepage';
 import LoginPage from './pages/LoginPage';
 import ModelpageWrapper from './pages/Modelpage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +29,16 @@ const App: React.FC = () => {
               </Route>
             </Switch>
           </div>
+          <ToastContainer
+            position="bottom-left"
+            toastClassName="rounded shadow font-bold min-h-0 py-3"
+            hideProgressBar
+            closeButton={
+              <button className="focus:outline-none">
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            }
+          />
         </PageContextProvider>
       </Router>
     </AuthContextProvider>
