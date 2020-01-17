@@ -8,6 +8,7 @@ import { AuthContext } from '../contexts/auth';
 import { api } from '../util/api';
 import { Model } from '../data/models';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
+import { SWALClasses } from '../util/alert';
 Settings.defaultLocale = 'de';
 
 interface ModelsData {
@@ -46,11 +47,20 @@ const Homepage: React.FC = () => {
     const result = await Swal.fire({
       title: 'Modellname',
       input: 'text',
+      customClass: SWALClasses,
       inputAttributes: {
         autocapitalize: 'off',
         placeholder: 'Name'
       },
-      customClass: { popup: 'shadow' },
+      inputValidator: (value: string) => {
+        // if (!value.match(/([A-Z][a-z0-9]+)+/)) {
+        //   return 'Der Name muss in PascalCase geschrieben sein.';
+        // }
+        if (value.includes(' ')) {
+          return 'Der Name darf keine Leerzeichen enthalten.';
+        }
+        return '';
+      },
       confirmButtonText: 'Erstellen'
     });
     if (result.value) {
