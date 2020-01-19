@@ -102,7 +102,13 @@ const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, dat
   };
 
   return (
-    <select id={id} className="w-full border px-2 py-1" value={String(data)} onChange={onChangeHandler}>
+    <select
+      id={id}
+      className="w-full border px-2 py-1"
+      value={String(data)}
+      onChange={onChangeHandler}
+      title={parameter.name}
+    >
       {!data && <option value=""></option>}
       {model.layers.map(layer => {
         return (
