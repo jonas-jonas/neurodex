@@ -20,8 +20,10 @@ const FormField = React.forwardRef<HTMLInputElement, FormFieldProps & React.Inpu
 
     return (
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">{label}</label>
-        <input className={inputClasses} ref={ref} {...rest} />
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={props.name}>
+          {label}
+        </label>
+        <input className={inputClasses} ref={ref} {...rest} id={props.name} />
         {validationMessage && <p className="text-error text-s italic">{validationMessage}</p>}
       </div>
     );
