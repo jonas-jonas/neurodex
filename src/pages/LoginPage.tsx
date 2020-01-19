@@ -15,7 +15,6 @@ const LoginPage: React.FC = () => {
   const [loginPageState, setLoginPageState] = useState<LoginPageState>(LoginPageState.LOGIN);
 
   useEffect(() => {
-    console.log(window.location.hash);
     if (window.location.hash && window.location.hash === '#register') {
       setLoginPageState(LoginPageState.REGISTER);
     }
