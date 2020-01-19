@@ -58,7 +58,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
   }, [model.functions]);
 
   return (
-    <div className="h-full px-1 overflow-y-auto w-5/12">
+    <div className="h-full px-1 overflow-y-auto w-5/12" aria-label="Code Preview">
       <div className="rounded shadow">
         <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center shadow">
           <div className="flex items-center">
@@ -76,7 +76,13 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ model }) => {
             </button>
           </div>
         </div>
-        <SyntaxHighlighter language="python" showLineNumbers style={vs} className="font-mono text-lg rounded-b">
+        <SyntaxHighlighter
+          language="python"
+          showLineNumbers
+          style={vs}
+          className="font-mono text-lg rounded-b"
+          wrapLines
+        >
           {`import torch
 import torch.nn.functional as F
 
