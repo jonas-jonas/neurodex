@@ -1,14 +1,20 @@
 import React from 'react';
 import { ModelContext } from '../../contexts/modelcontext';
-import { ModelLayer } from '../../data/models';
+import { ModelLayer, ActivationFunction } from '../../data/models';
 import { Actions } from '../../util/api';
 
 type MockModelContextProvider = {
   layers?: ModelLayer[];
   updateModel?: (action: Actions) => Promise<boolean>;
+  activationFunctions?: ActivationFunction[];
 };
 
-const MockModelContextProvider: React.FC<MockModelContextProvider> = ({ children, layers, updateModel }) => {
+const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
+  children,
+  layers,
+  updateModel,
+  activationFunctions
+}) => {
   return (
     <ModelContext.Provider
       value={{
@@ -28,7 +34,7 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({ children
         updateModel: updateModel || jest.fn(),
         setModel: () => {},
         availableLayers: [],
-        activationFunctions: []
+        activationFunctions: activationFunctions || []
       }}
     >
       {children}

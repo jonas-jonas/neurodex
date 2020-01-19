@@ -48,11 +48,12 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
   return (
     <div className="rounded mb-2 font-mono bg-white select-none relative border border-gray-300 shadow">
       <div className="px-3 py-2 rounded-t flex justify-between items-center cursor-move border-b border-blue-800 bg-blue-800 text-white">
-        <label>Aktivator</label>
+        <label htmlFor="activator-select">Aktivator</label>
         <select
           className="w-full border px-2 py-1 text-blue-800 mx-2"
           onChange={handleFunctionChange}
           value={currentFunction.function.id}
+          id="activator-select"
         >
           {activationFunctions.map((func: ActivationFunction) => {
             return (
@@ -62,7 +63,7 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
             );
           })}
         </select>
-        <button className="focus:outline-none" onClick={handleDeleteButtonClick}>
+        <button className="focus:outline-none" onClick={handleDeleteButtonClick} title="Aktivator löschen">
           <FontAwesomeIcon icon={faTimes} />
         </button>
       </div>
