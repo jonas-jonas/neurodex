@@ -1,7 +1,7 @@
 import React from 'react';
-import { ModelContext } from '../../contexts/modelcontext';
-import { ModelLayer, ActivationFunction, ModelFunction } from '../../data/models';
-import { Actions } from '../../util/api';
+import { ModelContext } from '../contexts/modelcontext';
+import { ModelLayer, ActivationFunction, ModelFunction } from '../data/models';
+import { Actions } from '../util/api';
 
 type MockModelContextProvider = {
   layers?: ModelLayer[];

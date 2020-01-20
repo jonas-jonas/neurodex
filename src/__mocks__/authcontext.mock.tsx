@@ -1,6 +1,6 @@
 import React from 'react';
-import { AuthContext } from '../../contexts/auth';
-import { User } from '../../data/models';
+import { AuthContext } from '../contexts/auth';
+import { User } from '../data/models';
 
 type AuthContextData = {
   user?: User;

@@ -1,9 +1,8 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import ForwardCard from '../../../components/modelpage/ForwardCard';
-import { ActivationFunction, ModelFunction } from '../../../data/models';
-import MockModelContextProvider from '../../contexts/modelcontext.mock';
 import ForwardPanel from '../../../components/modelpage/ForwardPanel';
+import { ActivationFunction, ModelFunction } from '../../../data/models';
+import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
 
 afterEach(cleanup);
 

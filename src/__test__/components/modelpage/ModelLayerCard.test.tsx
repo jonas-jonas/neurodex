@@ -1,7 +1,7 @@
 import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import ModelLayerCard from '../../../components/modelpage/ModelLayerCard';
-import MockModelContextProvider from '../../contexts/modelcontext.mock';
+import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
 import { act } from 'react-dom/test-utils';
 
 afterEach(cleanup);

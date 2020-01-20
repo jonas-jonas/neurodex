@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageContext } from '../../contexts/pagecontext';
+import { PageContext } from '../contexts/pagecontext';
 
 type PageContextProps = {
   pageTitle?: string;

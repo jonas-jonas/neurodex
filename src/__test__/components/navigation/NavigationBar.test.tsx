@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Navigation from '../../../components/navigation/NavigationBar';
 import { User } from '../../../data/models';
-import { MockAuthContextProvider } from '../../contexts/authcontext.mock';
-import { MockPageContextProvider } from '../../contexts/pagecontext.mock';
+import { MockAuthContextProvider } from '../../../__mocks__/authcontext.mock';
+import { MockPageContextProvider } from '../../../__mocks__/pagecontext.mock';
 afterEach(cleanup);
 
 it('NavigationBar displays page title if set', async () => {
