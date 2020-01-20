@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import Navigation from './components/Navigation';
+import Navigation from './components/navigation/NavigationBar';
 import { AuthContextProvider } from './contexts/auth';
 import { PageContextProvider } from './contexts/pagecontext';
 import Homepage from './pages/Homepage';
