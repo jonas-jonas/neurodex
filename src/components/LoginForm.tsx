@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import useForm from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth';
-import FormField from './FormField';
+import FormField from './utility/FormField';
 
 const LoginForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
@@ -32,15 +32,15 @@ const LoginForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit(handleAuthenticate)}>
       <FormField
-        label="Username"
+        label="Nutzername"
         name="username"
-        placeholder="Username"
+        placeholder="Nutzername"
         validationMessage={errors.username?.message}
         ref={register({ required: true })}
         autoFocus
       />
       <FormField
-        label="Password"
+        label="Passwort"
         name="password"
         placeholder="*********"
         type="password"
@@ -56,7 +56,7 @@ const LoginForm: React.FC = () => {
           className="inline-block align-baseline font-bold text-sm text-blue-800 hover:text-blue-800 hover:underline"
           to="/"
         >
-          Forgot Password?
+          Passwort vergessen?
         </Link>
       </div>
     </form>

@@ -81,8 +81,10 @@ const Homepage: React.FC = () => {
   return (
     <div className="container py-3">
       <div className="flex justify-between items-center ">
-        <h1 className="text-3xl">{models.length} Models</h1>
-        <button className="p-3" title="Neues modell" onClick={handleNewModel} disabled={creatingNewModel}>
+        <h1 className="text-3xl">
+          {models.length} Modell{models.length !== 1 && 'e'}
+        </h1>
+        <button className="p-3" title="Neues Modell" onClick={handleNewModel} disabled={creatingNewModel}>
           <FontAwesomeIcon icon={creatingNewModel ? faSpinner : faPlus} spin={creatingNewModel} />
         </button>
       </div>

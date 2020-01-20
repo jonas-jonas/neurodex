@@ -5,7 +5,7 @@ import { AuthContext } from '../contexts/auth';
 import classNames from 'classnames';
 import { api } from '../util/api';
 import { HTTPError } from 'ky';
-import FormField from './FormField';
+import FormField from './utility/FormField';
 
 type RegisterFormProps = {
   setLoginPageState: (value: LoginPageState) => any;
@@ -52,15 +52,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
   return (
     <form>
       <FormField
-        label="Username"
+        label="Nutzername"
         name="username"
-        placeholder="Username"
+        placeholder="Nutzername"
         ref={register({ required: true })}
         validationMessage={errors.username?.message}
         autoFocus
       />
       <FormField
-        label="Password"
+        label="Passwort"
         name="password"
         placeholder="*********"
         type="password"
@@ -69,7 +69,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
       />
 
       <FormField
-        label="Password wiederholen"
+        label="Passwort wiederholen"
         name="repeatPassword"
         placeholder="*********"
         type="password"

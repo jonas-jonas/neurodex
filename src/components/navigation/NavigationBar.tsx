@@ -31,7 +31,7 @@ const Navigation: React.FC = () => {
         </Link>
       </div>
       <div className="mr-6">
-        <h2 className="font-bold uppercase">{pageTitle}</h2>
+        <h2 className="font-bold">{pageTitle}</h2>
       </div>
       <div className="flex items-center">
         <a

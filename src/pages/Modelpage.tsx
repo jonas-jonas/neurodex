@@ -30,11 +30,9 @@ const Modelpage: React.FC = () => {
     <div className="flex h-full flex-auto pb-2">
       <div className="w-7/12 flex">
         <Panel>
-          <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center">
+          <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center shadow">
             <h2 className="text-lg font-bold">Layers</h2>
-            <span className="text-sm italic text-gray-800 font-semibold">
-              {availableLayers.length} Layer{availableLayers.length !== 1 && 's'} verfügbar
-            </span>
+            <span className="text-sm italic text-gray-800 font-semibold">{availableLayers.length} Layer verfügbar</span>
           </div>
           <div className="p-2 flex-grow overflow-y-auto">
             {availableLayers.map(layerType => {
