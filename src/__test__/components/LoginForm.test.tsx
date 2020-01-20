@@ -1,4 +1,4 @@
-import { cleanup, render, screen, act, fireEvent, getByDisplayValue, getByTitle } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import LoginForm from '../../components/LoginForm';
