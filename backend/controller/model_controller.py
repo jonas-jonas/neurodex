@@ -70,7 +70,7 @@ def add_model_layer(current_user, model_id):
     model_layer = ModelLayer(model_id=model.id, layer_id=layer.id, layer_name=f"{layer.layer_name}{layer_count+1}")
 
     model.layers.append(model_layer)
-
+    model.update_timestamp()
     db.session.commit()
 
     return jsonify({'model': model.to_dict()}), 200
@@ -96,6 +96,7 @@ def remove_model_layer(current_user, model_id, model_layer_id):
     db.session.query(ModelLayer).filter_by(model_id=model_id, id=model_layer_id).delete()
 
     model.layers.reorder()
+    model.update_timestamp()
 
     db.session.commit()
 
@@ -133,9 +134,10 @@ def update_parameter_data(current_user, model_id, model_layer_id, parameter_name
     else:
         param_data.value = data['value']
 
-    db.session.commit()
-
     model = db.session.query(Model).filter_by(id=model_id).first()
+    model.update_timestamp()
+
+    db.session.commit()
 
     return jsonify({'model': model.to_dict()}), 200
 
@@ -152,6 +154,7 @@ def update_order(current_user, model_id, model_layer_id):
     model.layers.remove(model_layer)
     model.layers.insert(int(index), model_layer)
     model.layers.reorder()
+    model.update_timestamp()
 
     db.session.commit()
 
@@ -168,6 +171,7 @@ def add_function(current_user, model_id):
     model = db.session.query(Model).filter_by(id=model_id).first()
 
     model.functions.append(model_function)
+    model.update_timestamp()
 
     db.session.commit()
 
@@ -181,6 +185,7 @@ def remove_function(current_user, model_id, function_id):
     model = db.session.query(Model).filter_by(id=model_id).first()
 
     model.layers.reorder()
+    model.update_timestamp()
 
     db.session.commit()
 
@@ -199,6 +204,7 @@ def update_activator(current_user, model_id, model_function_id):
         id=model_function_id).update({'activation_function_id': activation_function_id})
 
     db.session.commit()
+    model.update_timestamp()
 
     model = db.session.query(Model).filter_by(id=model_id).first()
 
@@ -247,8 +253,9 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
     else:
         param_data.value = value
 
-    db.session.commit()
-
     model = db.session.query(Model).filter_by(id=model_id).first()
+    model.update_timestamp()
+
+    db.session.commit()
 
     return jsonify({'model': model.to_dict()}), 200

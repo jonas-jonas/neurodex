@@ -40,6 +40,9 @@ class Model(Base):
     functions = relationship("ModelFunction", order_by="ModelFunction.position",
                              collection_class=ordering_list('position'))
 
+    def update_timestamp(self):
+        self.updated_at = func.now()
+
     def to_dict(self):
         return {
             'id': self.id,
