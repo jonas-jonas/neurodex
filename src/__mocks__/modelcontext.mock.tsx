@@ -1,6 +1,6 @@
 import React from 'react';
 import { ModelContext } from '../contexts/modelcontext';
-import { ModelLayer, ActivationFunction, ModelFunction } from '../data/models';
+import { ModelLayer, ActivationFunction, ModelFunction, LayerType } from '../data/models';
 import { Actions } from '../util/api';
 
 type MockModelContextProvider = {
@@ -8,6 +8,7 @@ type MockModelContextProvider = {
   functions?: ModelFunction[];
   updateModel?: (action: Actions) => Promise<boolean>;
   activationFunctions?: ActivationFunction[];
+  availableLayers?: LayerType[];
 };
 
 export const mockModel = {
@@ -29,7 +30,8 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
   layers,
   functions,
   updateModel,
-  activationFunctions
+  activationFunctions,
+  availableLayers
 }) => {
   return (
     <ModelContext.Provider
@@ -41,7 +43,7 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
         },
         updateModel: updateModel || jest.fn(),
         setModel: () => {},
-        availableLayers: [],
+        availableLayers: availableLayers || [],
         activationFunctions: activationFunctions || []
       }}
     >

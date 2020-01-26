@@ -12,7 +12,7 @@ import { LayerType } from '../data/models';
 import { api } from '../util/api';
 import { PageContext } from '../contexts/pagecontext';
 
-const Modelpage: React.FC = () => {
+export const Modelpage: React.FC = () => {
   const { model, availableLayers, updateModel } = useModelContext();
 
   const [addingLayer, setAddingLayer] = useState(false);
@@ -59,7 +59,7 @@ type LayerCardProps = {
   onAdd: (id: string) => void;
 };
 
-const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
+export const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
   const handleAdd = () => {
     onAdd(layerType.id);
   };
@@ -67,7 +67,7 @@ const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
   return (
     <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
       <h2 className="font-mono mr-1">{layerType.id}</h2>
-      <button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd}>
+      <button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd} title="Zum Modell hinzufügen">
         <FontAwesomeIcon icon={faPlus} />
       </button>
     </div>
@@ -91,6 +91,7 @@ const ModelpageWrapper = () => {
         setModel(model);
       }
     };
+    console.log(modelId, setPageTitle);
     fetchModel();
 
     return () => {
