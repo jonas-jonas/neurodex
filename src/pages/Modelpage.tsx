@@ -91,7 +91,6 @@ const ModelpageWrapper = () => {
         setModel(model);
       }
     };
-    console.log(modelId, setPageTitle);
     fetchModel();
 
     return () => {
