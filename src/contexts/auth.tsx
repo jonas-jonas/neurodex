@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { api } from '../util/api';
+import React, { useEffect, useMemo, useState } from 'react';
 import { User } from '../data/models';
+import { api } from '../util/api';
 
 type AuthContextData = {
   user?: User;
   isAuthenticated: boolean;
   authenticate: (name: string, password: string) => Promise<Response>;
   deauthenticate: () => Promise<boolean>;
+  registerUser: (username: string, password: string, repeatPassword: string) => Promise<Response>;
 };
 
 /**
@@ -19,7 +20,8 @@ type AuthenticationResponse = {
 export const AuthContext = React.createContext<AuthContextData>({
   isAuthenticated: false,
   authenticate: () => Promise.reject(),
-  deauthenticate: () => Promise.reject()
+  deauthenticate: () => Promise.reject(),
+  registerUser: () => Promise.reject()
 });
 
 export const AuthContextProvider: React.FC = ({ children }) => {
@@ -93,8 +95,23 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     return logout();
   };
 
+  /**
+   * Registers a new user with the API
+   *
+   * If the registeration is not successful validation messages are displayed.
+   * @param values The register form values
+   */
+  const registerUser = async (username: string, password: string, repeatPassword: string) => {
+    const data = new FormData();
+    data.append('username', username);
+    data.append('password', password);
+    data.append('repeatPassword', repeatPassword);
+
+    return await api.post('user', { body: data });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, authenticate, deauthenticate }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, authenticate, deauthenticate, registerUser }}>
       {children}
     </AuthContext.Provider>
   );

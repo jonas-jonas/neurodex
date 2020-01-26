@@ -13,7 +13,7 @@ type RegisterFormProps = {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
-  const { authenticate } = useContext(AuthContext);
+  const { authenticate, registerUser } = useContext(AuthContext);
 
   // The button should look "disabled" if the button is disabled
   const loginButtonClasses = classNames(
@@ -23,20 +23,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
     }
   );
 
-  /**
-   * Registers a new user with the API
-   *
-   * If the registeration is not successful validation messages are displayed.
-   * @param values The register form values
-   */
-  const handleRegister = async (values: Record<string, any>) => {
-    const data = new FormData();
-    data.append('username', values.username);
-    data.append('password', values.password);
-    data.append('repeatPassword', values.repeatPassword);
-
+  const handleRegister = async (values: Record<string, string>) => {
     try {
-      const response = await api.post('user', { body: data });
+      const response = await registerUser(values.username, values.password, values.repeatPassword);
       if (response.status === 200) {
         await authenticate(values.username, values.password);
       }
