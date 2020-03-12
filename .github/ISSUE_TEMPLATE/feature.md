@@ -1,6 +1,6 @@
 ---
 name: Feature
-about: Describe this issue template's purpose here.
+about: Vorlage für ein neues Feature
 title: 'Feature:'
 labels: ''
 assignees: ''
