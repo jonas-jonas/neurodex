@@ -24,4 +24,6 @@ yarn-error.log*
 
 __pycache__
 venv
+neurodex_env
 .ropeproject
+postgres

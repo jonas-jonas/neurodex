@@ -1,5 +1,5 @@
 {
-	"python.pythonPath": "venv/bin/python",
+	"python.pythonPath": "neurodex_env/bin/python",
 	"python.linting.pylintEnabled": false,
 	"python.linting.enabled": true,
 	"python.linting.flake8Enabled": true,
