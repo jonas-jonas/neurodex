@@ -16,7 +16,7 @@ model_blueprint = Blueprint('model', __name__, url_prefix="/api/models")
 
 @model_blueprint.route('', methods=['GET'])
 @token_required
-def models(current_user):
+def get_models(current_user):
     models = db.session.query(Model).filter_by(user_id=current_user.id).order_by(Model.updated_at.desc()).all()
 
     return models_schema.jsonify(models)
@@ -24,7 +24,7 @@ def models(current_user):
 
 @model_blueprint.route('/<id>', methods=['GET'])
 @token_required
-def model(current_user, id):
+def get_model(current_user, id):
     model = db.session.query(Model).filter_by(id=id, user_id=current_user.id).first()
     # if model.user_id != current_user.id:
     #     return jsonify({'message': 'Missing permissions'}), 401
@@ -34,7 +34,7 @@ def model(current_user, id):
 
 @model_blueprint.route('', methods=['POST'])
 @token_required
-def create_model(current_user):
+def post_model(current_user):
     data = request.form
 
     new_model = Model(id=str(uuid.uuid4()), name=data['name'], user_id=current_user.id)
@@ -47,7 +47,7 @@ def create_model(current_user):
 
 @model_blueprint.route('/<model_id>/name', methods=['PUT'])
 @token_required
-def update_model_name(current_user, model_id):
+def put_model_name(current_user, model_id):
     data = request.form
 
     model = db.session.query(Model).filter_by(id=model_id).first()
@@ -58,7 +58,7 @@ def update_model_name(current_user, model_id):
 
 @model_blueprint.route('/<model_id>/layers', methods=['POST'])
 @token_required
-def add_model_layer(current_user, model_id):
+def post_model_layer(current_user, model_id):
     data = request.form
     layer_id = data['layerId']
 
@@ -87,7 +87,7 @@ def get_model_layers(current_user, id):
 
 @model_blueprint.route('/<model_id>/layer/<model_layer_id>', methods=['DELETE'])
 @token_required
-def remove_model_layer(current_user, model_id, model_layer_id):
+def delete_model_layer(current_user, model_id, model_layer_id):
     """Removes a layer from a model.
 
     Removes a layer with a given id from a model.
@@ -114,7 +114,7 @@ def remove_model_layer(current_user, model_id, model_layer_id):
 
 @model_blueprint.route('/<model_id>/layer/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
-def update_parameter_data(current_user, model_id, model_layer_id, parameter_name):
+def put_parameter_data(current_user, model_id, model_layer_id, parameter_name):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
@@ -153,7 +153,7 @@ def update_parameter_data(current_user, model_id, model_layer_id, parameter_name
 
 @model_blueprint.route('/<model_id>/layer/<model_layer_id>/order', methods=['PUT'])
 @token_required
-def update_order(current_user, model_id, model_layer_id):
+def put_model_layer_order(current_user, model_id, model_layer_id):
     data = request.form
     index = data['index']
 
@@ -172,7 +172,7 @@ def update_order(current_user, model_id, model_layer_id):
 
 @model_blueprint.route('/<model_id>/functions', methods=['POST'])
 @token_required
-def add_function(current_user, model_id):
+def post_function(current_user, model_id):
     data = request.form
     function_id = data['functionId']
 
@@ -197,7 +197,7 @@ def get_model_functions(current_user, id):
 
 @model_blueprint.route('/<model_id>/functions/<function_id>', methods=['DELETE'])
 @token_required
-def remove_function(current_user, model_id, function_id):
+def delete_function(current_user, model_id, function_id):
     db.session.query(ModelFunction).filter_by(id=function_id).delete()
     model = db.session.query(Model).filter_by(id=model_id).first()
 
@@ -211,7 +211,7 @@ def remove_function(current_user, model_id, function_id):
 
 @model_blueprint.route('/<model_id>/functions/<model_function_id>/activator', methods=['PUT'])
 @token_required
-def update_activator(current_user, model_id, model_function_id):
+def put_model_function(current_user, model_id, model_function_id):
     data = request.form
     activation_function_id = data['functionId']
 
@@ -229,7 +229,7 @@ def update_activator(current_user, model_id, model_function_id):
 
 @model_blueprint.route('/<model_id>/functions/<model_function_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
-def update_model_function_parameter(current_user, model_id, model_function_id, parameter_name):
+def put_model_function_parameter(current_user, model_id, model_function_id, parameter_name):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in

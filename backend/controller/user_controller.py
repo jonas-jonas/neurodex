@@ -9,21 +9,21 @@ from backend.data.models import User
 from backend.util import token_required
 from backend.data.schema import users_schema, user_schema
 
-user_blueprint = Blueprint('api', __name__, url_prefix="/api")
+user_blueprint = Blueprint('user', __name__, url_prefix="/api/users")
 
 token_key = 'x-access-token'
 
 
-@user_blueprint.route('/users', methods=['GET'])
+@user_blueprint.route('', methods=['GET'])
 @token_required
-def users(current_user):
+def get_users(current_user):
     users = db.session.query(User).all()
     return users_schema.jsonify(users)
 
 
-@user_blueprint.route('/user', methods=['GET'])
+@user_blueprint.route('/current', methods=['GET'])
 @token_required
-def current_user(current_user):
+def get_current_user(current_user):
     # Refresh access token everytime the current user object is requested
     key_data = {
         'id': current_user.id,
@@ -38,7 +38,7 @@ def current_user(current_user):
 
 @user_blueprint.route('/user/<id>', methods=['GET'])
 @token_required
-def user(current_user, id):
+def get_user(current_user, id):
     user = db.session.query(User).filter_by(id=id).first()
 
     if not user:
@@ -48,7 +48,7 @@ def user(current_user, id):
 
 
 @user_blueprint.route('/user', methods=['POST'])
-def create_user():
+def post_user():
     data = request.form
 
     if data['password'] != data['repeatPassword']:
@@ -79,7 +79,7 @@ def delete_user(current_user):
 
 
 @user_blueprint.route('/login', methods=['POST'])
-def login():
+def post_login():
     auth = request.form
 
     if not auth or not auth['email'] or not auth['password']:
@@ -106,7 +106,7 @@ def login():
 
 @user_blueprint.route('/logout', methods=['GET'])
 @token_required
-def logout(current_user):
+def get_logout(current_user):
     response = make_response()
     response.set_cookie(token_key, '', expires=0)
     return response

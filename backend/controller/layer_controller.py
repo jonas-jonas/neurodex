@@ -9,7 +9,7 @@ layer_blueprint = Blueprint('layer', __name__, url_prefix="/api/layers")
 
 
 @layer_blueprint.route('', methods=['GET'])
-def get_all_layers():
+def get_layers():
     """Returns all layers that are currently available.
 
     Returns:
@@ -21,7 +21,7 @@ def get_all_layers():
 
 
 @layer_blueprint.route('', methods=['POST'])
-def create_layer():
+def post_layer():
     """Creates a new layer.
 
     A POST endpoint that creates a new layer from data supplied by request.form.
@@ -43,7 +43,7 @@ def create_layer():
 
 
 @layer_blueprint.route('<layer_id>/parameter/', methods=['POST'])
-def create_parameter(layer_id):
+def post_parameter(layer_id):
     data = request.form
     name = data['name']
     type = data['type']

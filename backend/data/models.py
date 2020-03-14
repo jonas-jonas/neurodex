@@ -68,14 +68,6 @@ class ModelLayer(Base):
 
     __table_args__ = (UniqueConstraint('model_id', 'layer_name', name='model_layer_name_uc'),)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'layerType': self.layer_type.to_dict(),
-            'layerName': self.layer_name,
-            'parameterData': {data.parameter_name: data.value for data in self.parameter_data}
-        }
-
 
 class ModelLayerParameterData(Base):
     """Represents parameter data of a parameter in a layer."""
@@ -87,11 +79,6 @@ class ModelLayerParameterData(Base):
 
     __table_args__ = (UniqueConstraint('model_layer_id', 'parameter_name', name='model_layer_parameter_name_uc'),)
 
-    def to_dict(self):
-        return {
-            self.parameter_name: self.value,
-        }
-
 
 class LayerType(Base):
     """Represents a type of layer."""
@@ -101,14 +88,6 @@ class LayerType(Base):
     description = Column(Text)
     layer_name = Column(Text, nullable=False)
     parameters = relationship('LayerParameter', passive_deletes=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'layerName': self.layer_name,
-            'description': self.description,
-            'parameters': [parameter.to_dict() for parameter in self.parameters]
-        }
 
 
 class LayerParameter(Base):
@@ -120,13 +99,6 @@ class LayerParameter(Base):
     type = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
 
-    def to_dict(self):
-        return {
-            'name': self.name,
-            'type': self.type,
-            'defaultValue': self.default_value
-        }
-
 
 class ActivationFunction(Base):
     __tablename__ = "activation_function"
@@ -135,14 +107,6 @@ class ActivationFunction(Base):
     name = Column(Text, nullable=False, unique=True)
     description = Column(Text)
     parameters = relationship("ActivationFunctionParameter", passive_deletes=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'parameters': [param.to_dict() for param in self.parameters]
-        }
 
 
 class ActivationFunctionParameter(Base):
@@ -153,13 +117,6 @@ class ActivationFunctionParameter(Base):
     type = Column(Text, nullable=False)
     name = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
-
-    def to_dict(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'defaultValue': self.default_value
-        }
 
 
 class ModelFunction(Base):
@@ -173,13 +130,6 @@ class ModelFunction(Base):
     model = relationship("Model", back_populates="functions")
     function = relationship("ActivationFunction")
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'function': self.function.to_dict(),
-            'parameterData': {data.key(): data.value.to_dict() for data in self.parameter_data}
-        }
-
 
 class ModelFunctionParameterData(Base):
     __tablename__ = "model_function_parameter_data"
@@ -191,9 +141,6 @@ class ModelFunctionParameterData(Base):
 
     activation_function_parameter = relationship('ActivationFunctionParameter')
     value = relationship('Value')
-
-    def key(self):
-        return self.activation_function_parameter.name
 
 
 class Value(Base):
@@ -220,12 +167,6 @@ class LayerValue(Value):
         'polymorphic_identity': 'layer_value',
     }
 
-    def to_dict(self):
-        return {
-            'value': f'self.{self.value.layer_name}',
-            'id': self.value_id
-        }
-
 
 class PrimitiveValue(Value):
     __tablename__ = "primitive_value"
@@ -236,8 +177,3 @@ class PrimitiveValue(Value):
     __mapper_args__ = {
         'polymorphic_identity': 'primitive_value',
     }
-
-    def to_dict(self):
-        return {
-            'value': self.value,
-        }

@@ -15,7 +15,7 @@ def get_functions():
 
 
 @functions_blueprint.route('', methods=['POST'])
-def create_function():
+def post_function():
 
     data = request.form
     name = data['name']
@@ -30,7 +30,7 @@ def create_function():
 
 
 @functions_blueprint.route('/parameter', methods=['POST'])
-def create_parameter():
+def post_parameter():
     data = request.form
     function_id = data['functionId']
     type = data['type']

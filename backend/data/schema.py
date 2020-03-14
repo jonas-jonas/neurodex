@@ -21,6 +21,10 @@ class CamelCaseSchema(ma.SQLAlchemyAutoSchema):
     def on_bind_field(self, field_name, field_obj):
         field_obj.data_key = camelcase(field_obj.data_key or field_name)
 
+# =================================================================
+# Schema Definitions
+# =================================================================
+
 
 class RoleSchema(CamelCaseSchema):
     class Meta:
@@ -37,8 +41,8 @@ class UserSchema(CamelCaseSchema):
 
     _links = ma.Hyperlinks(
         {
-            "self": ma.URLFor("api.user", id="<id>"),
-            "collection": ma.URLFor("api.users")
+            "self": ma.URLFor("user.get_user", id="<id>"),
+            "collection": ma.URLFor("user.get_users")
         }
     )
 
@@ -51,11 +55,11 @@ class ModelSchema(CamelCaseSchema):
 
     _links = ma.Hyperlinks(
         {
-            "self": ma.URLFor("model.model", id="<id>"),
-            "collection": ma.URLFor("model.models"),
-            "functions": ma.URLFor('model.get_model_functions', id="<id>"),
+            "self": ma.URLFor("model.get_model", id="<id>"),
+            "collection": ma.URLFor("model.get_models"),
             "layers": ma.URLFor('model.get_model_layers', id="<id>"),
-            "user": ma.URLFor('api.user', id="<user_id>")
+            "functions": ma.URLFor('model.get_model_functions', id="<id>"),
+            "user": ma.URLFor('user.get_user', id="<user_id>")
         }
     )
 
