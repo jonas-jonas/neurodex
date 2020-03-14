@@ -1,11 +1,16 @@
-from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
-                        String, Text, UniqueConstraint)
+from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer,
+                        String, Table, Text, UniqueConstraint)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 Base = declarative_base()
+
+user_role_table = Table('user_role', Base.metadata,
+                        Column('user_id', Text, ForeignKey('user.id')),
+                        Column('role_id', Text, ForeignKey('role.id'))
+                        )
 
 
 class User(Base):
@@ -14,16 +19,17 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Text, primary_key=True, nullable=False)
-    username = Column(Text, nullable=False)
+    email = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
-    admin = Column(Boolean, nullable=False)
+    roles = relationship("Role", secondary=user_role_table, back_populates="users")
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'admin': self.admin
-        }
+
+class Role(Base):
+
+    __tablename__ = "role"
+
+    id = Column(Text, primary_key=True, nullable=False)
+    users = relationship("User", secondary=user_role_table, back_populates="roles")
 
 
 class Model(Base):
@@ -42,17 +48,6 @@ class Model(Base):
 
     def update_timestamp(self):
         self.updated_at = func.now()
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'userId': self.user_id,
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at,
-            'layers': [layer.to_dict() for layer in self.layers],
-            'functions': [function.to_dict() for function in self.functions],
-        }
 
 
 class ModelLayer(Base):

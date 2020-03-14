@@ -1,10 +1,11 @@
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from backend import db
 from backend.data.models import LayerType, LayerParameter
+from backend.data.schema import layer_types_schema, layer_type_schema
 
-layer_blueprint = Blueprint('layer', __name__, url_prefix="/api/layer")
+layer_blueprint = Blueprint('layer', __name__, url_prefix="/api/layers")
 
 
 @layer_blueprint.route('', methods=['GET'])
@@ -16,9 +17,7 @@ def get_all_layers():
     """
     layers = db.session.query(LayerType).all()
 
-    output = [layer.to_dict() for layer in layers]
-
-    return jsonify({'layers': output}), 200
+    return layer_types_schema.jsonify(layers)
 
 
 @layer_blueprint.route('', methods=['POST'])
@@ -40,7 +39,7 @@ def create_layer():
     db.session.add(layer)
     db.session.commit()
 
-    return jsonify({'layer': layer.to_dict()}), 200
+    return layer_type_schema.jsonify(layer)
 
 
 @layer_blueprint.route('<layer_id>/parameter/', methods=['POST'])
@@ -57,4 +56,4 @@ def create_parameter(layer_id):
 
     layer = db.session.query(LayerType).filter_by(id=layer_id).first()
 
-    return jsonify({'layer': layer.to_dict()}), 200
+    return layer_type_schema.jsonify(layer)

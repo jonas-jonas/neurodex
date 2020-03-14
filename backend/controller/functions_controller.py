@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from backend import db
 from backend.data.models import ActivationFunction, ActivationFunctionParameter
+from backend.data.schema import activation_functions_schema, activation_function_schema
 
 functions_blueprint = Blueprint('functions', __name__, url_prefix="/api/functions")
 
@@ -10,9 +11,7 @@ functions_blueprint = Blueprint('functions', __name__, url_prefix="/api/function
 def get_functions():
     functions = db.session.query(ActivationFunction)
 
-    output = [function.to_dict() for function in functions]
-
-    return jsonify({'functions': output}), 200
+    return activation_functions_schema.jsonify(functions)
 
 
 @functions_blueprint.route('', methods=['POST'])
@@ -27,7 +26,7 @@ def create_function():
     db.session.add(function)
     db.session.commit()
 
-    return jsonify({'function': function.to_dict()}), 200
+    return activation_function_schema.jsonify(function)
 
 
 @functions_blueprint.route('/parameter', methods=['POST'])
@@ -44,4 +43,4 @@ def create_parameter():
     db.session.add(parameter)
     db.session.commit()
 
-    return jsonify({'parameter': parameter.to_dict()}), 200
+    return activation_function_schema.jsonify(db.session.Query(ActivationFunction).filter(id=function_id).first())

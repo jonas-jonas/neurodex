@@ -1,0 +1,15 @@
+users:
+  - email: admin@neurodex.app
+    roles: 
+      - ADMIN
+      - USER
+      - MODERATOR
+      - LECTURER
+    password: password
+  # ..
+
+roles:
+  - ADMIN
+  - USER
+  - MODERATOR
+  - LECTURER

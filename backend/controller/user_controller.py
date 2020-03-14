@@ -7,6 +7,7 @@ from flask import Blueprint, jsonify, make_response, request
 from backend import app, db, bcrypt
 from backend.data.models import User
 from backend.util import token_required
+from backend.data.schema import users_schema, user_schema
 
 user_blueprint = Blueprint('api', __name__, url_prefix="/api")
 
@@ -15,24 +16,14 @@ token_key = 'x-access-token'
 
 @user_blueprint.route('/users', methods=['GET'])
 @token_required
-def get_all_users(current_user):
-
+def users(current_user):
     users = db.session.query(User).all()
-
-    output = []
-
-    for user in users:
-        user_data = {}
-        user_data['id'] = user.id
-        user_data['name'] = user.name
-        output.append(user_data)
-
-    return jsonify({'users': output})
+    return users_schema.jsonify(users)
 
 
 @user_blueprint.route('/user', methods=['GET'])
 @token_required
-def get_current_user(current_user):
+def current_user(current_user):
     # Refresh access token everytime the current user object is requested
     key_data = {
         'id': current_user.id,
@@ -40,20 +31,20 @@ def get_current_user(current_user):
     }
     token = jwt.encode(key_data, app.config['SECRET_KEY'])
 
-    response = jsonify({'user': current_user.to_dict()})
+    response = user_schema.jsonify(current_user)
     response.set_cookie(token_key, token.decode('UTF-8'), httponly=True)
     return response
 
 
 @user_blueprint.route('/user/<id>', methods=['GET'])
 @token_required
-def get_one_user(current_user, id):
+def user(current_user, id):
     user = db.session.query(User).filter_by(id=id).first()
 
     if not user:
-        return jsonify({'message': 'No user found!'}), 404
+        return jsonify({'message': f'User with id {id} not found'}), 404
 
-    return jsonify({'user': user.to_dict()})
+    return user_schema.jsonify(user)
 
 
 @user_blueprint.route('/user', methods=['POST'])
@@ -64,76 +55,24 @@ def create_user():
         # Status Code might not be correct
         return jsonify({'message': 'Passwörter stimmen nicht überein', 'field': 'repeatPassword'}), 400
 
-    username = data['username']
-    if db.session.query(User.id).filter_by(username=username).scalar() is not None:
+    email = data['email']
+    if db.session.query(User.id).filter_by(email=email).scalar() is not None:
         return jsonify({'message': 'Username ist bereits vergeben', 'field': 'username'}), 400
 
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
-    new_user = User(id=str(uuid.uuid4()), username=username, password=hashed_password, admin=False)
+    new_user = User(id=str(uuid.uuid4()), email=email, password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({'message': 'New user created!'})
 
 
-@user_blueprint.route('/user', methods=['PUT'])
-@token_required
-def promote_user(current_user):
-
-    data = request.get_json()
-
-    user = db.session.query(User).filter_by(id=current_user.id).first()
-
-    if not user:
-        return jsonify({'message': 'No user found!'}), 404
-
-    if data['password'] is not None and data['password'] != '':
-        user.password = bcrypt.generate_password_hash(data['password']).decode('utf8')
-
-    if data['username'] is not None and data['password'] != '':
-        user.username = data['username']
-
-    db.session.commit()
-
-    return jsonify({'message': 'The user has been promoted!'})
-
-
-@user_blueprint.route('/user/<id>', methods=['PUT'])
-@token_required
-def promote_user_by_id(current_user, id):
-
-    if current_user.admin:
-        data = request.get_json()
-
-        user = db.session.query(User).filter_by(id=id).first()
-
-        if not user:
-            return jsonify({'message': 'No user found!'}), 404
-
-        if data['password'] is not None and data['password'] != '':
-            user.password = bcrypt.generate_password_hash(data['password']).decode('utf8')
-
-        if data['username'] is not None and data['password'] != '':
-            user.username = data['username']
-
-        db.session.commit()
-
-        return jsonify({'message': 'The user has been promoted!'})
-    else:
-        return jsonify({'message': 'You are not permitted to do that!'}), 401
-
-
 @user_blueprint.route('/user', methods=['DELETE'])
 @token_required
 def delete_user(current_user):
 
-    user = db.session.query(User).filter_by(id=current_user.id).first()
-
-    if not user:
-        return jsonify({'message': 'No user found!'}), 404
-
-    db.session.delete(user)
+    db.session.delete(current_user)
     db.session.commit()
 
     return jsonify({'message': 'The user has been deleted!'})
@@ -143,13 +82,13 @@ def delete_user(current_user):
 def login():
     auth = request.form
 
-    if not auth or not auth['username'] or not auth['password']:
-        return jsonify(message='Username or password incorrect'), 401
+    if not auth or not auth['email'] or not auth['password']:
+        return jsonify(message='Email or password incorrect'), 401
 
-    user = db.session.query(User).filter_by(username=auth['username']).first()
+    user = db.session.query(User).filter_by(email=auth['email']).first()
 
     if not user:
-        return jsonify(message='Username not found'), 404
+        return jsonify(message='Email not found'), 404
 
     if bcrypt.check_password_hash(user.password, auth['password']):
         key_data = {
@@ -158,11 +97,11 @@ def login():
         }
         token = jwt.encode(key_data, app.config['SECRET_KEY'])
 
-        response = jsonify({'user': user.to_dict()})
+        response = user_schema.jsonify(user)
         response.set_cookie(token_key, token.decode('UTF-8'), httponly=True)
         return response
 
-    return jsonify(message='Username or password incorrect'), 401
+    return jsonify(message='Email or password incorrect'), 401
 
 
 @user_blueprint.route('/logout', methods=['GET'])
