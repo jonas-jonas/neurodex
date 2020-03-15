@@ -15,7 +15,7 @@ it('Renders number input element for type number', () => {
       defaultValue: '3'
     },
     updateData: () => Promise.reject(),
-    data: 10
+    value: { value: '10' }
   };
 
   render(<ParameterInput {...props} />);
@@ -38,7 +38,7 @@ it('Renders boolean input element for type boolean', () => {
       defaultValue: 'false'
     },
     updateData: () => Promise.reject(),
-    data: 'true'
+    value: { value: 'true' }
   };
 
   render(<ParameterInput {...props} />);
@@ -61,7 +61,7 @@ it('Renders layer input element for type layer', () => {
       defaultValue: 'false'
     },
     updateData: () => Promise.reject(),
-    data: undefined
+    value: { value: '' }
   };
 
   const layers: ModelLayer[] = [
@@ -104,7 +104,7 @@ it('Data update is triggered on click on boolean input', () => {
       defaultValue: 'false'
     },
     updateData: updateData,
-    data: 'true'
+    value: { value: 'true' }
   };
 
   render(<ParameterInput {...props} />);
@@ -128,7 +128,7 @@ it('Data update is triggered on blur of number input', () => {
       defaultValue: '3'
     },
     updateData: updateData,
-    data: '128'
+    value: { value: '128' }
   };
 
   render(<ParameterInput {...props} />);
@@ -154,7 +154,7 @@ it('Data change in layer input element triggers update', () => {
       defaultValue: 'false'
     },
     updateData: updateData,
-    data: undefined
+    value: { value: '' }
   };
 
   const layers: ModelLayer[] = [
@@ -197,7 +197,7 @@ it('Data update is not triggered on blur of number input if data is equal', () =
       defaultValue: '3'
     },
     updateData: updateData,
-    data: '128'
+    value: { value: '128' }
   };
 
   render(<ParameterInput {...props} />);
@@ -219,7 +219,7 @@ it('Data update is not triggered on blur of number input if data is equal', () =
       defaultValue: '3'
     },
     updateData: updateData,
-    data: '128'
+    data: { value: '128' }
   };
 
   render(<ParameterInput {...props} />);
@@ -232,7 +232,7 @@ it('Data update is not triggered on blur of number input if data is equal', () =
   expect(updateData.mock.calls[0][1]).toBe('3');
 });
 
-it('Null is returned when non-supported type is passed', () => {
+it('Warning is displayed when non-supported type is passed', () => {
   const updateData = jest.fn((name, value) => Promise.resolve());
   const props = {
     id: 'random-id',
@@ -246,22 +246,6 @@ it('Null is returned when non-supported type is passed', () => {
   };
 
   const { container } = render(<ParameterInput {...props} />);
-  expect(container.childNodes.length).toEqual(0);
-});
-
-it('Null is returned when non-supported type is passed', () => {
-  const updateData = jest.fn((name, value) => Promise.resolve());
-  const props = {
-    id: 'random-id',
-    parameter: {
-      name: 'some-parameter',
-      type: 'random-type',
-      defaultValue: '3'
-    },
-    updateData: updateData,
-    data: '128'
-  };
-
-  const { container } = render(<ParameterInput {...props} />);
-  expect(container.childNodes.length).toEqual(0);
+  expect(container.childNodes.length).toEqual(1);
+  expect(screen.getByText('Unknown datatype "random-type"')).toBeDefined;
 });

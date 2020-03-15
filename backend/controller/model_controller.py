@@ -1,40 +1,40 @@
 import uuid
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from backend import db
-from backend.data.models import (ActivationFunctionParameter, LayerType,
+from backend.data.models import (FunctionParameter, LayerType,
                                  LayerValue, Model, ModelFunction,
                                  ModelFunctionParameterData, ModelLayer,
                                  ModelLayerParameterData, PrimitiveValue)
+from backend.data.schema import (model_functions_schema, model_layers_schema,
+                                 model_schema, models_schema)
 from backend.util import token_required
 
-model_blueprint = Blueprint('model', __name__, url_prefix="/api/model")
+model_blueprint = Blueprint('model', __name__, url_prefix="/api/models")
 
 
 @model_blueprint.route('', methods=['GET'])
 @token_required
-def get_all_models(current_user):
+def get_models(current_user):
     models = db.session.query(Model).filter_by(user_id=current_user.id).order_by(Model.updated_at.desc()).all()
 
-    output = [model.to_dict() for model in models]
-
-    return jsonify({'models': output})
+    return models_schema.jsonify(models)
 
 
-@model_blueprint.route('/<model_id>', methods=['GET'])
+@model_blueprint.route('/<id>', methods=['GET'])
 @token_required
-def get_model(current_user, model_id):
-    model = db.session.query(Model).filter_by(id=model_id).first()
-    if model.user_id != current_user.id:
-        return jsonify({'message': 'Missing permissions'}), 401
+def get_model(current_user, id):
+    model = db.session.query(Model).filter_by(id=id, user_id=current_user.id).first()
+    # if model.user_id != current_user.id:
+    #     return jsonify({'message': 'Missing permissions'}), 401
 
-    return jsonify({"model": model.to_dict()})
+    return model_schema.jsonify(model)
 
 
 @model_blueprint.route('', methods=['POST'])
 @token_required
-def create_model(current_user):
+def post_model(current_user):
     data = request.form
 
     new_model = Model(id=str(uuid.uuid4()), name=data['name'], user_id=current_user.id)
@@ -42,22 +42,23 @@ def create_model(current_user):
     db.session.add(new_model)
     db.session.commit()
 
-    return jsonify({'id': new_model.id})
+    return model_schema.jsonify(new_model)
 
 
-@model_blueprint.route('/<model_id>', methods=['PUT'])
+@model_blueprint.route('/<model_id>/name', methods=['PUT'])
 @token_required
-def change_model(current_user, model_id):
+def put_model_name(current_user, model_id):
     data = request.form
 
-    db.session.query(Model).filter_by(id=model_id).update({'name': data['name']})
+    model = db.session.query(Model).filter_by(id=model_id).first()
+    model.name = data['name']
     db.session.commit()
-    return jsonify({'message': 'Model modified!'})
+    return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer', methods=['POST'])
+@model_blueprint.route('/<model_id>/layers', methods=['POST'])
 @token_required
-def add_model_layer(current_user, model_id):
+def post_model_layer(current_user, model_id):
     data = request.form
     layer_id = data['layerId']
 
@@ -73,12 +74,20 @@ def add_model_layer(current_user, model_id):
     model.update_timestamp()
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>', methods=['DELETE'])
+@model_blueprint.route('/<id>/layers', methods=['GET'])
 @token_required
-def remove_model_layer(current_user, model_id, model_layer_id):
+def get_model_layers(current_user, id):
+    model_layers = db.session.query(ModelLayer).filter_by(model_id=id).all()
+
+    return model_layers_schema.jsonify(model_layers)
+
+
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>', methods=['DELETE'])
+@token_required
+def delete_model_layer(current_user, model_id, model_layer_id):
     """Removes a layer from a model.
 
     Removes a layer with a given id from a model.
@@ -100,12 +109,12 @@ def remove_model_layer(current_user, model_id, model_layer_id):
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
-def update_parameter_data(current_user, model_id, model_layer_id, parameter_name):
+def put_parameter_data(current_user, model_id, model_layer_id, parameter_name):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
@@ -126,25 +135,27 @@ def update_parameter_data(current_user, model_id, model_layer_id, parameter_name
     param_data = db.session.query(ModelLayerParameterData).filter_by(
         model_layer_id=model_layer_id, parameter_name=parameter_name).first()
 
+    value = PrimitiveValue(value=data['value'])
+
     if(param_data is None):
         param_data = ModelLayerParameterData(model_layer_id=model_layer_id,
-                                             parameter_name=parameter_name, value=data['value'])
+                                             parameter_name=parameter_name, value=value)
 
         db.session.add(param_data)
     else:
-        param_data.value = data['value']
+        param_data.value = value
 
     model = db.session.query(Model).filter_by(id=model_id).first()
     model.update_timestamp()
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>/order', methods=['PUT'])
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>/order', methods=['PUT'])
 @token_required
-def update_order(current_user, model_id, model_layer_id):
+def put_model_layer_order(current_user, model_id, model_layer_id):
     data = request.form
     index = data['index']
 
@@ -158,16 +169,16 @@ def update_order(current_user, model_id, model_layer_id):
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
 @model_blueprint.route('/<model_id>/functions', methods=['POST'])
 @token_required
-def add_function(current_user, model_id):
+def post_function(current_user, model_id):
     data = request.form
     function_id = data['functionId']
 
-    model_function = ModelFunction(model_id=model_id, activation_function_id=function_id)
+    model_function = ModelFunction(model_id=model_id, function_id=function_id)
     model = db.session.query(Model).filter_by(id=model_id).first()
 
     model.functions.append(model_function)
@@ -175,12 +186,20 @@ def add_function(current_user, model_id):
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
+
+
+@model_blueprint.route('/<id>/functions', methods=['GET'])
+@token_required
+def get_model_functions(current_user, id):
+    model_functions = db.session.query(ModelFunction).filter_by(model_id=id).all()
+
+    return model_functions_schema.jsonify(model_functions)
 
 
 @model_blueprint.route('/<model_id>/functions/<function_id>', methods=['DELETE'])
 @token_required
-def remove_function(current_user, model_id, function_id):
+def delete_function(current_user, model_id, function_id):
     db.session.query(ModelFunction).filter_by(id=function_id).delete()
     model = db.session.query(Model).filter_by(id=model_id).first()
 
@@ -189,31 +208,31 @@ def remove_function(current_user, model_id, function_id):
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
 @model_blueprint.route('/<model_id>/functions/<model_function_id>/activator', methods=['PUT'])
 @token_required
-def update_activator(current_user, model_id, model_function_id):
+def put_model_function(current_user, model_id, model_function_id):
     data = request.form
-    activation_function_id = data['functionId']
+    function_id = data['functionId']
 
     # function = db.session.query(ActivatorFunction).filter_by(id=activator_function_id).first()
 
-    db.session.query(ModelFunction).filter_by(
-        id=model_function_id).update({'activation_function_id': activation_function_id})
+    function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
 
+    function.function_id = function_id
+
+    model = db.session.query(Model).filter_by(id=model_id).first()
     db.session.commit()
     model.update_timestamp()
 
-    model = db.session.query(Model).filter_by(id=model_id).first()
-
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)
 
 
 @model_blueprint.route('/<model_id>/functions/<model_function_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
-def update_model_function_parameter(current_user, model_id, model_function_id, parameter_name):
+def put_model_function_parameter(current_user, model_id, model_function_id, parameter_name):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
@@ -235,7 +254,7 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
 
     function_id = model_function.function.id
 
-    param = db.session.query(ActivationFunctionParameter).filter_by(activation_function_id=function_id, name=parameter_name).first()
+    param = db.session.query(FunctionParameter).filter_by(function_id=function_id, name=parameter_name).first()
 
     if param.type == "layer":
         value = LayerValue(value_id=data['value'])
@@ -243,11 +262,11 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
         value = PrimitiveValue(value=data['value'])
 
     param_data = db.session.query(ModelFunctionParameterData).filter_by(
-        model_function_id=model_function_id, activation_function_parameter_id=param.id).first()
+        model_function_id=model_function_id, parameter_name=param.name).first()
 
     if(param_data is None):
         param_data = ModelFunctionParameterData(model_function_id=model_function_id,
-                                                activation_function_parameter_id=param.id, value=value)
+                                                parameter_name=param.name, value=value)
 
         db.session.add(param_data)
     else:
@@ -258,4 +277,4 @@ def update_model_function_parameter(current_user, model_id, model_function_id, p
 
     db.session.commit()
 
-    return jsonify({'model': model.to_dict()}), 200
+    return model_schema.jsonify(model)

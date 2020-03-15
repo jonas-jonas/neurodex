@@ -10,13 +10,6 @@ type AuthContextData = {
   registerUser: (username: string, password: string, repeatPassword: string) => Promise<Response>;
 };
 
-/**
- * Data sent by the authentication endpoint
- */
-type AuthenticationResponse = {
-  user: User;
-};
-
 export const AuthContext = React.createContext<AuthContextData>({
   isAuthenticated: false,
   authenticate: () => Promise.reject(),
@@ -29,7 +22,9 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User>();
 
   /** indicates whether the user is currently logged in */
-  const isAuthenticated = useMemo(() => user != null, [user]);
+  const isAuthenticated = useMemo(() => {
+    return user != null;
+  }, [user]);
 
   useEffect(() => {
     /**
@@ -37,9 +32,9 @@ export const AuthContextProvider: React.FC = ({ children }) => {
      */
     const fetchCurrentUser = async (): Promise<void> => {
       try {
-        const data = await api.get('user');
-        const authenticationResponse: AuthenticationResponse = await data.json();
-        setUser(authenticationResponse.user);
+        const data = await api.get('users/current');
+        const authenticationResponse = await data.json();
+        setUser(authenticationResponse);
       } catch (error) {
         setUser(undefined);
       }
@@ -50,25 +45,25 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   /**
    * Authenticates the user with the api
    *
-   * The supplied name and password are sent to the API.
+   * The supplied email and password are sent to the API.
    * If the API succesfully authenticates and returns the user object, the current user state is set to the returned object
    *
-   * @param name The name of the user
+   * @param email The email of the user
    * @param password The password of the user
    */
-  const authenticate = (name: string, password: string) => {
+  const authenticate = (email: string, password: string) => {
     const login = async (): Promise<Response> => {
       // TODO: Check if the user is already logged in
       const data = new FormData();
-      data.append('username', name);
+      data.append('email', email);
       data.append('password', password);
       try {
-        const response = await api.post('login', {
+        const response = await api.post('users/login', {
           body: data
         });
         if (response.status === 200) {
-          const authenticationResponse: AuthenticationResponse = await response.json();
-          setUser(authenticationResponse.user);
+          const authenticationResponse = await response.json();
+          setUser(authenticationResponse);
         }
         return response;
       } catch (error) {
@@ -101,13 +96,13 @@ export const AuthContextProvider: React.FC = ({ children }) => {
    * If the registeration is not successful validation messages are displayed.
    * @param values The register form values
    */
-  const registerUser = async (username: string, password: string, repeatPassword: string) => {
+  const registerUser = async (email: string, password: string, repeatPassword: string) => {
     const data = new FormData();
-    data.append('username', username);
+    data.append('email', email);
     data.append('password', password);
     data.append('repeatPassword', repeatPassword);
 
-    return await api.post('user', { body: data });
+    return await api.post('users/user', { body: data });
   };
 
   return (

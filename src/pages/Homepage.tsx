@@ -11,10 +11,6 @@ import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { SWALClasses } from '../util/alert';
 Settings.defaultLocale = 'de';
 
-interface ModelsData {
-  models: Model[];
-}
-
 const Homepage: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [creatingNewModel, setCreatingNewModel] = useState(false);
@@ -25,10 +21,10 @@ const Homepage: React.FC = () => {
   useEffect(() => {
     const loadModels = async () => {
       setLoading(true);
-      const response = await api.get('model');
+      const response = await api.get('models');
       if (response.status === 200) {
-        const data: ModelsData = await response.json();
-        setModels(data.models);
+        const models = await response.json();
+        setModels(models);
       }
       setLoading(false);
     };
@@ -66,7 +62,7 @@ const Homepage: React.FC = () => {
     if (result.value) {
       const data = new FormData();
       data.append('name', result.value);
-      const response = await api.post('model', { body: data });
+      const response = await api.post('models', { body: data });
       if (response.status === 200) {
         const { id } = await response.json();
         history.push('/model/' + id);

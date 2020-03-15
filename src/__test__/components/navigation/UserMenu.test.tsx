@@ -7,9 +7,9 @@ afterEach(cleanup);
 
 it('UserMenu section displays username', async () => {
   const user: User = {
-    admin: false,
+    roles: [],
     id: '3',
-    username: 'username'
+    email: 'email@test.com'
   };
   render(
     <Router>
@@ -17,14 +17,14 @@ it('UserMenu section displays username', async () => {
     </Router>
   );
 
-  expect(screen.getByText('username')).toBeDefined();
+  expect(screen.getByText('email@test.com')).toBeDefined();
 });
 
 it('UserMenu expand triggers expand', async () => {
   const user: User = {
-    admin: false,
+    roles: [],
     id: '3',
-    username: 'username'
+    email: 'email@test.com'
   };
   render(
     <Router>

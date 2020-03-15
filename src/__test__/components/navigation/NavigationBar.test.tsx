@@ -35,9 +35,9 @@ it('NavigationBar displays login button if user not logged in', async () => {
 
 it('NavigationBar displays UserMenu if user is logged in', async () => {
   const user: User = {
-    admin: false,
+    roles: [],
     id: '3',
-    username: 'username'
+    email: 'email@test.com'
   };
   render(
     <Router>
@@ -49,5 +49,5 @@ it('NavigationBar displays UserMenu if user is logged in', async () => {
     </Router>
   );
 
-  expect(screen.getByText('username')).toBeDefined();
+  expect(screen.getByText('email@test.com')).toBeDefined();
 });

@@ -2,17 +2,18 @@ import { cleanup, render, screen } from '@testing-library/react';
 import React from 'react';
 import ModelLayerPanel from '../../../components/modelpage/ModelLayerPanel';
 import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
+import { ModelLayer } from '../../../data/models';
 
 afterEach(cleanup);
 
 it('Renders panel with model layer cards', () => {
-  const layers = [
+  const layers: ModelLayer[] = [
     {
       id: 1,
       layerName: 'some-layer',
       parameterData: {
-        in_features: '0',
-        bias: 'true'
+        in_features: { value: '0' },
+        bias: { value: 'true' }
       },
       layerType: {
         id: 'torch.nn.Linear',
@@ -25,8 +26,8 @@ it('Renders panel with model layer cards', () => {
       id: 2,
       layerName: 'some-second-layer',
       parameterData: {
-        in_features: '2',
-        bias: 'false'
+        in_features: { value: '2' },
+        bias: { value: 'false' }
       },
       layerType: {
         id: 'torch.nn.Linear',

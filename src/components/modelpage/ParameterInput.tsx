@@ -1,12 +1,12 @@
 import React from 'react';
 import { useModelContext } from '../../contexts/modelcontext';
-import { ActivationFunctionParameter, LayerParameter } from '../../data/models';
+import { FunctionParameter, LayerParameter, Value } from '../../data/models';
 
 type ParameterInputProps = {
   id: string;
-  parameter: LayerParameter | ActivationFunctionParameter;
+  parameter: LayerParameter | FunctionParameter;
   updateData: (parameterName: string, newData: string) => Promise<void>;
-  data?: number | boolean | string | string[];
+  value?: Value;
 };
 
 /**
@@ -24,7 +24,7 @@ const ParameterInput: React.FC<ParameterInputProps> = props => {
       return <LayerSelect {...props} />;
     default:
       //TODO: Add a message about missing datatype support?
-      return null;
+      return <span>Unknown datatype "{props.parameter.type}"</span>;
   }
 };
 
@@ -36,16 +36,16 @@ const ParameterInput: React.FC<ParameterInputProps> = props => {
 const NumberParameterInput: React.FC<ParameterInputProps> = ({
   parameter,
   updateData,
-  data,
+  value,
   id
 }: ParameterInputProps) => {
   const onBlurHandler = async (e: React.FocusEvent<HTMLInputElement>) => {
-    let value = (e.target as HTMLInputElement).value;
-    if (!value) {
-      value = parameter.defaultValue;
+    let newValue = (e.target as HTMLInputElement).value;
+    if (!newValue) {
+      newValue = parameter.defaultValue;
     }
-    if (value !== data) {
-      await updateData(parameter.name, value);
+    if (newValue !== value?.value) {
+      await updateData(parameter.name, newValue);
     }
   };
 
@@ -53,7 +53,7 @@ const NumberParameterInput: React.FC<ParameterInputProps> = ({
     <input
       type={parameter.type}
       className="w-full border px-2 py-1"
-      defaultValue={data as number}
+      defaultValue={(value?.value as string)}
       onBlur={onBlurHandler}
       placeholder={parameter.defaultValue}
       title={parameter.name}
@@ -70,12 +70,12 @@ const NumberParameterInput: React.FC<ParameterInputProps> = ({
 const BooleanParameterInput: React.FC<ParameterInputProps> = ({
   parameter,
   updateData,
-  data,
+  value,
   id
 }: ParameterInputProps) => {
   const onCheckHandler = async (e: React.MouseEvent<HTMLInputElement>) => {
     const checked = (e.target as HTMLInputElement).checked;
-    if ((data === 'true') !== checked) {
+    if ((value?.value === 'true') !== checked) {
       // Only update if the data is not the same
       await updateData(parameter.name, String(checked));
     }
@@ -85,7 +85,7 @@ const BooleanParameterInput: React.FC<ParameterInputProps> = ({
     <input
       type="checkbox"
       className="w-full border px-2 py-1"
-      defaultChecked={data === 'true'}
+      defaultChecked={value?.value === 'true'}
       onClick={onCheckHandler}
       title={parameter.name}
       id={id}
@@ -93,7 +93,7 @@ const BooleanParameterInput: React.FC<ParameterInputProps> = ({
   );
 };
 
-const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, data, id }) => {
+const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, value, id }) => {
   const { model } = useModelContext();
 
   const onChangeHandler = (e: React.ChangeEvent) => {
@@ -105,11 +105,11 @@ const LayerSelect: React.FC<ParameterInputProps> = ({ parameter, updateData, dat
     <select
       id={id}
       className="w-full border px-2 py-1"
-      value={String(data)}
+      value={String((value?.id))}
       onChange={onChangeHandler}
       title={parameter.name}
     >
-      {!data && <option value=""></option>}
+      {!value?.id && <option value=""></option>}
       {model.layers.map(layer => {
         return (
           <option value={layer.id} key={layer.id}>

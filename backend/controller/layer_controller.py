@@ -1,14 +1,15 @@
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from backend import db
-from backend.data.models import LayerType, LayerParameter
+from backend.data.models import LayerType, LayerTypeParameter
+from backend.data.schema import layer_types_schema, layer_type_schema
 
-layer_blueprint = Blueprint('layer', __name__, url_prefix="/api/layer")
+layer_blueprint = Blueprint('layer', __name__, url_prefix="/api/layers")
 
 
 @layer_blueprint.route('', methods=['GET'])
-def get_all_layers():
+def get_layers():
     """Returns all layers that are currently available.
 
     Returns:
@@ -16,13 +17,11 @@ def get_all_layers():
     """
     layers = db.session.query(LayerType).all()
 
-    output = [layer.to_dict() for layer in layers]
-
-    return jsonify({'layers': output}), 200
+    return layer_types_schema.jsonify(layers)
 
 
 @layer_blueprint.route('', methods=['POST'])
-def create_layer():
+def post_layer():
     """Creates a new layer.
 
     A POST endpoint that creates a new layer from data supplied by request.form.
@@ -40,21 +39,21 @@ def create_layer():
     db.session.add(layer)
     db.session.commit()
 
-    return jsonify({'layer': layer.to_dict()}), 200
+    return layer_type_schema.jsonify(layer)
 
 
 @layer_blueprint.route('<layer_id>/parameter/', methods=['POST'])
-def create_parameter(layer_id):
+def post_parameter(layer_id):
     data = request.form
     name = data['name']
     type = data['type']
     default_value = data['defaultValue']
 
-    layer_parameter = LayerParameter(layer_type_id=layer_id, name=name, type=type, default_value=default_value)
+    layer_parameter = LayerTypeParameter(layer_type_id=layer_id, name=name, type=type, default_value=default_value)
 
     db.session.add(layer_parameter)
     db.session.commit()
 
     layer = db.session.query(LayerType).filter_by(id=layer_id).first()
 
-    return jsonify({'layer': layer.to_dict()}), 200
+    return layer_type_schema.jsonify(layer)

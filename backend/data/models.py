@@ -1,11 +1,16 @@
-from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
-                        String, Text, UniqueConstraint)
+from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer,
+                        String, Table, Text, UniqueConstraint)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 Base = declarative_base()
+
+user_role_table = Table('user_role', Base.metadata,
+                        Column('user_id', Text, ForeignKey('user.id')),
+                        Column('role_id', Text, ForeignKey('role.id'))
+                        )
 
 
 class User(Base):
@@ -14,16 +19,17 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Text, primary_key=True, nullable=False)
-    username = Column(Text, nullable=False)
+    email = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
-    admin = Column(Boolean, nullable=False)
+    roles = relationship("Role", secondary=user_role_table, back_populates="users")
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'admin': self.admin
-        }
+
+class Role(Base):
+
+    __tablename__ = "role"
+
+    id = Column(Text, primary_key=True, nullable=False)
+    users = relationship("User", secondary=user_role_table, back_populates="roles")
 
 
 class Model(Base):
@@ -42,17 +48,6 @@ class Model(Base):
 
     def update_timestamp(self):
         self.updated_at = func.now()
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'userId': self.user_id,
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at,
-            'layers': [layer.to_dict() for layer in self.layers],
-            'functions': [function.to_dict() for function in self.functions],
-        }
 
 
 class ModelLayer(Base):
@@ -73,14 +68,6 @@ class ModelLayer(Base):
 
     __table_args__ = (UniqueConstraint('model_id', 'layer_name', name='model_layer_name_uc'),)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'layerType': self.layer_type.to_dict(),
-            'layerName': self.layer_name,
-            'parameterData': {data.parameter_name: data.value for data in self.parameter_data}
-        }
-
 
 class ModelLayerParameterData(Base):
     """Represents parameter data of a parameter in a layer."""
@@ -88,14 +75,10 @@ class ModelLayerParameterData(Base):
 
     model_layer_id = Column(Integer, ForeignKey("model_layer.id", ondelete='CASCADE'), primary_key=True)
     parameter_name = Column(Text, nullable=False, primary_key=True)
-    value = Column(Text, nullable=False)
+    value_id = Column(Integer, ForeignKey("value.id"))
+    value = relationship('Value')
 
     __table_args__ = (UniqueConstraint('model_layer_id', 'parameter_name', name='model_layer_parameter_name_uc'),)
-
-    def to_dict(self):
-        return {
-            self.parameter_name: self.value,
-        }
 
 
 class LayerType(Base):
@@ -105,66 +88,35 @@ class LayerType(Base):
     id = Column(Text, primary_key=True, nullable=False)
     description = Column(Text)
     layer_name = Column(Text, nullable=False)
-    parameters = relationship('LayerParameter', passive_deletes=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'layerName': self.layer_name,
-            'description': self.description,
-            'parameters': [parameter.to_dict() for parameter in self.parameters]
-        }
+    parameters = relationship('LayerTypeParameter', passive_deletes=True)
 
 
-class LayerParameter(Base):
+class LayerTypeParameter(Base):
     """Represents a parameter in a layer."""
-    __tablename__ = 'layer_parameter'
+    __tablename__ = 'layer_type_parameter'
 
     layer_type_id = Column(Text, ForeignKey('layer_type.id', ondelete="CASCADE"), primary_key=True)
     name = Column(Text, nullable=False, primary_key=True,)
     type = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
 
-    def to_dict(self):
-        return {
-            'name': self.name,
-            'type': self.type,
-            'defaultValue': self.default_value
-        }
 
-
-class ActivationFunction(Base):
-    __tablename__ = "activation_function"
+class Function(Base):
+    __tablename__ = "function"
 
     id = Column(Integer, nullable=False, primary_key=True)
     name = Column(Text, nullable=False, unique=True)
     description = Column(Text)
-    parameters = relationship("ActivationFunctionParameter", passive_deletes=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'parameters': [param.to_dict() for param in self.parameters]
-        }
+    parameters = relationship("FunctionParameter", passive_deletes=True)
 
 
-class ActivationFunctionParameter(Base):
-    __tablename__ = "activation_function_parameter"
+class FunctionParameter(Base):
+    __tablename__ = "function_parameter"
 
-    id = Column(Integer, nullable=False, primary_key=True)
-    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete="CASCADE"))
+    function_id = Column(Integer, ForeignKey('function.id', ondelete="CASCADE"), primary_key=True)
     type = Column(Text, nullable=False)
-    name = Column(Text, nullable=False)
+    name = Column(Text, nullable=False, primary_key=True)
     default_value = Column(Text, nullable=False)
-
-    def to_dict(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'defaultValue': self.default_value
-        }
 
 
 class ModelFunction(Base):
@@ -172,33 +124,22 @@ class ModelFunction(Base):
 
     id = Column(Integer, primary_key=True)
     model_id = Column(Text, ForeignKey('model.id', ondelete='CASCADE'))
-    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete='CASCADE'))
+    function_id = Column(Integer, ForeignKey('function.id', ondelete='CASCADE'))
     position = Column(Integer, nullable=False)
     parameter_data = relationship("ModelFunctionParameterData", passive_deletes=True)
     model = relationship("Model", back_populates="functions")
-    function = relationship("ActivationFunction")
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'function': self.function.to_dict(),
-            'parameterData': {data.key(): data.value.to_dict() for data in self.parameter_data}
-        }
+    function = relationship("Function")
 
 
 class ModelFunctionParameterData(Base):
     __tablename__ = "model_function_parameter_data"
 
     model_function_id = Column(Integer, ForeignKey("model_function.id", ondelete='CASCADE'), primary_key=True)
-    activation_function_parameter_id = Column(Integer, ForeignKey("activation_function_parameter.id",
-                                                                  ondelete='CASCADE'), nullable=False, primary_key=True)
+    parameter_name = Column(Text, nullable=False, primary_key=True)
     value_id = Column(Integer, ForeignKey("value.id"))
-
-    activation_function_parameter = relationship('ActivationFunctionParameter')
     value = relationship('Value')
 
-    def key(self):
-        return self.activation_function_parameter.name
+    __table_args__ = (UniqueConstraint('model_function_id', 'parameter_name', name='model_function_parameter_name_uc'),)
 
 
 class Value(Base):
@@ -207,6 +148,7 @@ class Value(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     type = Column(String(50))
+    value = None
 
     __mapper_args__ = {
         'polymorphic_identity': 'value',
@@ -225,12 +167,6 @@ class LayerValue(Value):
         'polymorphic_identity': 'layer_value',
     }
 
-    def to_dict(self):
-        return {
-            'value': f'self.{self.value.layer_name}',
-            'id': self.value_id
-        }
-
 
 class PrimitiveValue(Value):
     __tablename__ = "primitive_value"
@@ -241,8 +177,3 @@ class PrimitiveValue(Value):
     __mapper_args__ = {
         'polymorphic_identity': 'primitive_value',
     }
-
-    def to_dict(self):
-        return {
-            'value': self.value,
-        }

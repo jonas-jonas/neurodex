@@ -11,7 +11,7 @@ afterEach(cleanup);
 describe('Homepage', () => {
   it('renders models if authenticated', async () => {
     const mockApi = jest.spyOn(api, 'get');
-    const response = new Response(JSON.stringify({ models: [mockModel] }), { status: 200 });
+    const response = new Response(JSON.stringify([mockModel]), { status: 200 });
     mockApi.mockResolvedValue(response);
 
     await act(async () => {

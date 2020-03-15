@@ -1,47 +1,44 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from backend import db
-from backend.data.models import ActivationFunction, ActivationFunctionParameter
+from backend.data.models import Function, FunctionParameter
+from backend.data.schema import activation_functions_schema, activation_function_schema
 
 functions_blueprint = Blueprint('functions', __name__, url_prefix="/api/functions")
 
 
 @functions_blueprint.route('', methods=['GET'])
 def get_functions():
-    functions = db.session.query(ActivationFunction)
+    functions = db.session.query(Function).all()
 
-    output = [function.to_dict() for function in functions]
-
-    return jsonify({'functions': output}), 200
+    return activation_functions_schema.jsonify(functions)
 
 
 @functions_blueprint.route('', methods=['POST'])
-def create_function():
+def post_function():
 
     data = request.form
     name = data['name']
     # description = data['description']
 
-    function = ActivationFunction(name=name)
+    function = Function(name=name)
 
     db.session.add(function)
     db.session.commit()
 
-    return jsonify({'function': function.to_dict()}), 200
+    return activation_function_schema.jsonify(function)
 
 
-@functions_blueprint.route('/parameter', methods=['POST'])
-def create_parameter():
+@functions_blueprint.route('/<function_id>/parameter', methods=['POST'])
+def post_parameter(function_id):
     data = request.form
-    function_id = data['functionId']
     type = data['type']
     name = data['name']
     default_value = data['defaultValue']
 
-    parameter = ActivationFunctionParameter(activation_function_id=function_id,
-                                            type=type, name=name, default_value=default_value)
+    parameter = FunctionParameter(function_id=function_id, type=type, name=name, default_value=default_value)
 
     db.session.add(parameter)
     db.session.commit()
 
-    return jsonify({'parameter': parameter.to_dict()}), 200
+    return activation_function_schema.jsonify(db.session.query(Function).filter_by(id=function_id).first())

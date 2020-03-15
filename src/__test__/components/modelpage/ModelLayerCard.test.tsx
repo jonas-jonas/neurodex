@@ -3,15 +3,16 @@ import React from 'react';
 import ModelLayerCard from '../../../components/modelpage/ModelLayerCard';
 import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
 import { act } from 'react-dom/test-utils';
+import { ModelLayer } from '../../../data/models';
 
 afterEach(cleanup);
 
-const modelLayer = {
+const modelLayer: ModelLayer = {
   id: 1,
   layerName: 'some-layer',
   parameterData: {
-    in_features: '128',
-    bias: 'true'
+    in_features: { value: '128' },
+    bias: { value: 'true' }
   },
   layerType: {
     id: 'torch.nn.Linear',

@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_compress import Compress
+from flask_marshmallow import Marshmallow
 
 BUILD_ROOT = os.path.join(os.getcwd(), 'build')
 STATIC_DIR = os.path.join(BUILD_ROOT, 'static')
@@ -17,3 +18,4 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+ma = Marshmallow(app)

@@ -84,9 +84,9 @@ const ModelpageWrapper = () => {
      * Fetches the current model object
      */
     const fetchModel = async () => {
-      const response = await api.get('model/' + modelId);
+      const response = await api.get('models/' + modelId);
       if (response.status === 200) {
-        const { model } = await response.json();
+        const model = await response.json();
         setPageTitle(model.name);
         setModel(model);
       }

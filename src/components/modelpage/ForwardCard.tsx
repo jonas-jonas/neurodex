@@ -2,7 +2,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { useModelContext } from '../../contexts/modelcontext';
-import { ActivationFunction, ModelFunction } from '../../data/models';
+import { Function, ModelFunction } from '../../data/models';
 import LoadingIndicator from '../utility/LoadingIndicator';
 import ParameterInput from './ParameterInput';
 
@@ -58,7 +58,7 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
           value={currentFunction.function.id}
           id="activator-select"
         >
-          {activationFunctions.map((func: ActivationFunction) => {
+          {activationFunctions.map((func: Function) => {
             return (
               <option value={func.id} key={func.id}>
                 {func.name}
@@ -85,7 +85,7 @@ const ForwardCard: React.FC<ForwardCardProps> = ({ currentFunction }) => {
                       id={id}
                       parameter={parameter}
                       updateData={handleDataChange}
-                      data={currentFunction.parameterData[parameter.name]?.id}
+                      value={currentFunction.parameterData[parameter.name]}
                     />
                   </td>
                 </tr>
