@@ -28,6 +28,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
             current_user = db.session.query(User).filter_by(id=data['id']).first()
+            if current_user is None:
+                return jsonify({'message': 'User not found'}), 401
         except jwt.InvalidTokenError:
             return jsonify({'message': 'Token could not be validated!'}), 401
 

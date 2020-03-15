@@ -113,10 +113,9 @@ class Function(Base):
 class FunctionParameter(Base):
     __tablename__ = "function_parameter"
 
-    id = Column(Integer, nullable=False, primary_key=True)
-    function_id = Column(Integer, ForeignKey('function.id', ondelete="CASCADE"))
+    function_id = Column(Integer, ForeignKey('function.id', ondelete="CASCADE"), primary_key=True)
     type = Column(Text, nullable=False)
-    name = Column(Text, nullable=False)
+    name = Column(Text, nullable=False, primary_key=True)
     default_value = Column(Text, nullable=False)
 
 
