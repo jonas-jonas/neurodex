@@ -10,9 +10,9 @@ it('CodeBlock renders layers correctly', async () => {
     id: 'some-id',
     name: 'ModelName',
     user: {
-      admin: false,
+      roles: [],
       id: 'user-id',
-      username: 'username'
+      email: 'email@test.com'
     },
     createdAt: 'created-at',
     updatedAt: 'updated-at',
@@ -49,9 +49,9 @@ it('CodeBlock renders functions correctly', async () => {
     id: 'some-id',
     name: 'ModelName',
     user: {
-      admin: false,
+      roles: [],
       id: 'user-id',
-      username: 'username'
+      email: 'email@test.com'
     },
     createdAt: 'created-at',
     updatedAt: 'updated-at',
@@ -64,6 +64,7 @@ it('CodeBlock renders functions correctly', async () => {
           name: 'F.relu',
           parameters: [
             {
+              id: 3,
               name: 'input',
               defaultValue: '',
               type: 'layer'
@@ -87,9 +88,9 @@ it('CodeBlock renders TODO if no layers or functions are configured', async () =
     id: 'some-id',
     name: 'ModelName',
     user: {
-      admin: false,
+      roles: [],
       id: 'user-id',
-      username: 'username'
+      email: 'email@test.com'
     },
     createdAt: 'created-at',
     updatedAt: 'updated-at',

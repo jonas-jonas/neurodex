@@ -75,7 +75,8 @@ class ModelLayerParameterData(Base):
 
     model_layer_id = Column(Integer, ForeignKey("model_layer.id", ondelete='CASCADE'), primary_key=True)
     parameter_name = Column(Text, nullable=False, primary_key=True)
-    value = Column(Text, nullable=False)
+    value_id = Column(Integer, ForeignKey("value.id"))
+    value = relationship('Value')
 
     __table_args__ = (UniqueConstraint('model_layer_id', 'parameter_name', name='model_layer_parameter_name_uc'),)
 
@@ -87,12 +88,12 @@ class LayerType(Base):
     id = Column(Text, primary_key=True, nullable=False)
     description = Column(Text)
     layer_name = Column(Text, nullable=False)
-    parameters = relationship('LayerParameter', passive_deletes=True)
+    parameters = relationship('LayerTypeParameter', passive_deletes=True)
 
 
-class LayerParameter(Base):
+class LayerTypeParameter(Base):
     """Represents a parameter in a layer."""
-    __tablename__ = 'layer_parameter'
+    __tablename__ = 'layer_type_parameter'
 
     layer_type_id = Column(Text, ForeignKey('layer_type.id', ondelete="CASCADE"), primary_key=True)
     name = Column(Text, nullable=False, primary_key=True,)
@@ -100,20 +101,20 @@ class LayerParameter(Base):
     default_value = Column(Text, nullable=False)
 
 
-class ActivationFunction(Base):
-    __tablename__ = "activation_function"
+class Function(Base):
+    __tablename__ = "function"
 
     id = Column(Integer, nullable=False, primary_key=True)
     name = Column(Text, nullable=False, unique=True)
     description = Column(Text)
-    parameters = relationship("ActivationFunctionParameter", passive_deletes=True)
+    parameters = relationship("FunctionParameter", passive_deletes=True)
 
 
-class ActivationFunctionParameter(Base):
-    __tablename__ = "activation_function_parameter"
+class FunctionParameter(Base):
+    __tablename__ = "function_parameter"
 
     id = Column(Integer, nullable=False, primary_key=True)
-    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete="CASCADE"))
+    function_id = Column(Integer, ForeignKey('function.id', ondelete="CASCADE"))
     type = Column(Text, nullable=False)
     name = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
@@ -124,23 +125,22 @@ class ModelFunction(Base):
 
     id = Column(Integer, primary_key=True)
     model_id = Column(Text, ForeignKey('model.id', ondelete='CASCADE'))
-    activation_function_id = Column(Integer, ForeignKey('activation_function.id', ondelete='CASCADE'))
+    function_id = Column(Integer, ForeignKey('function.id', ondelete='CASCADE'))
     position = Column(Integer, nullable=False)
     parameter_data = relationship("ModelFunctionParameterData", passive_deletes=True)
     model = relationship("Model", back_populates="functions")
-    function = relationship("ActivationFunction")
+    function = relationship("Function")
 
 
 class ModelFunctionParameterData(Base):
     __tablename__ = "model_function_parameter_data"
 
     model_function_id = Column(Integer, ForeignKey("model_function.id", ondelete='CASCADE'), primary_key=True)
-    activation_function_parameter_id = Column(Integer, ForeignKey("activation_function_parameter.id",
-                                                                  ondelete='CASCADE'), nullable=False, primary_key=True)
+    parameter_name = Column(Text, nullable=False, primary_key=True)
     value_id = Column(Integer, ForeignKey("value.id"))
-
-    activation_function_parameter = relationship('ActivationFunctionParameter')
     value = relationship('Value')
+
+    __table_args__ = (UniqueConstraint('model_function_id', 'parameter_name', name='model_function_parameter_name_uc'),)
 
 
 class Value(Base):
@@ -149,6 +149,7 @@ class Value(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     type = Column(String(50))
+    value = None
 
     __mapper_args__ = {
         'polymorphic_identity': 'value',

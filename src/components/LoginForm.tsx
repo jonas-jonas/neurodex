@@ -10,12 +10,12 @@ const LoginForm: React.FC = () => {
   const { authenticate } = useContext(AuthContext);
 
   /**
-   * Uses the current username and password to authenticate with the server
+   * Uses the current email and password to authenticate with the server
    *
    * @param event The event emitted by the submission of the login form
    */
   const handleAuthenticate = async (values: Record<string, any>) => {
-    const response = await authenticate(values.username, values.password);
+    const response = await authenticate(values.email, values.password);
     if (response.status !== 200) {
       const json = await response.json();
       setError('password', 'notMatch', json.message);
@@ -32,10 +32,10 @@ const LoginForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit(handleAuthenticate)}>
       <FormField
-        label="Nutzername"
-        name="username"
-        placeholder="Nutzername"
-        validationMessage={errors.username?.message}
+        label="Email"
+        name="email"
+        placeholder="Email"
+        validationMessage={errors.email?.message}
         ref={register({ required: true })}
         autoFocus
       />

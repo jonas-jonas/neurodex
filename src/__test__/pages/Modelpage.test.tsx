@@ -8,7 +8,7 @@ import { MockPageContextProvider } from '../../__mocks__/pagecontext.mock';
 
 afterEach(cleanup);
 
-const layerType = {
+const layerType: LayerType = {
   description: '',
   id: 'torch.nn.Linear',
   layerName: 'linear',

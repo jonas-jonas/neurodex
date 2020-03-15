@@ -1,18 +1,19 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import ForwardCard from '../../../components/modelpage/ForwardCard';
-import { ActivationFunction, ModelFunction } from '../../../data/models';
+import { Function, ModelFunction } from '../../../data/models';
 import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
 
 afterEach(cleanup);
 
-const activationFunctions: ActivationFunction[] = [
+const activationFunctions: Function[] = [
   {
     description: '',
     id: 1,
     name: 'F.relu',
     parameters: [
       {
+        id: 3,
         defaultValue: '',
         name: 'input',
         type: 'number'
@@ -25,6 +26,7 @@ const activationFunctions: ActivationFunction[] = [
     name: 'F.softmax',
     parameters: [
       {
+        id: 4,
         defaultValue: '',
         name: 'input',
         type: 'number'

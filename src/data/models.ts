@@ -1,8 +1,8 @@
 export type User = {
   id: string;
-  username: string;
+  email: string;
   // password: string;
-  admin: boolean;
+  roles: String[];
 };
 
 export type Model = {
@@ -18,14 +18,8 @@ export type Model = {
 export type ModelLayer = {
   id: number;
   layerName: string;
-  parameterData: Record<string, string>;
+  parameterData: Record<string, Value>;
   layerType: LayerType;
-};
-
-export type ModelLayerParameterData = {
-  modelLayer: ModelLayer;
-  parameterName: string;
-  value: string;
 };
 
 export type LayerType = {
@@ -41,25 +35,28 @@ export type LayerParameter = {
   defaultValue: string;
 };
 
-export type ActivationFunction = {
+export type Function = {
+  description: string;
   id: number;
   name: string;
-  description: string;
-  parameters: ActivationFunctionParameter[];
+  parameters: FunctionParameter[];
 };
 
-export type ActivationFunctionParameter = {
-  type: string;
-  name: string;
+export type FunctionParameter = {
   defaultValue: string;
+  id: number;
+  name: string;
+  type: string;
 };
 
 export type ModelFunction = {
+  function: Function;
   id: number;
-  function: ActivationFunction;
   parameterData: Record<string, Value>;
 };
+
 export type Value = {
-  value: string;
   id?: number;
+  value: string;
 };
+

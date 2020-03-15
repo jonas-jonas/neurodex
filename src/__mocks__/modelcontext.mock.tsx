@@ -1,13 +1,13 @@
 import React from 'react';
 import { ModelContext } from '../contexts/modelcontext';
-import { ModelLayer, ActivationFunction, ModelFunction, LayerType } from '../data/models';
+import { ModelLayer, Function, ModelFunction, LayerType } from '../data/models';
 import { Actions } from '../util/api';
 
 type MockModelContextProvider = {
   layers?: ModelLayer[];
   functions?: ModelFunction[];
   updateModel?: (action: Actions) => Promise<boolean>;
-  activationFunctions?: ActivationFunction[];
+  activationFunctions?: Function[];
   availableLayers?: LayerType[];
 };
 
@@ -16,8 +16,8 @@ export const mockModel = {
   name: 'model-name',
   user: {
     id: 'test-user-id',
-    username: 'test-user',
-    admin: false
+    email: 'test-user',
+    roles: []
   },
   createdAt: '2019-12-30 18:13:18.889242',
   updatedAt: '2019-12-30 18:13:18.889242',
@@ -42,7 +42,7 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
           layers: layers || []
         },
         updateModel: updateModel || jest.fn(),
-        setModel: () => {},
+        setModel: () => { },
         availableLayers: availableLayers || [],
         activationFunctions: activationFunctions || []
       }}

@@ -8,15 +8,15 @@ export const api = ky.extend({
 const addLayer = async (modelId: string, layerTypeId: string) => {
   const data = new FormData();
   data.append('layerId', layerTypeId);
-  const response = await api.post('model/' + modelId + '/layer', { body: data });
+  const response = await api.post('models/' + modelId + '/layers', { body: data });
 
-  const { model } = await response.json();
+  const model = await response.json();
   return model;
 };
 
 const deleteLayer = async (modelId: string, layerId: number): Promise<Model> => {
-  const response = await api.delete('model/' + modelId + '/layer/' + layerId);
-  const { model } = await response.json();
+  const response = await api.delete('models/' + modelId + '/layers/' + layerId);
+  const model = await response.json();
   return model;
 };
 
@@ -24,9 +24,9 @@ const updateLayer = async (modelId: string, layerId: number, parameterName: stri
   const data = new FormData();
   data.append('value', newData);
 
-  const response = await api.put(`model/${modelId}/layer/${layerId}/data/${parameterName}`, { body: data });
+  const response = await api.put(`models/${modelId}/layers/${layerId}/data/${parameterName}`, { body: data });
 
-  const { model } = await response.json();
+  const model = await response.json();
 
   return model;
 };
@@ -35,8 +35,8 @@ const updateOrder = async (modelId: string, modelLayerId: number, newIndex: numb
   const data = new FormData();
   data.append('index', String(newIndex));
 
-  const response = await api.put('model/' + modelId + '/layer/' + modelLayerId + '/order', { body: data });
-  const { model } = await response.json();
+  const response = await api.put('models/' + modelId + '/layers/' + modelLayerId + '/order', { body: data });
+  const model = await response.json();
 
   return model;
 };
@@ -45,19 +45,19 @@ const addFunction = async (modelId: string, functionId: number) => {
   const data = new FormData();
   data.append('functionId', String(functionId));
 
-  const response = await api.post('model/' + modelId + '/functions', {
+  const response = await api.post('models/' + modelId + '/functions', {
     body: data
   });
 
-  const { model } = await response.json();
+  const model = await response.json();
 
   return model;
 };
 
 const deleteFunction = async (modelId: string, modelFunctionId: number) => {
-  const response = await api.delete('model/' + modelId + '/functions/' + modelFunctionId);
+  const response = await api.delete('models/' + modelId + '/functions/' + modelFunctionId);
 
-  const { model } = await response.json();
+  const model = await response.json();
 
   return model;
 };
@@ -66,9 +66,9 @@ const updateModelFunctionActivator = async (modelId: string, modelFunctionId: nu
   const data = new FormData();
   data.append('functionId', String(functionId));
 
-  const response = await api.put('model/' + modelId + '/functions/' + modelFunctionId + '/activator', { body: data });
+  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/activator', { body: data });
 
-  const { model } = await response.json();
+  const model = await response.json();
 
   return model;
 };
@@ -82,11 +82,11 @@ const updateModelFunctionData = async (
   const data = new FormData();
   data.append('value', newData);
 
-  const response = await api.put('model/' + modelId + '/functions/' + modelFunctionId + '/data/' + parameterName, {
+  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/data/' + parameterName, {
     body: data
   });
 
-  const { model } = await response.json();
+  const model = await response.json();
 
   return model;
 };

@@ -3,7 +3,7 @@ import uuid
 from flask import Blueprint, request
 
 from backend import db
-from backend.data.models import (ActivationFunctionParameter, LayerType,
+from backend.data.models import (FunctionParameter, LayerType,
                                  LayerValue, Model, ModelFunction,
                                  ModelFunctionParameterData, ModelLayer,
                                  ModelLayerParameterData, PrimitiveValue)
@@ -85,7 +85,7 @@ def get_model_layers(current_user, id):
     return model_layers_schema.jsonify(model_layers)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>', methods=['DELETE'])
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>', methods=['DELETE'])
 @token_required
 def delete_model_layer(current_user, model_id, model_layer_id):
     """Removes a layer from a model.
@@ -112,7 +112,7 @@ def delete_model_layer(current_user, model_id, model_layer_id):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
 @token_required
 def put_parameter_data(current_user, model_id, model_layer_id, parameter_name):
     """Changes data for a parameter.
@@ -135,13 +135,15 @@ def put_parameter_data(current_user, model_id, model_layer_id, parameter_name):
     param_data = db.session.query(ModelLayerParameterData).filter_by(
         model_layer_id=model_layer_id, parameter_name=parameter_name).first()
 
+    value = PrimitiveValue(value=data['value'])
+
     if(param_data is None):
         param_data = ModelLayerParameterData(model_layer_id=model_layer_id,
-                                             parameter_name=parameter_name, value=data['value'])
+                                             parameter_name=parameter_name, value=value)
 
         db.session.add(param_data)
     else:
-        param_data.value = data['value']
+        param_data.value = value
 
     model = db.session.query(Model).filter_by(id=model_id).first()
     model.update_timestamp()
@@ -151,7 +153,7 @@ def put_parameter_data(current_user, model_id, model_layer_id, parameter_name):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layer/<model_layer_id>/order', methods=['PUT'])
+@model_blueprint.route('/<model_id>/layers/<model_layer_id>/order', methods=['PUT'])
 @token_required
 def put_model_layer_order(current_user, model_id, model_layer_id):
     data = request.form
@@ -176,7 +178,7 @@ def post_function(current_user, model_id):
     data = request.form
     function_id = data['functionId']
 
-    model_function = ModelFunction(model_id=model_id, activation_function_id=function_id)
+    model_function = ModelFunction(model_id=model_id, function_id=function_id)
     model = db.session.query(Model).filter_by(id=model_id).first()
 
     model.functions.append(model_function)
@@ -213,12 +215,13 @@ def delete_function(current_user, model_id, function_id):
 @token_required
 def put_model_function(current_user, model_id, model_function_id):
     data = request.form
-    activation_function_id = data['functionId']
+    function_id = data['functionId']
 
     # function = db.session.query(ActivatorFunction).filter_by(id=activator_function_id).first()
 
-    db.session.query(ModelFunction).filter_by(
-        id=model_function_id).update({'activation_function_id': activation_function_id})
+    function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
+
+    function.function_id = function_id
 
     model = db.session.query(Model).filter_by(id=model_id).first()
     db.session.commit()
@@ -251,8 +254,7 @@ def put_model_function_parameter(current_user, model_id, model_function_id, para
 
     function_id = model_function.function.id
 
-    param = db.session.query(ActivationFunctionParameter).filter_by(
-        activation_function_id=function_id, name=parameter_name).first()
+    param = db.session.query(FunctionParameter).filter_by(function_id=function_id, name=parameter_name).first()
 
     if param.type == "layer":
         value = LayerValue(value_id=data['value'])
@@ -260,11 +262,11 @@ def put_model_function_parameter(current_user, model_id, model_function_id, para
         value = PrimitiveValue(value=data['value'])
 
     param_data = db.session.query(ModelFunctionParameterData).filter_by(
-        model_function_id=model_function_id, activation_function_parameter_id=param.id).first()
+        model_function_id=model_function_id, parameter_name=param.name).first()
 
     if(param_data is None):
         param_data = ModelFunctionParameterData(model_function_id=model_function_id,
-                                                activation_function_parameter_id=param.id, value=value)
+                                                parameter_name=param.name, value=value)
 
         db.session.add(param_data)
     else:

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivationFunction, LayerType, Model } from '../data/models';
+import { Function, LayerType, Model } from '../data/models';
 import { Actions, api, dispatchModelApi } from '../util/api';
 import { toast } from 'react-toastify';
 
@@ -7,7 +7,7 @@ type ModelContextProps = {
   model: Model;
   setModel: (model: Model) => void;
   availableLayers: LayerType[];
-  activationFunctions: ActivationFunction[];
+  activationFunctions: Function[];
   updateModel: (action: Actions) => Promise<boolean>;
 };
 
@@ -20,7 +20,7 @@ export type ModelContextProviderProps = {
 export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ children, initialModel }) => {
   const [model, setModel] = useState<Model>(initialModel);
   const [availableLayers, setAvailableLayers] = useState<LayerType[]>([]);
-  const [activationFunctions, setActivationFunctions] = useState<ActivationFunction[]>([]);
+  const [activationFunctions, setActivationFunctions] = useState<Function[]>([]);
 
   const updateModel = async (action: Actions) => {
     try {
@@ -39,8 +39,8 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
      */
     const fetchLayers = async () => {
       try {
-        const response = await api.get('layer');
-        const { layers } = await response.json();
+        const response = await api.get('layers');
+        const layers = await response.json();
         setAvailableLayers(layers);
       } catch (error) {
         toast.error('Fehler beim Laden der Layer');
@@ -51,7 +51,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
     const fetchActivationFunctions = async () => {
       try {
         const response = await api.get('functions');
-        const { functions } = await response.json();
+        const functions = await response.json();
         setActivationFunctions(functions);
       } catch (error) {
         toast.error('Fehler beim Laden der Aktivationsfunktionen');

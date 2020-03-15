@@ -5,7 +5,7 @@ import { mockModel } from '../../__mocks__/modelcontext.mock';
 const modelId = 'some-model-id';
 
 const buildResponse = (model: Model) => {
-  return new Response(JSON.stringify({ model }));
+  return new Response(JSON.stringify(model));
 };
 
 afterEach(() => {
@@ -22,7 +22,7 @@ describe('dispatchModelApi', () => {
       layerTypeId: '3'
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/layer');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 
@@ -35,7 +35,7 @@ describe('dispatchModelApi', () => {
       modelLayerId: 3
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/layer/3');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3');
   });
 
   it('UpdateLayer', async () => {
@@ -49,7 +49,7 @@ describe('dispatchModelApi', () => {
       newValue: '3'
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/layer/3/data/some-parameter-name');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/data/some-parameter-name');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 
@@ -63,7 +63,7 @@ describe('dispatchModelApi', () => {
       newIndex: 3
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/layer/3/order');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/order');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 
@@ -76,7 +76,7 @@ describe('dispatchModelApi', () => {
       activationFunctionId: 3
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/functions');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 
@@ -89,7 +89,7 @@ describe('dispatchModelApi', () => {
       modelFunctionId: 3
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/functions/3');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/3');
   });
 
   it('UpdateModelFunctionActivator', async () => {
@@ -102,7 +102,7 @@ describe('dispatchModelApi', () => {
       modelFunctionId: 2
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/functions/2/activator');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/activator');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 
@@ -117,7 +117,7 @@ describe('dispatchModelApi', () => {
       modelFunctionId: 2
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('model/some-model-id/functions/2/data/some-parameter-name');
+    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/data/some-parameter-name');
     expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
   });
 });

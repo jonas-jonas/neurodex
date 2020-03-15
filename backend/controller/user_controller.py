@@ -36,7 +36,7 @@ def get_current_user(current_user):
     return response
 
 
-@user_blueprint.route('/user/<id>', methods=['GET'])
+@user_blueprint.route('/<id>', methods=['GET'])
 @token_required
 def get_user(current_user, id):
     user = db.session.query(User).filter_by(id=id).first()
@@ -47,7 +47,7 @@ def get_user(current_user, id):
     return user_schema.jsonify(user)
 
 
-@user_blueprint.route('/user', methods=['POST'])
+@user_blueprint.route('', methods=['POST'])
 def post_user():
     data = request.form
 
@@ -68,7 +68,7 @@ def post_user():
     return jsonify({'message': 'New user created!'})
 
 
-@user_blueprint.route('/user', methods=['DELETE'])
+@user_blueprint.route('', methods=['DELETE'])
 @token_required
 def delete_user(current_user):
 

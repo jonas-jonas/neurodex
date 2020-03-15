@@ -80,7 +80,7 @@ const ModelLayerCard: React.FC<ModelLayerCardProps> = ({ modelLayer }) => {
                     <ParameterInput
                       parameter={parameter}
                       updateData={handleDataUpdate}
-                      data={modelLayer.parameterData[parameter.name]}
+                      value={modelLayer.parameterData[parameter.name]}
                       id={id}
                     />
                   </td>

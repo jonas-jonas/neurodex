@@ -19,14 +19,14 @@ it('Login form sign in trigger authenticate call', async () => {
     </Router>
   );
 
-  const userNameField = screen.getByLabelText('Nutzername');
-  expect(userNameField).toBeDefined();
+  const emailField = screen.getByLabelText('Email');
+  expect(emailField).toBeDefined();
 
   const passwordField = screen.getByLabelText('Passwort');
   expect(passwordField).toBeDefined();
 
   await act(async () => {
-    fireEvent.change(userNameField, { target: { value: 'some-username' } });
+    fireEvent.change(emailField, { target: { value: 'some-email@test.invalid' } });
     fireEvent.change(passwordField, { target: { value: 'some-password' } });
   });
 
@@ -56,11 +56,11 @@ it('Login form sign in trigger authenticate call', async () => {
     </Router>
   );
 
-  const userNameField = screen.getByLabelText('Nutzername');
+  const emailField = screen.getByLabelText('Email');
   const passwordField = screen.getByLabelText('Passwort');
 
   await act(async () => {
-    fireEvent.change(userNameField, { target: { value: 'some-username' } });
+    fireEvent.change(emailField, { target: { value: 'some-email@email.invalid' } });
     fireEvent.change(passwordField, { target: { value: 'some-password' } });
   });
 
