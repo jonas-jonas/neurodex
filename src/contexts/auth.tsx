@@ -58,7 +58,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       data.append('email', email);
       data.append('password', password);
       try {
-        const response = await api.post('users/login', {
+        const response = await api.post('auth/login', {
           body: data
         });
         if (response.status === 200) {
@@ -80,7 +80,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   const deauthenticate = () => {
     const logout = async (): Promise<boolean> => {
       try {
-        const response = await api.get('logout');
+        const response = await api.get('auth/logout');
         return response.status === 200;
       } finally {
         setUser(undefined);

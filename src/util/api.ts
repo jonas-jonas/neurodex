@@ -1,8 +1,24 @@
-import ky from 'ky';
+import ky, { NormalizedOptions } from 'ky';
 import { Model } from '../data/models';
 
+const refreshToken = async (request: Request, options: NormalizedOptions, response: Response) => {
+  if (response.status === 401) {
+    const json = await response.json();
+    const message = json['message'];
+    if (message === "access token expired") {
+      // Access tokens are set as cookies, just wait for the request to
+      // finish and every subsequent request has the right tokens.
+      await ky.post('/api/auth/refresh-token');
+      return ky(request);
+    }
+  }
+}
+
 export const api = ky.extend({
-  prefixUrl: '/api'
+  prefixUrl: '/api',
+  hooks: {
+    afterResponse: [refreshToken]
+  },
 });
 
 const addLayer = async (modelId: string, layerTypeId: string) => {
