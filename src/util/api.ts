@@ -1,14 +1,31 @@
-import ky from 'ky';
+import ky, { NormalizedOptions } from 'ky';
 import { Model } from '../data/models';
 
+const refreshToken = async (request: Request, options: NormalizedOptions, response: Response) => {
+  if (response.status === 401) {
+    const json = await response.json();
+    const message = json['message'];
+    if (message === "access token expired") {
+      // Access tokens are set as cookies, just wait for the request to
+      // finish and every subsequent request has the right tokens.
+      await ky.post('/api/auth/refresh-token');
+      return ky(request);
+    }
+  }
+}
+
 export const api = ky.extend({
-  prefixUrl: '/api'
+  prefixUrl: '/api',
+  hooks: {
+    afterResponse: [refreshToken]
+  },
 });
 
 const addLayer = async (modelId: string, layerTypeId: string) => {
-  const data = new FormData();
-  data.append('layerId', layerTypeId);
-  const response = await api.post('models/' + modelId + '/layers', { body: data });
+  const data = {
+    layerId: layerTypeId
+  }
+  const response = await api.post('models/' + modelId + '/layers', { json: data });
 
   const model = await response.json();
   return model;
@@ -21,10 +38,11 @@ const deleteLayer = async (modelId: string, layerId: number): Promise<Model> => 
 };
 
 const updateLayer = async (modelId: string, layerId: number, parameterName: string, newData: string) => {
-  const data = new FormData();
-  data.append('value', newData);
+  const data = {
+    value: newData
+  }
 
-  const response = await api.put(`models/${modelId}/layers/${layerId}/data/${parameterName}`, { body: data });
+  const response = await api.put(`models/${modelId}/layers/${layerId}/data/${parameterName}`, { json: data });
 
   const model = await response.json();
 
@@ -32,21 +50,23 @@ const updateLayer = async (modelId: string, layerId: number, parameterName: stri
 };
 
 const updateOrder = async (modelId: string, modelLayerId: number, newIndex: number) => {
-  const data = new FormData();
-  data.append('index', String(newIndex));
+  const data = {
+    index: newIndex
+  }
 
-  const response = await api.put('models/' + modelId + '/layers/' + modelLayerId + '/order', { body: data });
+  const response = await api.put('models/' + modelId + '/layers/' + modelLayerId + '/order', { json: data });
   const model = await response.json();
 
   return model;
 };
 
 const addFunction = async (modelId: string, functionId: number) => {
-  const data = new FormData();
-  data.append('functionId', String(functionId));
+  const data = {
+    functionId
+  }
 
   const response = await api.post('models/' + modelId + '/functions', {
-    body: data
+    json: data
   });
 
   const model = await response.json();
@@ -63,10 +83,11 @@ const deleteFunction = async (modelId: string, modelFunctionId: number) => {
 };
 
 const updateModelFunctionActivator = async (modelId: string, modelFunctionId: number, functionId: number) => {
-  const data = new FormData();
-  data.append('functionId', String(functionId));
+  const data = {
+    functionId
+  }
 
-  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/activator', { body: data });
+  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/activator', { json: data });
 
   const model = await response.json();
 
@@ -79,11 +100,12 @@ const updateModelFunctionData = async (
   parameterName: string,
   newData: any
 ) => {
-  const data = new FormData();
-  data.append('value', newData);
+  const data = {
+    value: newData
+  }
 
   const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/data/' + parameterName, {
-    body: data
+    json: data
   });
 
   const model = await response.json();

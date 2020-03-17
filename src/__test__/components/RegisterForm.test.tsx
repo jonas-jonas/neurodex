@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RegisterForm from '../../components/RegisterForm';
 import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
-import { HTTPError } from 'ky';
+import ky from 'ky';
 
 afterEach(cleanup);
 
@@ -82,7 +82,7 @@ describe('RegisterForm', () => {
     const mockResponse = new Response(JSON.stringify({ field: 'password', message: 'some error message' }), {
       status: 500
     });
-    registerUser.mockRejectedValue(new HTTPError(mockResponse));
+    registerUser.mockRejectedValue(new ky.HTTPError(mockResponse));
     const authenticate = jest.fn();
     render(
       <Router>

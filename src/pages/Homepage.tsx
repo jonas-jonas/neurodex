@@ -60,9 +60,10 @@ const Homepage: React.FC = () => {
       confirmButtonText: 'Erstellen'
     });
     if (result.value) {
-      const data = new FormData();
-      data.append('name', result.value);
-      const response = await api.post('models', { body: data });
+      const data = {
+        name: result.value
+      }
+      const response = await api.post('models', { json: data });
       if (response.status === 200) {
         const { id } = await response.json();
         history.push('/model/' + id);

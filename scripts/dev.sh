@@ -13,6 +13,7 @@ if [ -z "${VIRTUAL_ENV}" ]; then
   source ./neurodex_env/bin/activate
 fi
 
+export FLASK_ENV="dev"
 export DATABASE_URL="postgresql://postgres:docker@localhost:5432/postgres"
 
 gunicorn backend.main:app -b localhost:8081 --reload --log-level=DEBUG

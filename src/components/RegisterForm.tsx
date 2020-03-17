@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { HTTPError } from 'ky';
+import ky from 'ky';
 import React, { useContext } from 'react';
 import useForm from 'react-hook-form';
 import { AuthContext } from '../contexts/auth';
@@ -29,7 +29,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
         await authenticate(values.email, values.password);
       }
     } catch (error) {
-      if (error instanceof HTTPError) {
+      if (error instanceof ky.HTTPError) {
         const response = error.response;
         const json = await response.json();
         setError(json.field, 'notMatch', json.message);
