@@ -51,7 +51,7 @@ def post_login():
 
 
 @auth_blueprint.route('/logout', methods=['GET'])
-def get_logout(current_user):
+def get_logout():
     response = make_response()
     unset_jwt_cookies(response)
     return response
