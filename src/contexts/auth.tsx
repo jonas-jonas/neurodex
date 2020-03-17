@@ -8,18 +8,21 @@ type AuthContextData = {
   authenticate: (name: string, password: string) => Promise<Response>;
   deauthenticate: () => Promise<boolean>;
   registerUser: (username: string, password: string, repeatPassword: string) => Promise<Response>;
+  isLoadingUser: boolean;
 };
 
 export const AuthContext = React.createContext<AuthContextData>({
   isAuthenticated: false,
   authenticate: () => Promise.reject(),
   deauthenticate: () => Promise.reject(),
-  registerUser: () => Promise.reject()
+  registerUser: () => Promise.reject(),
+  isLoadingUser: true
 });
 
 export const AuthContextProvider: React.FC = ({ children }) => {
   /** The current user */
   const [user, setUser] = useState<User>();
+  const [isLoadingUser, setLoadingUser] = useState(true);
 
   /** indicates whether the user is currently logged in */
   const isAuthenticated = useMemo(() => {
@@ -37,6 +40,8 @@ export const AuthContextProvider: React.FC = ({ children }) => {
         setUser(authenticationResponse);
       } catch (error) {
         setUser(undefined);
+      } finally {
+        setLoadingUser(false);
       }
     };
     fetchCurrentUser();
@@ -108,7 +113,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, authenticate, deauthenticate, registerUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, authenticate, deauthenticate, registerUser, isLoadingUser }}>
       {children}
     </AuthContext.Provider>
   );

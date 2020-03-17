@@ -25,7 +25,8 @@ export const MockAuthContextProvider: React.FC<AuthContextData> = ({
         isAuthenticated: isAuthenticated || !!user,
         authenticate: authenticate || jest.fn(),
         deauthenticate: deauthenticate || jest.fn(),
-        registerUser: registerUser || jest.fn()
+        registerUser: registerUser || jest.fn(),
+        isLoadingUser: true
       }}
     >
       {children}
