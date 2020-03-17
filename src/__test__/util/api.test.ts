@@ -23,7 +23,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ layerId: '3' });
   });
 
   it('DeleteLayer', async () => {
@@ -50,7 +50,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ value: '3' })
   });
 
   it('UpdateOrder', async () => {
@@ -64,7 +64,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/order');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ index: 3 });
   });
 
   it('AddFunction', async () => {
@@ -77,7 +77,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 })
   });
 
   it('DeleteFunction', async () => {
@@ -103,7 +103,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/activator');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 })
   });
 
   it('UpdateModelFunctionData', async () => {
@@ -118,6 +118,6 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.body).toBeInstanceOf(FormData);
+    expect(mock.mock.calls[0][1]?.json).toEqual({ value: 'some-data' })
   });
 });

@@ -45,7 +45,7 @@ def get_model(model):
 @model_blueprint.route('', methods=['POST'])
 @jwt_required
 def post_model():
-    data = request.form
+    data = request.json
 
     new_model = Model(id=str(uuid.uuid4()), name=data['name'], user_id=current_user.id)
 
@@ -59,7 +59,7 @@ def post_model():
 @jwt_required
 @own_model
 def put_model_name(model):
-    data = request.form
+    data = request.json
 
     model.name = data['name']
     db.session.commit()
@@ -70,7 +70,7 @@ def put_model_name(model):
 @jwt_required
 @own_model
 def post_model_layer(model):
-    data = request.form
+    data = request.json
     layer_id = data['layerId']
 
     layer = db.session.query(LayerType).filter_by(id=layer_id).first()
@@ -138,7 +138,7 @@ def put_parameter_data(model_id, model_layer_id, parameter_name):
     Returns:
         A json string containing the updated model
     """
-    data = request.form
+    data = request.json
 
     param_data = db.session.query(ModelLayerParameterData).filter_by(
         model_layer_id=model_layer_id, parameter_name=parameter_name).first()
@@ -164,7 +164,7 @@ def put_parameter_data(model_id, model_layer_id, parameter_name):
 @model_blueprint.route('/<model:model>/layers/<model_layer_id>/order', methods=['PUT'])
 @jwt_required
 def put_model_layer_order(model, model_layer_id):
-    data = request.form
+    data = request.json
     index = data['index']
 
     model_layer = db.session.query(ModelLayer).filter_by(id=model_layer_id).first()
@@ -182,7 +182,7 @@ def put_model_layer_order(model, model_layer_id):
 @model_blueprint.route('/<model:model>/functions', methods=['POST'])
 @jwt_required
 def post_function(model):
-    data = request.form
+    data = request.json
     function_id = data['functionId']
 
     model_function = ModelFunction(model_id=model.id, function_id=function_id)
@@ -219,7 +219,7 @@ def delete_function(model: Model, function_id):
 @model_blueprint.route('/<model:model>/functions/<model_function_id>/activator', methods=['PUT'])
 @jwt_required
 def put_model_function(model, model_function_id):
-    data = request.form
+    data = request.json
     function_id = data['functionId']
 
     # function = db.session.query(ActivatorFunction).filter_by(id=activator_function_id).first()
@@ -251,7 +251,7 @@ def put_model_function_parameter(model, model_function_id, parameter_name):
     Returns:
         A json string containing the updated model
     """
-    data = request.form
+    data = request.json
 
     model_function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
 

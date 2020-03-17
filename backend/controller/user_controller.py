@@ -38,7 +38,7 @@ def get_user(id):
 
 @user_blueprint.route('', methods=['POST'])
 def post_user():
-    data = request.form
+    data = request.json
 
     if data['password'] != data['repeatPassword']:
         # Status Code might not be correct

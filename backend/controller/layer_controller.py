@@ -24,12 +24,12 @@ def get_layers():
 def post_layer():
     """Creates a new layer.
 
-    A POST endpoint that creates a new layer from data supplied by request.form.
+    A POST endpoint that creates a new layer from data supplied by request.json.
 
     Returns:
         A json string containing the newly created layer
     """
-    data = request.form
+    data = request.json
     id = data['id']
     description = data['description']
     layer_name = data['layerName']
@@ -44,7 +44,7 @@ def post_layer():
 
 @layer_blueprint.route('<layer_id>/parameter/', methods=['POST'])
 def post_parameter(layer_id):
-    data = request.form
+    data = request.json
     name = data['name']
     type = data['type']
     default_value = data['defaultValue']

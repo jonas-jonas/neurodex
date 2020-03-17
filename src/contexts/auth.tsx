@@ -54,12 +54,13 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   const authenticate = (email: string, password: string) => {
     const login = async (): Promise<Response> => {
       // TODO: Check if the user is already logged in
-      const data = new FormData();
-      data.append('email', email);
-      data.append('password', password);
+      const data = {
+        email,
+        password
+      }
       try {
         const response = await api.post('auth/login', {
-          body: data
+          json: data
         });
         if (response.status === 200) {
           const authenticationResponse = await response.json();
@@ -97,12 +98,13 @@ export const AuthContextProvider: React.FC = ({ children }) => {
    * @param values The register form values
    */
   const registerUser = async (email: string, password: string, repeatPassword: string) => {
-    const data = new FormData();
-    data.append('email', email);
-    data.append('password', password);
-    data.append('repeatPassword', repeatPassword);
+    const data = {
+      email,
+      password,
+      repeatPassword
+    }
 
-    return await api.post('users/user', { body: data });
+    return await api.post('users/user', { json: data });
   };
 
   return (

@@ -28,7 +28,7 @@ def expired_token_loader(expired_token):
 
 @auth_blueprint.route('/login', methods=['POST'])
 def post_login():
-    auth = request.form
+    auth = request.json
 
     if not auth or not auth['email'] or not auth['password']:
         return jsonify(message='Email or password incorrect'), 401
