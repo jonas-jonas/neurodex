@@ -25,14 +25,14 @@ const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) =
   }, [toggleMenu]);
 
   return (
-    <div className="absolute bg-white right-0 rounded shadow w-48 mt-2" ref={menuRef}>
-      <Link to="/account" className="block p-2 px-5 hover:bg-gray-200 w-full text-left">
-        <FontAwesomeIcon icon={faCog} />
+    <div className="absolute bg-white right-0 rounded shadow-lg border border-gray-400 w-full mt-2" ref={menuRef}>
+      <Link to="/account" className="block p-2 px-5 hover:bg-gray-200 w-full text-left" title="Einstellungen">
+        <FontAwesomeIcon icon={faCog} className="hover:bg-blue-500" />
         <span className="pl-2">Einstellungen</span>
       </Link>
       <button
         onClick={onLogout}
-        className="block p-2 px-5 hover:bg-gray-200 w-full text-left focus:outline-none"
+        className="block p-2 px-5 hover:bg-gray-200 w-full text-left focus:outline-none border-t border-gray-400"
         title="Logout"
       >
         <FontAwesomeIcon icon={faSignOutAlt} />

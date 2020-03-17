@@ -45,7 +45,7 @@ const Navigation: React.FC = () => {
         </a>
         {!isAuthenticated && (
           <Link
-            className="flex items-center px-5 py-1 rounded border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100"
+            className="px-2 py-1 rounded focus:outline-none text-gray-900 font-semibold hover:bg-gray-200 focus:bg-gray-200"
             to="/login"
           >
             Login
