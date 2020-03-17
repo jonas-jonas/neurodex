@@ -13,6 +13,3 @@ roles:
   - USER
   - MODERATOR
   - LECTURER
-
-jwt:
-  secret-key: super-secret
