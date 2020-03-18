@@ -13,10 +13,13 @@ app = Flask(__name__, static_folder=STATIC_DIR)
 Compress(app)
 bcrypt = Bcrypt(app)
 
-app.config.from_pyfile('application.cfg', silent=False)
 profile = os.environ.get('FLASK_ENV')
-if profile is not None:
-    app.config.from_pyfile(f'application-{profile}.cfg', silent=True)
+if profile == "development":
+    app.config.from_object("backend.config.DevelopmentConfig")
+elif profile == "production":
+    app.config.from_object("backend.config.ProductionConfig")
+else:
+    app.config.from_object("backend.config.Config")
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
