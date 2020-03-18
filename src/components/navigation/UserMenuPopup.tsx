@@ -34,7 +34,7 @@ const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) =
         <FontAwesomeIcon icon={faCog} className="hover:bg-blue-500" />
         <span className="pl-2">Einstellungen</span>
       </Link>
-      {user!.roles.includes('ADMIN') && (
+      {user && user.roles.includes('ADMIN') && (
         <>
           <span className="pl-3 text-sm font-bold uppercase text-gray-600">Admin</span>
           <Link to="/admin" className="block p-2 px-5 hover:bg-gray-200 w-full text-left" title="Admin Dashboard">

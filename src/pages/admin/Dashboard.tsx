@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
     };
     fetchStats();
     return () => setPageTitle('');
-  }, []);
+  }, [setPageTitle]);
 
   return (
     <div className="">
