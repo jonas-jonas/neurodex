@@ -29,7 +29,7 @@ const Navigation: React.FC = () => {
         className="flex font-semibold text-2xl tracking-tight rounded transition-colors duration-300 hover:bg-gray-200 px-2 items-center"
         to="/"
       >
-        <img className="h-6 mr-2" src="/static/assets/logo.png" />
+        <img className="h-6 mr-2" src="/static/assets/logo.png" alt="Neurodex logo" />
         <span className="text-blue-700">Neuro</span>
         <span className="text-orange-500">DEX</span>
       </Link>

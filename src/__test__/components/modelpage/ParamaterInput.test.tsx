@@ -247,5 +247,5 @@ it('Warning is displayed when non-supported type is passed', () => {
 
   const { container } = render(<ParameterInput {...props} />);
   expect(container.childNodes.length).toEqual(1);
-  expect(screen.getByText('Unknown datatype "random-type"')).toBeDefined;
+  expect(screen.getByText('Unknown datatype "random-type"')).toBeDefined();
 });

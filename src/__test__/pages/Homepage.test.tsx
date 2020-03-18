@@ -1,9 +1,9 @@
-import { act, cleanup, fireEvent, render, screen, wait } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Homepage from '../../pages/Homepage';
-import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
 import { api } from '../../util/api';
+import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
 import { mockModel } from '../../__mocks__/modelcontext.mock';
 
 afterEach(cleanup);
