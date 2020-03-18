@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type PageContextProps = {
   pageTitle: string;
@@ -12,6 +12,14 @@ export const PageContext = React.createContext<PageContextProps>({
 
 export const PageContextProvider: React.FC = ({ children }) => {
   const [pageTitle, setPageTitle] = useState('');
+
+  useEffect(() => {
+    if (pageTitle === '') {
+      document.title = 'Neurodex';
+    } else {
+      document.title = pageTitle + ' · Neurodex';
+    }
+  }, [pageTitle]);
 
   return <PageContext.Provider value={{ pageTitle, setPageTitle }}>{children}</PageContext.Provider>;
 };

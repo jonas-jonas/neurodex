@@ -1,8 +1,9 @@
-from flask import send_from_directory
+from flask import jsonify, send_from_directory
+from werkzeug.exceptions import HTTPException
 
 from backend import BUILD_ROOT, app, db
+from backend.controller.admin_controller import admin_blueprint
 from backend.controller.authentication_controller import auth_blueprint
-from backend.controller.error_controller import internal_error, page_not_found
 from backend.controller.functions_controller import functions_blueprint
 from backend.controller.layer_controller import layer_blueprint
 from backend.controller.model_controller import model_blueprint
@@ -17,8 +18,7 @@ app.register_blueprint(user_blueprint)
 app.register_blueprint(model_blueprint)
 app.register_blueprint(layer_blueprint)
 app.register_blueprint(functions_blueprint)
-app.register_error_handler(404, page_not_found)
-app.register_error_handler(500, internal_error)
+app.register_blueprint(admin_blueprint)
 app.json_encoder = CustomJSONEncoder
 
 
@@ -26,6 +26,15 @@ app.json_encoder = CustomJSONEncoder
 def setup():
     Base.metadata.create_all(bind=db.engine)
     init_db()
+
+
+@app.errorhandler(HTTPException)
+def error_handler(e):
+    result = {
+        'code': e.code,
+        'message': e.description
+    }
+    return jsonify(result), e.code
 
 
 @app.route('/')

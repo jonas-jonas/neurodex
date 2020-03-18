@@ -27,7 +27,7 @@ def init_db():
     if db.session.query(User).count() == 0:
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
-        with open(dir_path + "/data.yaml", 'r') as stream:
+        with open(dir_path + "/../data.yaml", 'r') as stream:
             try:
                 config = yaml.safe_load(stream)
 

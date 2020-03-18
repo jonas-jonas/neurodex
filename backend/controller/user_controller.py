@@ -6,6 +6,7 @@ from flask_jwt_extended import current_user, jwt_required
 from backend import bcrypt, db
 from backend.data.models import User
 from backend.data.schema import user_schema, users_schema
+from backend.util.decorators import needs_role
 
 user_blueprint = Blueprint('user', __name__, url_prefix="/api/users")
 
@@ -14,6 +15,7 @@ token_key = 'x-access-token'
 
 @user_blueprint.route('', methods=['GET'])
 @jwt_required
+@needs_role("admin")
 def get_users():
     users = db.session.query(User).all()
     return users_schema.jsonify(users)
