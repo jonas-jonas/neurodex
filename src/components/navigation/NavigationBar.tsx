@@ -24,12 +24,15 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between flex-wrap bg-white py-2 px-5 border-blue-500 border-b-4 shadow fixed w-full">
-      <div className="block">
-        <Link className="font-semibold text-xl tracking-tight" to="/">
-          <img src="/static/assets/logo-wide.png" className="h-8" alt="Neurodex Logo" />
-        </Link>
-      </div>
+    <nav className="flex items-center justify-between flex-wrap bg-white py-1 px-2 border-blue-700 border-b-4 shadow fixed w-full">
+      <Link
+        className="flex font-semibold text-2xl tracking-tight rounded transition-colors duration-300 hover:bg-gray-200 px-2 items-center"
+        to="/"
+      >
+        <img className="h-6 mr-2" src="/static/assets/logo.png" />
+        <span className="text-blue-700">Neuro</span>
+        <span className="text-orange-500">DEX</span>
+      </Link>
       <div className="mr-6">
         <h2 className="font-bold">{pageTitle}</h2>
       </div>
