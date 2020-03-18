@@ -7,7 +7,7 @@ module.exports = {
       sm: '640px',
       md: '768px',
       lg: '1024px',
-      xl: '1280px',
+      xl: '1280px'
     },
     colors: {
       transparent: 'transparent',
@@ -27,7 +27,7 @@ module.exports = {
         600: '#718096',
         700: '#4a5568',
         800: '#2d3748',
-        900: '#1a202c',
+        900: '#1a202c'
       },
       blue: {
         100: '#EAF3F8',
@@ -38,7 +38,7 @@ module.exports = {
         600: '#2979A7',
         700: '#1B506F',
         800: '#143C53',
-        900: '#0E2838',
+        900: '#0E2838'
       },
       orange: {
         100: '#FDF0E6',
@@ -49,8 +49,8 @@ module.exports = {
         600: '#CF5D00',
         700: '#8A3E00',
         800: '#682E00',
-        900: '#451F00',
-      },
+        900: '#451F00'
+      }
     },
     spacing: {
       px: '1px',
@@ -71,7 +71,7 @@ module.exports = {
       '40': '10rem',
       '48': '12rem',
       '56': '14rem',
-      '64': '16rem',
+      '64': '16rem'
     },
     backgroundColor: theme => theme('colors'),
     backgroundPosition: {
@@ -83,30 +83,30 @@ module.exports = {
       right: 'right',
       'right-bottom': 'right bottom',
       'right-top': 'right top',
-      top: 'top',
+      top: 'top'
     },
     backgroundSize: {
       auto: 'auto',
       cover: 'cover',
-      contain: 'contain',
+      contain: 'contain'
     },
     borderColor: theme => ({
       ...theme('colors'),
-      default: theme('colors.gray.200', 'currentColor'),
+      default: theme('colors.gray.200', 'currentColor')
     }),
     borderRadius: {
       none: '0',
       sm: '0.125rem',
       default: '0.25rem',
       lg: '0.5rem',
-      full: '9999px',
+      full: '9999px'
     },
     borderWidth: {
       default: '1px',
       '0': '0',
       '2': '2px',
       '4': '4px',
-      '8': '8px',
+      '8': '8px'
     },
     boxShadow: {
       default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
@@ -116,10 +116,10 @@ module.exports = {
       '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
       outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
-      none: 'none',
+      none: 'none'
     },
     container: {
-      center: true,
+      center: true
     },
     cursor: {
       auto: 'auto',
@@ -128,24 +128,24 @@ module.exports = {
       wait: 'wait',
       text: 'text',
       move: 'move',
-      'not-allowed': 'not-allowed',
+      'not-allowed': 'not-allowed'
     },
     fill: {
-      current: 'currentColor',
+      current: 'currentColor'
     },
     flex: {
       '1': '1 1 0%',
       auto: '1 1 auto',
       initial: '0 1 auto',
-      none: 'none',
+      none: 'none'
     },
     flexGrow: {
       '0': '0',
-      default: '1',
+      default: '1'
     },
     flexShrink: {
       '0': '0',
-      default: '1',
+      default: '1'
     },
     fontFamily: {
       sans: [
@@ -154,24 +154,10 @@ module.exports = {
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
-        '"Noto Color Emoji"',
+        '"Noto Color Emoji"'
       ],
-      serif: [
-        'Georgia',
-        'Cambria',
-        '"Times New Roman"',
-        'Times',
-        'serif',
-      ],
-      mono: [
-        '"Courier Prime"',
-        'Menlo',
-        'Monaco',
-        'Consolas',
-        '"Liberation Mono"',
-        '"Courier New"',
-        'monospace',
-      ],
+      serif: ['"Roboto Slab"', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+      mono: ['"Courier Prime"', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace']
     },
     fontSize: {
       xs: '0.75rem',
@@ -183,7 +169,7 @@ module.exports = {
       '3xl': '1.875rem',
       '4xl': '2.25rem',
       '5xl': '3rem',
-      '6xl': '4rem',
+      '6xl': '4rem'
     },
     fontWeight: {
       hairline: '100',
@@ -194,7 +180,7 @@ module.exports = {
       semibold: '600',
       bold: '700',
       extrabold: '800',
-      black: '900',
+      black: '900'
     },
     height: theme => ({
       auto: 'auto',
@@ -204,11 +190,11 @@ module.exports = {
       '0': '0',
       '1/4': '25vh',
       '1/2': '50vh',
-      '3/4': '75vh',
+      '3/4': '75vh'
     }),
     inset: {
       '0': '0',
-      auto: 'auto',
+      auto: 'auto'
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -216,7 +202,7 @@ module.exports = {
       normal: '0',
       wide: '0.025em',
       wider: '0.05em',
-      widest: '0.1em',
+      widest: '0.1em'
     },
     lineHeight: {
       none: '1',
@@ -224,17 +210,17 @@ module.exports = {
       snug: '1.375',
       normal: '1.5',
       relaxed: '1.625',
-      loose: '2',
+      loose: '2'
     },
     listStyleType: {
       none: 'none',
       disc: 'disc',
-      decimal: 'decimal',
+      decimal: 'decimal'
     },
     margin: (theme, { negative }) => ({
       auto: 'auto',
       ...theme('spacing'),
-      ...negative(theme('spacing')),
+      ...negative(theme('spacing'))
     }),
     maxHeight: {
       full: '100%',
@@ -242,7 +228,7 @@ module.exports = {
       '0': '0',
       '1/4': '25%',
       '1/2': '50%',
-      '3/4': '75%',
+      '3/4': '75%'
     },
     maxWidth: {
       xs: '20rem',
@@ -255,16 +241,16 @@ module.exports = {
       '4xl': '56rem',
       '5xl': '64rem',
       '6xl': '72rem',
-      full: '100%',
+      full: '100%'
     },
     minHeight: {
       '0': '0',
       full: '100%',
-      screen: '100vh',
+      screen: '100vh'
     },
     minWidth: {
       '0': '0',
-      full: '100%',
+      full: '100%'
     },
     objectPosition: {
       bottom: 'bottom',
@@ -275,14 +261,14 @@ module.exports = {
       right: 'right',
       'right-bottom': 'right bottom',
       'right-top': 'right top',
-      top: 'top',
+      top: 'top'
     },
     opacity: {
       '0': '0',
       '25': '0.25',
       '50': '0.5',
       '75': '0.75',
-      '100': '1',
+      '100': '1'
     },
     order: {
       first: '-9999',
@@ -299,12 +285,12 @@ module.exports = {
       '9': '9',
       '10': '10',
       '11': '11',
-      '12': '12',
+      '12': '12'
     },
     padding: theme => theme('spacing'),
     placeholderColor: theme => theme('colors'),
     stroke: {
-      current: 'currentColor',
+      current: 'currentColor'
     },
     textColor: theme => theme('colors'),
     width: theme => ({
@@ -337,7 +323,7 @@ module.exports = {
       '10/12': '83.333333%',
       '11/12': '91.666667%',
       full: '100%',
-      screen: '100vw',
+      screen: '100vw'
     }),
     zIndex: {
       auto: 'auto',
@@ -346,8 +332,8 @@ module.exports = {
       '20': '20',
       '30': '30',
       '40': '40',
-      '50': '50',
-    },
+      '50': '50'
+    }
   },
   variants: {
     accessibility: ['responsive', 'focus'],
@@ -415,8 +401,8 @@ module.exports = {
     whitespace: ['responsive'],
     width: ['responsive'],
     wordBreak: ['responsive'],
-    zIndex: ['responsive'],
+    zIndex: ['responsive']
   },
   corePlugins: {},
-  plugins: [],
-}
+  plugins: []
+};

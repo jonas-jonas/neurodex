@@ -1,7 +1,6 @@
 import uuid
-from functools import wraps
 
-from flask import Blueprint, request, abort
+from flask import Blueprint, request
 from flask_jwt_extended import current_user, jwt_required
 
 from backend import db
@@ -11,20 +10,9 @@ from backend.data.models import (FunctionParameter, LayerType, LayerValue,
                                  ModelLayerParameterData, PrimitiveValue)
 from backend.data.schema import (model_functions_schema, model_layers_schema,
                                  model_schema, models_schema)
+from backend.util.decorators import own_model
 
 model_blueprint = Blueprint('model', __name__, url_prefix="/api/models")
-
-
-def own_model(fn):
-    @wraps(fn)
-    def wrapped_function(*args, **kwargs):
-        model = kwargs['model']
-        if model.user_id != current_user.id:
-            abort(404)
-
-        return fn(*args, **kwargs)
-
-    return wrapped_function
 
 
 @model_blueprint.route('', methods=['GET'])
