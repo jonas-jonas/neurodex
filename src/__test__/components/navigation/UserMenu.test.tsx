@@ -19,7 +19,7 @@ it('UserMenu section displays username', async () => {
     </Router>
   );
 
-  expect(screen.getByText('email@test.com')).toBeDefined();
+  expect(screen.getByText('user-name')).toBeDefined();
 });
 
 it('UserMenu expand triggers expand', async () => {
