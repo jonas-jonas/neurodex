@@ -11,7 +11,9 @@ it('NavigationBar displays page title if set', async () => {
   render(
     <Router>
       <MockPageContextProvider pageTitle="Some page title">
-        <Navigation />
+        <MockAuthContextProvider isAuthenticated={false} user={undefined}>
+          <Navigation />
+        </MockAuthContextProvider>
       </MockPageContextProvider>
     </Router>
   );
@@ -50,5 +52,5 @@ it('NavigationBar displays UserMenu if user is logged in', async () => {
     </Router>
   );
 
-  expect(screen.getByText('email@test.com')).toBeDefined();
+  expect(screen.getByText('user-name')).toBeDefined();
 });

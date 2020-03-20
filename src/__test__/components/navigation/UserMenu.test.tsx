@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import UserMenu from '../../../components/navigation/UserMenu';
 import { User } from '../../../data/models';
+import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
 afterEach(cleanup);
 
 it('UserMenu section displays username', async () => {
@@ -24,11 +25,14 @@ it('UserMenu expand triggers expand', async () => {
   const user: User = {
     roles: [],
     id: '3',
-    email: 'email@test.com'
+    email: 'email@test.com',
+    name: 'username'
   };
   render(
     <Router>
-      <UserMenu onLogout={jest.fn()} user={user} />
+      <MockAuthContextProvider>
+        <UserMenu onLogout={jest.fn()} user={user} />
+      </MockAuthContextProvider>
     </Router>
   );
 
