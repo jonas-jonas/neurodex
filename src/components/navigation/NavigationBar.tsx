@@ -2,13 +2,13 @@ import { faGithubSquare } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { AuthContext } from '../../contexts/auth';
+import { useUserContext } from '../../contexts/auth';
 import { PageContext } from '../../contexts/pagecontext';
 import UserMenu from './UserMenu';
 
 const Navigation: React.FC = () => {
   const { pageTitle } = useContext(PageContext);
-  const { isAuthenticated, user, deauthenticate } = useContext(AuthContext);
+  const { isAuthenticated, user, deauthenticate } = useUserContext();
   const history = useHistory();
 
   /**
@@ -24,7 +24,7 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between flex-wrap bg-white py-1 px-2 border-blue-700 border-b-4 shadow fixed w-full">
+    <nav className="flex items-center justify-between flex-wrap bg-white py-1 px-2 border-blue-700 border-b-4 shadow fixed w-full z-50">
       <Link
         className="flex font-semibold text-2xl tracking-tight rounded transition-colors duration-300 hover:bg-gray-200 px-2 items-center"
         to="/"

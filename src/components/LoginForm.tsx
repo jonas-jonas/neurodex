@@ -1,13 +1,13 @@
 import classnames from 'classnames';
-import React, { useContext } from 'react';
+import React from 'react';
 import useForm from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../contexts/auth';
+import { useUserContext } from '../contexts/auth';
 import FormField from './utility/FormField';
 
 const LoginForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
-  const { authenticate } = useContext(AuthContext);
+  const { authenticate } = useUserContext();
 
   /**
    * Uses the current email and password to authenticate with the server

@@ -7,17 +7,13 @@ type AuthContextData = {
   isAuthenticated: boolean;
   authenticate: (name: string, password: string) => Promise<Response>;
   deauthenticate: () => Promise<boolean>;
-  registerUser: (username: string, password: string, repeatPassword: string) => Promise<Response>;
+  registerUser: (name: string, email: string, password: string, repeatPassword: string) => Promise<Response>;
   isLoadingUser: boolean;
+  updateData: (name: string, email: string) => Promise<Response | undefined>;
+  updatePassword: (oldPassword: string, password: string, repeatPassword: string) => Promise<Response>;
 };
 
-export const AuthContext = React.createContext<AuthContextData>({
-  isAuthenticated: false,
-  authenticate: () => Promise.reject(),
-  deauthenticate: () => Promise.reject(),
-  registerUser: () => Promise.reject(),
-  isLoadingUser: true
-});
+export const AuthContext = React.createContext<AuthContextData | undefined>(undefined);
 
 export const AuthContextProvider: React.FC = ({ children }) => {
   /** The current user */
@@ -62,7 +58,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       const data = {
         email,
         password
-      }
+      };
       try {
         const response = await api.post('auth/login', {
           json: data
@@ -102,19 +98,67 @@ export const AuthContextProvider: React.FC = ({ children }) => {
    * If the registeration is not successful validation messages are displayed.
    * @param values The register form values
    */
-  const registerUser = async (email: string, password: string, repeatPassword: string) => {
+  const registerUser = async (name: string, email: string, password: string, repeatPassword: string) => {
     const data = {
+      name,
       email,
       password,
       repeatPassword
-    }
+    };
 
-    return await api.post('users/user', { json: data });
+    return await api.post('users', { json: data });
+  };
+
+  const updateData = async (email: string, name: string): Promise<Response | undefined> => {
+    const data = {
+      email,
+      name
+    };
+    try {
+      const response = await api.put('users/update/data', { json: data });
+      setUser(await response.json());
+      return undefined;
+    } catch (error) {
+      return error.response;
+    }
+  };
+
+  const updatePassword = async (oldPassword: string, password: string, repeatPassword: string): Promise<Response> => {
+    const data = {
+      oldPassword,
+      password,
+      repeatPassword
+    };
+    try {
+      return await api.put('users/update/password', { json: data });
+    } catch (error) {
+      return error.response;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, authenticate, deauthenticate, registerUser, isLoadingUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        authenticate,
+        deauthenticate,
+        registerUser,
+        isLoadingUser,
+        updateData,
+        updatePassword
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useUserContext = () => {
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    // this is especially useful in TypeScript so you don't need to be checking for null all the time
+    throw new Error('useUserContext must be used within a AuthContextProvider.');
+  }
+  return context;
 };

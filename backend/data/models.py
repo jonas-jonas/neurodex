@@ -19,6 +19,7 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Text, primary_key=True, nullable=False)
+    name = Column(Text, nullable=False)
     email = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     roles = relationship("Role", secondary=user_role_table, back_populates="users")

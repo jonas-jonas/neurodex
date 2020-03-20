@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RegisterForm from '../../components/RegisterForm';
-import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
+import { MockAuthContextProvider } from '../__mocks__/authcontext.mock';
 import ky from 'ky';
 
 afterEach(cleanup);
@@ -52,11 +52,13 @@ describe('RegisterForm', () => {
       </Router>
     );
 
+    const nameField = screen.getByLabelText('Name');
     const emailField = screen.getByLabelText('Email');
     const passwordField = screen.getByLabelText('Passwort');
     const repeatPasswordField = screen.getByLabelText('Passwort wiederholen');
 
     await act(async () => {
+      fireEvent.input(nameField, { target: { value: 'some-username' } });
       fireEvent.input(emailField, { target: { value: 'some-email@test.invalid' } });
       fireEvent.input(passwordField, { target: { value: 'some-password' } });
       fireEvent.input(repeatPasswordField, { target: { value: 'some-password' } });
@@ -70,9 +72,10 @@ describe('RegisterForm', () => {
     });
 
     expect(registerUser.mock.calls.length).toBe(1);
-    expect(registerUser.mock.calls[0][0]).toEqual('some-email@test.invalid');
-    expect(registerUser.mock.calls[0][1]).toEqual('some-password');
+    expect(registerUser.mock.calls[0][0]).toEqual('some-username');
+    expect(registerUser.mock.calls[0][1]).toEqual('some-email@test.invalid');
     expect(registerUser.mock.calls[0][2]).toEqual('some-password');
+    expect(registerUser.mock.calls[0][3]).toEqual('some-password');
     expect(authenticate.mock.calls.length).toBe(1);
   });
 
@@ -92,12 +95,14 @@ describe('RegisterForm', () => {
       </Router>
     );
 
-    const userNameField = screen.getByLabelText('Email');
+    const nameField = screen.getByLabelText('Name');
+    const emailField = screen.getByLabelText('Email');
     const passwordField = screen.getByLabelText('Passwort');
     const repeatPasswordField = screen.getByLabelText('Passwort wiederholen');
 
     await act(async () => {
-      fireEvent.input(userNameField, { target: { value: 'some-email@test.invalid' } });
+      fireEvent.input(nameField, { target: { value: 'some-username' } });
+      fireEvent.input(emailField, { target: { value: 'some-email@test.invalid' } });
       fireEvent.input(passwordField, { target: { value: 'some-password' } });
       fireEvent.input(repeatPasswordField, { target: { value: 'some-password3' } });
     });

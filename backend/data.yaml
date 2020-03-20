@@ -6,10 +6,12 @@ users:
       - MODERATOR
       - LECTURER
     password: password
+    name: Admin Neurodex
   - email: user@neurodex.app
     password: password
     roles:
       - USER
+    name: User Neurodex
 
 roles:
   - ADMIN
