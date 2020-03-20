@@ -1,7 +1,7 @@
 import React from 'react';
 import { cleanup, fireEvent, render, screen, act } from '@testing-library/react';
 import ParameterInput from '../../../components/modelpage/ParameterInput';
-import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
+import MockModelContextProvider from '../../__mocks__/modelcontext.mock';
 import { ModelLayer } from '../../../data/models';
 
 afterEach(cleanup);

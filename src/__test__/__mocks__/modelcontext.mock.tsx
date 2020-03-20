@@ -1,7 +1,7 @@
 import React from 'react';
-import { ModelContext } from '../contexts/modelcontext';
-import { ModelLayer, Function, ModelFunction, LayerType } from '../data/models';
-import { Actions } from '../util/api';
+import { ModelContext } from '../../contexts/modelcontext';
+import { ModelLayer, Function, ModelFunction, LayerType } from '../../data/models';
+import { Actions } from '../../util/api';
 
 type MockModelContextProvider = {
   layers?: ModelLayer[];
@@ -17,7 +17,8 @@ export const mockModel = {
   user: {
     id: 'test-user-id',
     email: 'test-user',
-    roles: []
+    roles: [],
+    name: 'some-user-name'
   },
   createdAt: '2019-12-30 18:13:18.889242',
   updatedAt: '2019-12-30 18:13:18.889242',
@@ -42,7 +43,7 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
           layers: layers || []
         },
         updateModel: updateModel || jest.fn(),
-        setModel: () => { },
+        setModel: () => {},
         availableLayers: availableLayers || [],
         activationFunctions: activationFunctions || []
       }}

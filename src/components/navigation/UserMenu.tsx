@@ -23,7 +23,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
         onClick={handleUserMenuClick}
         title="Usermenu"
       >
-        <span className="mr-3">{user.email}</span>
+        <span className="mr-3">{user.name || user.email}</span>
         <FontAwesomeIcon icon={faChevronDown} />
       </button>
       {expanded && <UserMenuPopup onLogout={onLogout} toggleMenu={setExpanded} />}

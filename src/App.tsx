@@ -11,6 +11,7 @@ import Adminpanel from './pages/Adminpanel';
 import Homepage from './pages/Homepage';
 import LoginPage from './pages/LoginPage';
 import ModelpageWrapper from './pages/Modelpage';
+import AccountPage from './pages/AccountPage';
 
 const App: React.FC = () => {
   return (
@@ -21,7 +22,7 @@ const App: React.FC = () => {
           <div className="pt-16 h-screen">
             <AuthContext.Consumer>
               {value => {
-                if (value.isLoadingUser) {
+                if (value?.isLoadingUser) {
                   return <LoadingIndicator text="Loading..." />;
                 }
 
@@ -32,6 +33,9 @@ const App: React.FC = () => {
                     </Route>
                     <Route path="/admin">
                       <Adminpanel />
+                    </Route>
+                    <Route path="/account">
+                      <AccountPage />
                     </Route>
                     <Route path="/login">
                       <LoginPage />
@@ -45,7 +49,7 @@ const App: React.FC = () => {
             </AuthContext.Consumer>
           </div>
           <ToastContainer
-            position="bottom-left"
+            position="top-center"
             toastClassName="rounded shadow font-bold min-h-0 py-3"
             hideProgressBar
             closeButton={

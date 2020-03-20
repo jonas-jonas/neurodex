@@ -1,9 +1,9 @@
 import classnames from 'classnames';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import { AuthContext } from '../contexts/auth';
+import { useUserContext } from '../contexts/auth';
 
 export enum LoginPageState {
   LOGIN,
@@ -11,7 +11,7 @@ export enum LoginPageState {
 }
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useUserContext();
   const [loginPageState, setLoginPageState] = useState<LoginPageState>(LoginPageState.LOGIN);
 
   useEffect(() => {

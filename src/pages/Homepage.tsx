@@ -1,18 +1,18 @@
 import { faArrowRight, faPlus, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DateTime, Settings } from 'luxon';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { AuthContext } from '../contexts/auth';
-import { api } from '../util/api';
-import { Model } from '../data/models';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
+import { useUserContext } from '../contexts/auth';
+import { Model } from '../data/models';
 import { SWALClasses } from '../util/alert';
+import { api } from '../util/api';
 Settings.defaultLocale = 'de';
 
 const Homepage: React.FC = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useUserContext();
   const [creatingNewModel, setCreatingNewModel] = useState(false);
   const history = useHistory();
   const [models, setModels] = useState<Model[]>([]);
@@ -62,7 +62,7 @@ const Homepage: React.FC = () => {
     if (result.value) {
       const data = {
         name: result.value
-      }
+      };
       const response = await api.post('models', { json: data });
       if (response.status === 200) {
         const { id } = await response.json();

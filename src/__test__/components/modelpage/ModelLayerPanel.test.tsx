@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import React from 'react';
 import ModelLayerPanel from '../../../components/modelpage/ModelLayerPanel';
-import MockModelContextProvider from '../../../__mocks__/modelcontext.mock';
+import MockModelContextProvider from '../../__mocks__/modelcontext.mock';
 import { ModelLayer } from '../../../data/models';
 
 afterEach(cleanup);

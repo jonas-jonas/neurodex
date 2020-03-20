@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { LayerType } from '../../data/models';
 import ModelpageWrapper, { LayerCard, Modelpage } from '../../pages/Modelpage';
-import MockModelContextProvider from '../../__mocks__/modelcontext.mock';
-import { MockPageContextProvider } from '../../__mocks__/pagecontext.mock';
+import MockModelContextProvider from '../__mocks__/modelcontext.mock';
+import { MockPageContextProvider } from '../__mocks__/pagecontext.mock';
 
 afterEach(cleanup);
 

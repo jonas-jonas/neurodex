@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Homepage from '../../pages/Homepage';
 import { api } from '../../util/api';
-import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
-import { mockModel } from '../../__mocks__/modelcontext.mock';
+import { MockAuthContextProvider } from '../__mocks__/authcontext.mock';
+import { mockModel } from '../__mocks__/modelcontext.mock';
 
 afterEach(cleanup);
 

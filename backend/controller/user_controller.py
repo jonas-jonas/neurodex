@@ -48,11 +48,11 @@ def post_user():
 
     email = data['email']
     if db.session.query(User.id).filter_by(email=email).scalar() is not None:
-        return jsonify({'message': 'Username ist bereits vergeben', 'field': 'username'}), 400
+        return jsonify({'message': 'E-Mail Adresse wird bereits benutzt', 'field': 'email'}), 400
 
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
-    new_user = User(id=str(uuid.uuid4()), email=email, password=hashed_password)
+    new_user = User(id=str(uuid.uuid4()), email=email, password=hashed_password, name=data['name'])
     db.session.add(new_user)
     db.session.commit()
 
@@ -67,3 +67,38 @@ def delete_user():
     db.session.commit()
 
     return jsonify({'message': 'The user has been deleted!'})
+
+
+@user_blueprint.route('/update/data', methods=['PUT'])
+@jwt_required
+def update_data():
+
+    data = request.json
+
+    current_user.name = data['name']
+    current_user.email = data['email']
+
+    db.session.commit()
+
+    return user_schema.jsonify(current_user)
+
+
+@user_blueprint.route('/update/password', methods=['PUT'])
+@jwt_required
+def update_password():
+
+    data = request.json
+
+    if not bcrypt.check_password_hash(current_user.password, data['oldPassword']):
+        return jsonify({'message': 'Password incorrect', 'field': 'oldPassword'}), 401
+
+    if data['password'] != data['repeatPassword']:
+        # Status Code might not be correct
+        return jsonify({'message': 'Passwörter stimmen nicht überein', 'field': 'repeatPassword'}), 400
+
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
+    current_user.password = hashed_password
+
+    db.session.commit()
+
+    return user_schema.jsonify(current_user)

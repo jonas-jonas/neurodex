@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import ky from 'ky';
-import React, { useContext } from 'react';
+import React from 'react';
 import useForm from 'react-hook-form';
-import { AuthContext } from '../contexts/auth';
+import { useUserContext } from '../contexts/auth';
 import { LoginPageState } from '../pages/LoginPage';
 import FormField from './utility/FormField';
 
@@ -12,7 +12,7 @@ type RegisterFormProps = {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
-  const { authenticate, registerUser } = useContext(AuthContext);
+  const { authenticate, registerUser } = useUserContext();
 
   // The button should look "disabled" if the button is disabled
   const loginButtonClasses = classNames(
@@ -24,7 +24,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
 
   const handleRegister = async (values: Record<string, string>) => {
     try {
-      const response = await registerUser(values.email, values.password, values.repeatPassword);
+      const response = await registerUser(values.name, values.email, values.password, values.repeatPassword);
       if (response.status === 200) {
         await authenticate(values.email, values.password);
       }
@@ -39,13 +39,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
 
   return (
     <form>
+      <FormField label="Name" name="name" placeholder="Name" ref={register({ required: true })} autoFocus />
       <FormField
         label="Email"
         name="email"
         placeholder="Email"
         ref={register({ required: true })}
         validationMessage={errors.email?.message}
-        autoFocus
       />
       <FormField
         label="Passwort"

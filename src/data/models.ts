@@ -1,6 +1,7 @@
 export type User = {
   id: string;
   email: string;
+  name: string;
   // password: string;
   roles: String[];
 };
@@ -59,4 +60,3 @@ export type Value = {
   id?: number;
   value: string;
 };
-

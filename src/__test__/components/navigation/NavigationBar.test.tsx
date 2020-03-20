@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Navigation from '../../../components/navigation/NavigationBar';
 import { User } from '../../../data/models';
-import { MockAuthContextProvider } from '../../../__mocks__/authcontext.mock';
-import { MockPageContextProvider } from '../../../__mocks__/pagecontext.mock';
+import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
+import { MockPageContextProvider } from '../../__mocks__/pagecontext.mock';
 afterEach(cleanup);
 
 it('NavigationBar displays page title if set', async () => {
@@ -37,7 +37,8 @@ it('NavigationBar displays UserMenu if user is logged in', async () => {
   const user: User = {
     roles: [],
     id: '3',
-    email: 'email@test.com'
+    email: 'email@test.com',
+    name: 'user-name'
   };
   render(
     <Router>

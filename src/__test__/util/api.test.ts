@@ -1,6 +1,6 @@
 import { api, dispatchModelApi } from '../../util/api';
 import { Model } from '../../data/models';
-import { mockModel } from '../../__mocks__/modelcontext.mock';
+import { mockModel } from '../__mocks__/modelcontext.mock';
 
 const modelId = 'some-model-id';
 
@@ -50,7 +50,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ value: '3' })
+    expect(mock.mock.calls[0][1]?.json).toEqual({ value: '3' });
   });
 
   it('UpdateOrder', async () => {
@@ -77,7 +77,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 })
+    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 });
   });
 
   it('DeleteFunction', async () => {
@@ -103,7 +103,7 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/activator');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 })
+    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 });
   });
 
   it('UpdateModelFunctionData', async () => {
@@ -118,6 +118,6 @@ describe('dispatchModelApi', () => {
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ value: 'some-data' })
+    expect(mock.mock.calls[0][1]?.json).toEqual({ value: 'some-data' });
   });
 });

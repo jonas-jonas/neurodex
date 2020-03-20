@@ -52,7 +52,7 @@ def init_roles(roles):
 def init_users(users):
     for user in users:
         pw = bcrypt.generate_password_hash(user['password']).decode('utf8')
-        user_model = User(id=str(uuid.uuid4()), email=user['email'], password=pw)
+        user_model = User(id=str(uuid.uuid4()), email=user['email'], password=pw, name=user['name'])
         for role in user['roles']:
             role_model = db.session.query(Role).filter_by(id=role).first()
             user_model.roles.append(role_model)

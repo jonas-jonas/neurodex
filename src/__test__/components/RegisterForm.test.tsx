@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RegisterForm from '../../components/RegisterForm';
-import { MockAuthContextProvider } from '../../__mocks__/authcontext.mock';
+import { MockAuthContextProvider } from '../__mocks__/authcontext.mock';
 import ky from 'ky';
 
 afterEach(cleanup);
