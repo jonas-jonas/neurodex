@@ -9,7 +9,7 @@ type AuthContextData = {
   deauthenticate: () => Promise<boolean>;
   registerUser: (name: string, email: string, password: string, repeatPassword: string) => Promise<Response>;
   isLoadingUser: boolean;
-  updateData: (name: string, email: string) => Promise<Record<string, any>>;
+  updateData: (name: string, email: string) => Promise<Response | undefined>;
   updatePassword: (oldPassword: string, password: string, repeatPassword: string) => Promise<Response>;
 };
 
@@ -109,17 +109,17 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     return await api.post('users', { json: data });
   };
 
-  const updateData = async (email: string, name: string): Promise<Record<string, any>> => {
+  const updateData = async (email: string, name: string): Promise<Response | undefined> => {
     const data = {
       email,
       name
     };
-    const response = await api.put('users/update/data', { json: data });
-    if (response.status !== 200) {
-      return await response.json();
-    } else {
+    try {
+      const response = await api.put('users/update/data', { json: data });
       setUser(await response.json());
-      return {};
+      return undefined;
+    } catch (error) {
+      return error.response;
     }
   };
 
@@ -130,8 +130,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       repeatPassword
     };
     try {
-      const response = await api.put('users/update/password', { json: data });
-      return response;
+      return await api.put('users/update/password', { json: data });
     } catch (error) {
       return error.response;
     }

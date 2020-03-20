@@ -19,13 +19,17 @@ const AccountSettingsPage = React.forwardRef((props, ref: React.Ref<HTMLDivEleme
 
 const UserDataChangeForm = () => {
   const { user, updateData } = useUserContext();
-  const { register, handleSubmit, errors, formState, reset } = useForm({ mode: 'onBlur' });
+  const { register, handleSubmit, errors, formState, reset, setError } = useForm({ mode: 'onBlur' });
 
   const handleDataUpdate = async (values: Record<string, any>) => {
-    await updateData(values['email'], values['name']);
-    // TODO: If something goes wrong, show validation errors?
+    const errorResponse = await updateData(values['email'], values['name']);
     reset();
-    toast.info('Account Daten erfolgreich geändert.');
+    if (errorResponse) {
+      const json = await errorResponse.json();
+      setError(json.field, 'required', json.message);
+    } else {
+      toast.info('Account Daten erfolgreich geändert.');
+    }
   };
 
   const loginButtonClasses = classnames(

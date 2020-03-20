@@ -10,7 +10,8 @@ it('UserMenu section displays username', async () => {
   const user: User = {
     roles: [],
     id: '3',
-    email: 'email@test.com'
+    email: 'email@test.com',
+    name: 'user-name'
   };
   render(
     <Router>

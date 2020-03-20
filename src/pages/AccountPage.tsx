@@ -14,9 +14,11 @@ const AccountPage: React.FC = () => {
     return () => setPageTitle('');
   }, [setPageTitle]);
 
-  const scrollTo = (ref: any) => {
+  const scrollTo = (ref: React.RefObject<HTMLElement>) => {
     return () => {
-      ref?.current!.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth' });
+      }
     };
   };
 
