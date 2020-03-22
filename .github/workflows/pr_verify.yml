@@ -14,9 +14,6 @@ jobs:
           cmd: install # will run `yarn install` command
       - uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run eslint ./src/**/*.tsx ./src/**/*.js ./src/**/*.ts
-      - uses: borales/actions-yarn@v2.0.0
-        with:
           cmd: test:ci # will run `yarn test` command
       - name: Codecov
         uses: codecov/codecov-action@v1.0.5
