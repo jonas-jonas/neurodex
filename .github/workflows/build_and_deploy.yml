@@ -33,6 +33,7 @@ jobs:
         with:
           source: './backend,./build,./requirements.txt'
           target: '/application/neurodex'
+          overwrite: true
       - name: Install dependencies
         uses: appleboy/ssh-action@master
         env:
