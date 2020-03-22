@@ -7,6 +7,8 @@ from flask_compress import Compress
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import (JWTManager)
 
+from sendgrid import SendGridAPIClient
+
 BUILD_ROOT = os.path.join(os.getcwd(), 'build')
 STATIC_DIR = os.path.join(BUILD_ROOT, 'static')
 app = Flask(__name__, static_folder=STATIC_DIR)
@@ -24,3 +26,4 @@ else:
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 jwt = JWTManager(app)
+sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))

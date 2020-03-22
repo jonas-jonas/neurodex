@@ -4,11 +4,16 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import current_user, jwt_required
 
 from backend import bcrypt, db
-from backend.data.models import User
+from backend.data.models import User, UserMetadata
 from backend.data.schema import user_schema, users_schema
 from backend.util.decorators import needs_role
 
+from backend.service.email_service import send_confirmation_email
+import re
+
 user_blueprint = Blueprint('user', __name__, url_prefix="/api/users")
+
+email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
 token_key = 'x-access-token'
 
@@ -47,16 +52,45 @@ def post_user():
         return jsonify({'message': 'Passwörter stimmen nicht überein', 'field': 'repeatPassword'}), 400
 
     email = data['email']
+    if not re.search(email_regex, email):
+        return jsonify({'message': 'Keine gültige E-Mail Adresse', 'field': 'email'}), 400
+
     if db.session.query(User.id).filter_by(email=email).scalar() is not None:
         return jsonify({'message': 'E-Mail Adresse wird bereits benutzt', 'field': 'email'}), 400
 
+    confirmation_id = str(uuid.uuid4())
+
+    try:
+        send_confirmation_email(confirmation_id, email, data['name'])
+    except Exception as error:
+        print(error.body)
+        return jsonify({'message': 'Keine gültige E-Mail Adresse', 'field': 'email'}), 400
+
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
-    new_user = User(id=str(uuid.uuid4()), email=email, password=hashed_password, name=data['name'])
+    new_user = User(id=str(uuid.uuid4()), email=email,
+                    password=hashed_password, name=data['name'])
+
+    user_metadata = UserMetadata(confirmation_id=confirmation_id)
+    new_user.user_metadata = user_metadata
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({'message': 'New user created!'})
+    return jsonify({'message': 'success'}), 200
+
+
+@user_blueprint.route('/confirm-email', methods=['POST'])
+def post_confirmation_id():
+    data = request.json
+    metadata = db.session.query(UserMetadata).filter_by(confirmation_id=data['confirmationId']).first()
+    if metadata is None:
+        return jsonify({'message': 'Dieser Bestätigungslink ist abgelaufen.'}), 400
+
+    metadata.confirmation_id = None
+
+    db.session.commit()
+
+    return jsonify({'message': 'Success'})
 
 
 @user_blueprint.route('', methods=['DELETE'])

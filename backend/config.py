@@ -15,8 +15,10 @@ class Config(object):
 
 class ProductionConfig(Config):
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+    BASE_URL = "https://neurodex.app"
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     JWT_SECRET_KEY = 'dev-key'
+    BASE_URL = "http://localhost:8080"

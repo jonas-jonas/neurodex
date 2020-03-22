@@ -12,6 +12,7 @@ import Homepage from './pages/Homepage';
 import LoginPage from './pages/LoginPage';
 import ModelpageWrapper from './pages/Modelpage';
 import AccountPage from './pages/AccountPage';
+import ConfirmEmailPage from './pages/ConfirmEmailPage';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,9 @@ const App: React.FC = () => {
                     </Route>
                     <Route path="/login">
                       <LoginPage />
+                    </Route>
+                    <Route path="/confirm-email/:id">
+                      <ConfirmEmailPage />
                     </Route>
                     <Route path="/">
                       <Homepage />
