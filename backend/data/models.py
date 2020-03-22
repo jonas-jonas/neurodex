@@ -23,6 +23,16 @@ class User(Base):
     email = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     roles = relationship("Role", secondary=user_role_table, back_populates="users")
+    user_metadata = relationship("UserMetadata", back_populates="user", uselist=False)
+
+
+class UserMetadata(Base):
+
+    __tablename__ = "user_metadata"
+
+    user_id = Column(String, ForeignKey('user.id', ondelete='CASCADE'), primary_key=True)
+    confirmation_id = Column(Text, nullable=True)
+    user = relationship("User", back_populates="user_metadata")
 
 
 class Role(Base):
