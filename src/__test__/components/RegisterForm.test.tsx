@@ -1,4 +1,5 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+// @ts-nocheck see https://github.com/testing-library/react-testing-library/issues/610
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RegisterForm from '../../components/RegisterForm';
@@ -40,13 +41,14 @@ describe('RegisterForm', () => {
   it('submit button is enabled and triggers register and authenticate with valid data', async () => {
     const setLoginPageState = jest.fn();
     const registerUser = jest.fn();
-    registerUser.mockResolvedValue({
-      status: 200
-    });
-    const authenticate = jest.fn();
+    registerUser.mockResolvedValue(
+      new Response({
+        status: 200
+      })
+    );
     render(
       <Router>
-        <MockAuthContextProvider registerUser={registerUser} authenticate={authenticate}>
+        <MockAuthContextProvider registerUser={registerUser}>
           <RegisterForm setLoginPageState={setLoginPageState} />
         </MockAuthContextProvider>
       </Router>
@@ -76,7 +78,8 @@ describe('RegisterForm', () => {
     expect(registerUser.mock.calls[0][1]).toEqual('some-email@test.invalid');
     expect(registerUser.mock.calls[0][2]).toEqual('some-password');
     expect(registerUser.mock.calls[0][3]).toEqual('some-password');
-    expect(authenticate.mock.calls.length).toBe(1);
+    expect(screen.getByText('Registrierung erfolgreich')).toBeDefined();
+    expect(screen.getByText('some-email@test.invalid')).toBeDefined();
   });
 
   it('error message is displayed, when registerUser fails', async () => {

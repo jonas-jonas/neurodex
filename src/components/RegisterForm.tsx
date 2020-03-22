@@ -1,20 +1,19 @@
+import { faCheckCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import ky from 'ky';
 import React, { useState } from 'react';
 import useForm from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { useUserContext } from '../contexts/auth';
 import { LoginPageState } from '../pages/LoginPage';
 import FormField from './utility/FormField';
-import { faCheckCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type RegisterFormProps = {
   setLoginPageState: (value: LoginPageState) => any;
 };
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
-  const { register, handleSubmit, errors, setError, formState, getValues } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
   const { registerUser } = useUserContext();
   const [isFinished, setFinished] = useState(false);
   const [email, setEmail] = useState('');
@@ -42,6 +41,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
       }
     }
   };
+  // console.log(isFinished);
   if (isFinished) {
     return (
       <div className="text-center">
