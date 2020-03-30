@@ -8,6 +8,7 @@ import { PageContext } from '../../contexts/pagecontext';
 type DashboardData = {
   userCount: number;
   modelCount: number;
+  torchVersion: string;
 };
 
 const Dashboard: React.FC = () => {
@@ -32,7 +33,7 @@ const Dashboard: React.FC = () => {
       <div className="flex">
         <Link
           to="/admin/users"
-          className="bg-white rounded p-5 hover:shadow hover:bg-gray-100 transition-all duration-300 m-2"
+          className="bg-white rounded p-5 shadow hover:bg-gray-100 transition-all duration-300 m-2"
         >
           <h2 className="text-xl font-bold">Benutzer</h2>
           {!loading && <h2 className="">{data?.userCount} registrierte Benutzer</h2>}
@@ -40,17 +41,27 @@ const Dashboard: React.FC = () => {
         </Link>
         <Link
           to="/admin/courses"
-          className="bg-white rounded p-5 hover:shadow hover:bg-gray-100 transition-all duration-300 m-2"
+          className="bg-white rounded p-5 shadow hover:bg-gray-100 transition-all duration-300 m-2"
         >
           <h2 className="text-xl font-bold">Kurse</h2>
           {!loading && <h2 className="">30 laufende Kurse</h2>}
           {loading && <FontAwesomeIcon icon={faSpinner} spin />}
         </Link>
-        <div className="bg-white rounded p-5 m-2">
+        <div className="bg-white rounded p-5 m-2 shadow">
           <h2 className="text-xl font-bold">Modelle</h2>
           {!loading && <h2 className="">{data?.modelCount} erstellte Modelle</h2>}
           {loading && <FontAwesomeIcon icon={faSpinner} spin />}
         </div>
+      </div>
+      <div className="flex">
+        <Link
+          to="/admin/torch"
+          className="bg-white rounded p-5 shadow hover:bg-gray-100 transition-all duration-300 m-2"
+        >
+          <h2 className="text-xl font-bold">PyTorch</h2>
+          {!loading && <h2 className="">Version: {data?.torchVersion}</h2>}
+          {loading && <FontAwesomeIcon icon={faSpinner} spin />}
+        </Link>
       </div>
     </div>
   );

@@ -109,7 +109,7 @@ class LayerTypeParameter(Base):
     layer_type_id = Column(Text, ForeignKey('layer_type.id', ondelete="CASCADE"), primary_key=True)
     name = Column(Text, nullable=False, primary_key=True,)
     type = Column(Text, nullable=False)
-    default_value = Column(Text, nullable=False)
+    default_value = Column(Text, nullable=True)
 
 
 class Function(Base):
