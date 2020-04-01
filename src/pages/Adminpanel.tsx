@@ -1,11 +1,31 @@
-import React from 'react';
+import { faDiscourse } from '@fortawesome/free-brands-svg-icons';
+import { faColumns, faLocationArrow, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, useEffect } from 'react';
 import { Link, Route } from 'react-router-dom';
 import Dashboard from './admin/Dashboard';
-import { faColumns, faUsersCog, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDiscourse } from '@fortawesome/free-brands-svg-icons';
+import Torch from './admin/Torch';
+import { api } from '../util/api';
+
+export type DashboardData = {
+  userCount: number;
+  modelCount: number;
+  torchVersion: string;
+};
 
 const Adminpanel: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<DashboardData>();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const statsResponse = await api.get('admin/stats');
+      setData(await statsResponse.json());
+      setLoading(false);
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="container py-3 flex">
       <div>
@@ -40,9 +60,9 @@ const Adminpanel: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="px-4">
+      <div className="px-4 w-full">
         <Route exact path="/admin">
-          <Dashboard />
+          <Dashboard data={data} loading={loading} />
         </Route>
         <Route path="/admin/users">
           <h1 className="text-4xl font-serif">Users</h1>
@@ -51,7 +71,7 @@ const Adminpanel: React.FC = () => {
           <h1 className="text-4xl font-serif">Courses</h1>
         </Route>
         <Route path="/admin/torch">
-          <h1 className="text-4xl font-serif">PyTorch</h1>
+          <Torch data={data} />
         </Route>
       </div>
     </div>

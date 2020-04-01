@@ -1,6 +1,6 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPassport, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { MouseEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import CodeBlock from '../components/modelpage/CodeBlock';
 import ForwardPanel from '../components/modelpage/ForwardPanel';
@@ -8,13 +8,14 @@ import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { Panel } from '../components/utility/Panel';
 import { ModelContextProvider, useModelContext } from '../contexts/modelcontext';
+import { PageContext } from '../contexts/pagecontext';
 import { LayerType } from '../data/models';
 import { api } from '../util/api';
-import { PageContext } from '../contexts/pagecontext';
 
 export const Modelpage: React.FC = () => {
   const { model, availableLayers, updateModel } = useModelContext();
 
+  const [expandedLayer, setExpandedLayer] = useState<String>();
   const [addingLayer, setAddingLayer] = useState(false);
 
   const handleLayerAdd = async (id: string) => {
@@ -24,6 +25,14 @@ export const Modelpage: React.FC = () => {
       layerTypeId: id
     });
     setAddingLayer(false);
+  };
+
+  const handleExpandCard = (id: string) => {
+    if (expandedLayer === id) {
+      setExpandedLayer(undefined);
+    } else {
+      setExpandedLayer(id);
+    }
   };
 
   return (
@@ -36,7 +45,15 @@ export const Modelpage: React.FC = () => {
           </div>
           <div className="p-2 flex-grow overflow-y-auto">
             {availableLayers.map(layerType => {
-              return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
+              return (
+                <LayerCard
+                  layerType={layerType}
+                  key={layerType.id}
+                  onAdd={handleLayerAdd}
+                  expandCard={handleExpandCard}
+                  isExpanded={expandedLayer === layerType.id}
+                />
+              );
             })}
             {addingLayer && (
               <div className="w-full bg-white opacity-75 absolute inset-0">
@@ -57,19 +74,57 @@ export const Modelpage: React.FC = () => {
 type LayerCardProps = {
   layerType: LayerType;
   onAdd: (id: string) => void;
+  expandCard: (id: string) => void;
+  isExpanded: boolean;
 };
 
-export const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
+export const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd, expandCard, isExpanded }) => {
+  const addRef = useRef<HTMLButtonElement>(null);
+  const toggle = (e: MouseEvent<HTMLElement>) => {
+    if (e.target !== addRef.current && !addRef.current?.contains(e.target as HTMLElement)) {
+      expandCard(layerType.id);
+    }
+  };
+
   const handleAdd = () => {
     onAdd(layerType.id);
   };
 
   return (
-    <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
-      <h2 className="font-mono mr-1">{layerType.id}</h2>
-      <button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd} title="Zum Modell hinzufügen">
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
+    <div className="shadow mb-2">
+      <div
+        onClick={toggle}
+        className="bg-blue-800 text-white p-3 rounded select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center relative group pr-10 w-full focus:outline-none cursor-pointer"
+      >
+        <h2 className="font-mono mr-1 truncate">{layerType.id}</h2>
+        <button
+          className="px-2 hover:bg-blue-700 focus:outline-none absolute right-0 mr-3 group-hover:opacity-100 opacity-0"
+          onClick={handleAdd}
+          title="Zum Modell hinzufügen"
+          ref={addRef}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </button>
+      </div>
+      {isExpanded && (
+        <>
+          <div className="flex justify-evenly rounded-b-sm">
+            <button onClick={handleAdd} className="p-4 hover:bg-blue-200 w-full flex flex-col items-center">
+              <FontAwesomeIcon icon={faPlus} />
+              <span>Benutzen</span>
+            </button>
+            <a
+              href={'https://pytorch.org/docs/stable/nn.html#' + layerType.id}
+              className="p-4 hover:bg-blue-200 w-full flex flex-col items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FontAwesomeIcon icon={faPassport} />
+              <span>Dokumentation</span>
+            </a>
+          </div>
+        </>
+      )}
     </div>
   );
 };

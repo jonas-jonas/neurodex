@@ -1,32 +1,15 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState, useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../../util/api';
-import { PageContext } from '../../contexts/pagecontext';
+import { DashboardData } from '../Adminpanel';
 
-type DashboardData = {
-  userCount: number;
-  modelCount: number;
-  torchVersion: string;
+export type DashboardProps = {
+  data?: DashboardData;
+  loading?: boolean;
 };
 
-const Dashboard: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<DashboardData>();
-  const { setPageTitle } = useContext(PageContext);
-
-  useEffect(() => {
-    setPageTitle('Admin Dashboard');
-    const fetchStats = async () => {
-      const statsResponse = await api.get('admin/stats');
-      setData(await statsResponse.json());
-      setLoading(false);
-    };
-    fetchStats();
-    return () => setPageTitle('');
-  }, [setPageTitle]);
-
+const Dashboard: React.FC<DashboardProps> = ({ data, loading }) => {
   return (
     <div className="">
       <h1 className="text-4xl font-serif">Admin Dashboard</h1>
