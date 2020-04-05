@@ -1,4 +1,12 @@
-import { faExternalLinkAlt, faTrash, faCode } from '@fortawesome/free-solid-svg-icons';
+import {
+  faExternalLinkAlt,
+  faTrash,
+  faCode,
+  faChevronLeft,
+  faChevronRight,
+  faPassport,
+  faExternalLinkSquareAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -22,7 +30,7 @@ const Torch: React.FC<DashboardProps> = ({ data }) => {
      */
     const fetchLayers = async () => {
       try {
-        const response = await api.get('layers');
+        const response = await api.get('admin/layers');
         const layers = await response.json();
         setAvailableLayers(layers);
       } catch (error) {
@@ -79,46 +87,48 @@ const Torch: React.FC<DashboardProps> = ({ data }) => {
           </span>
         )}
       </h1>
+      <hr />
       <div className="flex">
         <button
-          className="font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mr-2"
+          className="font-bold py-1 px-5 rounded focus:outline-none bg-blue-800 text-white font-bold focus:shadow-outline hover:bg-blue-700 mr-2 shadow"
           onClick={triggerImport}
         >
           Reimport Layer
         </button>
-        <button
-          disabled
-          className="font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mr-2"
-        >
-          Reimport Functions
-        </button>
       </div>
       {isLoading && <LoadingIndicator text="Lädt Layer" />}
       {!isLoading && (
-        <table className="table-auto w-full">
+        <table className="table-auto w-full mt-2">
           <thead className="text-left">
-            <tr>
-              <th className="px-4 py-2 text-gray-600 font-bold uppercase">Name</th>
-              <th className="px-4 py-2 text-gray-600 font-bold uppercase">Benutzt in</th>
-              <th className="px-4 py-2 text-gray-600 font-bold uppercase">Aktionen</th>
+            <tr className="rounded-t bg-white border border-gray-500">
+              <th className="px-4 py-2 font-bold uppercase rounded-tl">Name</th>
+              <th className="px-4 py-2 font-bold uppercase">Benutzt in</th>
+              <th className="px-4 py-2 font-bold uppercase rounded-tr">Aktionen</th>
             </tr>
           </thead>
           <tbody>
-            {availableLayers.map((layer: LayerType, index: number) => {
-              const rowClasses = classNames('hover:bg-gray-300', { 'bg-white': index % 2 === 0 });
+            {availableLayers.map((layer: LayerType) => {
               return (
-                <tr className={rowClasses} key={layer.id}>
-                  <td className="border border-gray-500 px-4 py-2">{layer.layerName}</td>
-                  <td className="border border-gray-500 px-4 py-2">3 Modellen</td>
-                  <td className="border border-gray-500 px-4 py-2">
+                <tr className="hover:bg-gray-200 bg-white" key={layer.id}>
+                  <td className="border-b border-gray-500 px-4 py-2 border-l">
+                    <a
+                      className="hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={'https://pytorch.org/docs/stable/nn.html#' + layer.id}
+                    >
+                      {layer.layerName}
+                      <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" className="ml-1" />
+                    </a>
+                  </td>
+                  <td className="border-b border-gray-500 px-4 py-2">3 Modellen</td>
+                  <td className="border-b border-gray-500 px-4 py-2 border-r">
                     <button
-                      className="px-2 hover:underline hover:text-gray-900 rounded"
+                      className="inline-block px-2 rounded duration-100 transition-colors hover:text-white border border-error hover:bg-error text-sm font-bold mr-2"
                       onClick={() => deleteLayer(layer.id)}
                     >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                    <button className="px-2 hover:underline hover:text-gray-900 rounded">
-                      <FontAwesomeIcon icon={faCode} />
+                      <FontAwesomeIcon icon={faTrash} className="mr-1" />
+                      Löschen
                     </button>
                   </td>
                 </tr>
