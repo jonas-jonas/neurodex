@@ -1,4 +1,4 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faChevronCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -21,35 +21,18 @@ export const Modelpage: React.FC = () => {
     setAddingLayer(true);
     await updateModel({
       type: 'ADD_LAYER',
-      layerTypeId: id
+      layerTypeId: id,
     });
     setAddingLayer(false);
   };
 
   return (
     <div className="flex h-full flex-auto pb-2">
-      <div className="w-7/12 flex">
-        <Panel>
-          <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center shadow">
-            <h2 className="text-lg font-bold">Layers</h2>
-            <span className="text-sm italic text-gray-800 font-semibold">{availableLayers.length} Layer verfügbar</span>
-          </div>
-          <div className="p-2 flex-grow overflow-y-auto">
-            {availableLayers.map(layerType => {
-              return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
-            })}
-            {addingLayer && (
-              <div className="w-full bg-white opacity-75 absolute inset-0">
-                <LoadingIndicator text="Updating..." />
-              </div>
-            )}
-          </div>
-        </Panel>
-        <ModelLayerPanel />
-
-        <ForwardPanel />
+      <div className="flex h-64">
+        <button className="">
+          <FontAwesomeIcon icon={faChevronCircleLeft} />
+        </button>
       </div>
-      <CodeBlock model={model} />
     </div>
   );
 };
