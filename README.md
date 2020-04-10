@@ -1,10 +1,9 @@
+# <img src="https://user-images.githubusercontent.com/5540255/78991996-979a1a80-7b3a-11ea-95d5-9436a4645626.png" width="25" /> NeuroDEX
 
-<img src="https://user-images.githubusercontent.com/5540255/72426228-a1092600-3789-11ea-9722-0be1cd5a5d47.png" width="350" />
-
-[![neurodex.app](https://badgen.net/badge/neurodex.app/up/orange)](https://neurodex.app)
 [![Closed Issues](https://badgen.net/github/closed-issues/jonas-jonas/neurodex)](https://github.com/jonas-jonas/neurodex/issues)
 [![Closed PRs](https://badgen.net/github/closed-prs/jonas-jonas/neurodex)](https://github.com/jonas-jonas/neurodex/pulls)
 [![Code Coverage](https://badgen.net/codecov/c/github/jonas-jonas/neurodex/)](https://codecov.io/gh/jonas-jonas/neurodex)
+[![Docker](https://badgen.net/docker/size/neurodex/neurodex/v0.1)](https://hub.docker.com/repository/docker/neurodex/neurodex)
 
 ---
 
@@ -39,7 +38,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
   web:
-    image: neurodex/neurodex:latest
+    image: neurodex/neurodex:v0.1 # change the version to the latest on https://hub.docker.com/repository/docker/neurodex/neurodex
     ports:
       - 8081:8081 # change the first number to a unused port on the host machine
     environment:
@@ -52,6 +51,8 @@ services:
     links:
       - "postgres:postgres.local"
 ```
+
+For all versions of the image see https://hub.docker.com/repository/docker/neurodex/neurodex
 
 This will:
 
