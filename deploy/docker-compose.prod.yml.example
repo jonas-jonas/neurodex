@@ -1,0 +1,19 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  web:
+    image: neurodex/neurodex:latest
+    ports:
+      - 8081:8081
+    environment:
+      - DATABASE_URL=postgresql://postgres:docker@postgres.local/postgres
+      - JWT_SECRET_KEY=changethis!! # a key the JWT token creator uses to encrypt the keys
+      - FLASK_ENV=production # Sets flask to production mode
+      - SENGRID_API_KEY= # Used for sending emails, required for sign up to work
+    depends_on:
+      - postgres
+    links:
+      - "postgres:postgres.local"
