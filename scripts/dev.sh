@@ -7,7 +7,7 @@ if [ -x "$(command -v docker-compose.exe)" ]; then
   echo "Using docker-compose.exe"
 fi
 
-eval $DOCKER_COMPOSE -f ./docker-compose.local.yml up -d
+eval $DOCKER_COMPOSE -f ./deploy/docker-compose.local.yml up -d
 
 if [ -z "${VIRTUAL_ENV}" ]; then
   source ./neurodex_env/bin/activate
