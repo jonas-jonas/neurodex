@@ -5,7 +5,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
   web:
-    image: neurodex/neurodex:latest
+    image: neurodex/neurodex:v0.1
     ports:
       - 8081:8081
     environment:
