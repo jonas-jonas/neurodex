@@ -16,3 +16,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: deploy/Dockerfile
           tag_semver: true
+          tag_names: true
