@@ -28,7 +28,8 @@ WORKDIR /app
 
 # copy project
 COPY ./backend /app/backend
+COPY ./deploy/config /app/config
 COPY --from=node-compile-image /app/build /app/build
 
 EXPOSE 8081
-ENTRYPOINT gunicorn backend.main:app -b 0.0.0.0:8081
+ENTRYPOINT gunicorn backend.main:app -c /app/config/gunicorn.conf.py

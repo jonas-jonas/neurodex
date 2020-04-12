@@ -18,4 +18,4 @@ export DATABASE_URL="postgresql://postgres:docker@localhost:5432/postgres"
 source ./.env.local
 export SENDGRID_API_KEY=$SENDGRID_API_KEY
 
-gunicorn backend.main:app -b localhost:8081 --reload --log-level=DEBUG
+gunicorn backend.main:app -c backend/gunicorn.py

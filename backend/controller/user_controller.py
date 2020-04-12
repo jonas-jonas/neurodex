@@ -3,7 +3,7 @@ import uuid
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import current_user, jwt_required
 
-from backend import bcrypt, db
+from backend import bcrypt, db, app
 from backend.data.models import User, UserMetadata
 from backend.data.schema import user_schema, users_schema
 from backend.util.decorators import needs_role
@@ -63,8 +63,11 @@ def post_user():
     try:
         send_confirmation_email(confirmation_id, email, data['name'])
     except Exception as error:
-        print(error.body)
-        return jsonify({'message': 'Keine gültige E-Mail Adresse', 'field': 'email'}), 400
+        app.logger.error(error.body)
+        return jsonify({
+            'message': 'Die Email konnte nicht gesendet werden. Bitte versuche es später erneut.',
+            'field': 'email'
+        }), 400
 
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 

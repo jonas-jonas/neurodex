@@ -1,3 +1,4 @@
+import logging
 import os
 
 from flask import Flask
@@ -14,6 +15,8 @@ STATIC_DIR = os.path.join(BUILD_ROOT, 'static')
 app = Flask(__name__, static_folder=STATIC_DIR)
 Compress(app)
 bcrypt = Bcrypt(app)
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers = gunicorn_logger.handlers
 
 profile = os.environ.get('FLASK_ENV')
 if profile == "development":

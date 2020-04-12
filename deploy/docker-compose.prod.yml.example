@@ -15,5 +15,7 @@ services:
       - SENGRID_API_KEY= # Used for sending emails, required for sign up to work
     depends_on:
       - postgres
+    volumes:
+       - ./logs:/app/logs
     links:
       - "postgres:postgres.local"

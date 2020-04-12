@@ -37,6 +37,8 @@ services:
     image: postgres:latest
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./postgres:/var/lib/postgresql/data # change the first part to a path on your local machine
   web:
     image: neurodex/neurodex:v0.1 # change the version to the latest on https://hub.docker.com/repository/docker/neurodex/neurodex
     ports:
@@ -48,6 +50,8 @@ services:
       - SENGRID_API_KEY= # Used for sending emails, required for sign up to work
     depends_on:
       - postgres
+    volumes:
+      - ./logs:/app/logs # change the first part to a path on your local machine
     links:
       - "postgres:postgres.local"
 ```
