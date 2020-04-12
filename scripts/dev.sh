@@ -7,7 +7,7 @@ if [ -x "$(command -v docker-compose.exe)" ]; then
   echo "Using docker-compose.exe"
 fi
 
-eval $DOCKER_COMPOSE -f ./docker-compose.local.yml up -d
+eval $DOCKER_COMPOSE -f ./deploy/docker-compose.local.yml up -d
 
 if [ -z "${VIRTUAL_ENV}" ]; then
   source ./neurodex_env/bin/activate
@@ -18,4 +18,4 @@ export DATABASE_URL="postgresql://postgres:docker@localhost:5432/postgres"
 source ./.env.local
 export SENDGRID_API_KEY=$SENDGRID_API_KEY
 
-gunicorn backend.main:app -b localhost:8081 --reload --log-level=DEBUG
+gunicorn backend.main:app -c backend/gunicorn.py

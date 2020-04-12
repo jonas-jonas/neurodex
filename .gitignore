@@ -27,3 +27,4 @@ venv
 neurodex_env
 .ropeproject
 postgres
+logs
