@@ -1,14 +1,14 @@
 import { faGithubSquare } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useUserContext } from '../../contexts/auth';
-import { PageContext } from '../../contexts/pagecontext';
+import { useAuth } from '../../contexts/AuthProvider';
+import { usePage } from '../../contexts/PageProvider';
 import UserMenu from './UserMenu';
 
 const Navigation: React.FC = () => {
-  const { pageTitle } = useContext(PageContext);
-  const { isAuthenticated, user, deauthenticate } = useUserContext();
+  const { pageTitle } = usePage();
+  const { isAuthenticated, user, deauthenticate } = useAuth();
   const history = useHistory();
 
   /**

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModelContext } from '../../contexts/modelcontext';
+import { ModelContext } from '../../contexts/ModelProvider';
 import { ModelLayer, Function, ModelFunction, LayerType } from '../../data/models';
 import { Actions } from '../../util/api';
 
@@ -18,12 +18,12 @@ export const mockModel = {
     id: 'test-user-id',
     email: 'test-user',
     roles: [],
-    name: 'some-user-name'
+    name: 'some-user-name',
   },
   createdAt: '2019-12-30 18:13:18.889242',
   updatedAt: '2019-12-30 18:13:18.889242',
   layers: [],
-  functions: []
+  functions: [],
 };
 
 const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
@@ -32,7 +32,7 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
   functions,
   updateModel,
   activationFunctions,
-  availableLayers
+  availableLayers,
 }) => {
   return (
     <ModelContext.Provider
@@ -40,12 +40,12 @@ const MockModelContextProvider: React.FC<MockModelContextProvider> = ({
         model: {
           ...mockModel,
           functions: functions || [],
-          layers: layers || []
+          layers: layers || [],
         },
         updateModel: updateModel || jest.fn(),
         setModel: () => {},
         availableLayers: availableLayers || [],
-        activationFunctions: activationFunctions || []
+        activationFunctions: activationFunctions || [],
       }}
     >
       {children}

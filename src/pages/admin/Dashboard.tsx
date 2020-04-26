@@ -1,9 +1,9 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { usePage } from '../../contexts/PageProvider';
 import { api } from '../../util/api';
-import { PageContext } from '../../contexts/pagecontext';
 
 type DashboardData = {
   userCount: number;
@@ -13,7 +13,7 @@ type DashboardData = {
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData>();
-  const { setPageTitle } = useContext(PageContext);
+  const { setPageTitle } = usePage();
 
   useEffect(() => {
     setPageTitle('Admin Dashboard');

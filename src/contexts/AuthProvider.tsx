@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { User } from '../data/models';
 import { api } from '../util/api';
+import LoadingIndicator from '../components/utility/LoadingIndicator';
 
 type AuthContextData = {
   user?: User;
@@ -57,11 +58,11 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       // TODO: Check if the user is already logged in
       const data = {
         email,
-        password
+        password,
       };
       try {
         const response = await api.post('auth/login', {
-          json: data
+          json: data,
         });
         if (response.status === 200) {
           const authenticationResponse = await response.json();
@@ -103,7 +104,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       name,
       email,
       password,
-      repeatPassword
+      repeatPassword,
     };
 
     return await api.post('users', { json: data });
@@ -112,7 +113,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   const updateData = async (email: string, name: string): Promise<Response | undefined> => {
     const data = {
       email,
-      name
+      name,
     };
     try {
       const response = await api.put('users/update/data', { json: data });
@@ -127,7 +128,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     const data = {
       oldPassword,
       password,
-      repeatPassword
+      repeatPassword,
     };
     try {
       return await api.put('users/update/password', { json: data });
@@ -135,6 +136,10 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       return error.response;
     }
   };
+
+  if (isLoadingUser) {
+    return <LoadingIndicator text="Lädt..." />;
+  }
 
   return (
     <AuthContext.Provider
@@ -146,7 +151,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
         registerUser,
         isLoadingUser,
         updateData,
-        updatePassword
+        updatePassword,
       }}
     >
       {children}
@@ -154,7 +159,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useUserContext = () => {
+export const useAuth = () => {
   const context = React.useContext(AuthContext);
   if (!context) {
     // this is especially useful in TypeScript so you don't need to be checking for null all the time

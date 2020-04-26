@@ -3,7 +3,7 @@ import { faCog, faColumns, faSignOutAlt, faUsersCog } from '@fortawesome/free-so
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useUserContext } from '../../contexts/auth';
+import { useAuth } from '../../contexts/AuthProvider';
 
 type UserMenuPopupProps = {
   onLogout: () => void;
@@ -12,7 +12,7 @@ type UserMenuPopupProps = {
 
 const UserMenuPopup: React.FC<UserMenuPopupProps> = ({ onLogout, toggleMenu }) => {
   const menuRef = useRef<HTMLDivElement>(null);
-  const { user } = useUserContext();
+  const { user } = useAuth();
 
   useEffect(() => {
     const closePopup = (e: MouseEvent) => {

@@ -1,13 +1,13 @@
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import React, { useContext, useEffect, useRef } from 'react';
-import { PageContext } from '../contexts/pagecontext';
+import React, { useEffect, useRef } from 'react';
+import { usePage } from '../contexts/PageProvider';
 import AccountSettingsPage from './account/AccountSettingsPage';
 
 const AccountPage: React.FC = () => {
   const accountRef = useRef<HTMLDivElement>(null);
-  const { setPageTitle } = useContext(PageContext);
+  const { setPageTitle } = usePage();
 
   useEffect(() => {
     setPageTitle('Einstellungen');

@@ -5,7 +5,7 @@ import React from 'react';
 import useForm from 'react-hook-form';
 import { toast } from 'react-toastify';
 import FormField from '../../components/utility/FormField';
-import { useUserContext } from '../../contexts/auth';
+import { useAuth } from '../../contexts/AuthProvider';
 
 const AccountSettingsPage = React.forwardRef((props, ref: React.Ref<HTMLDivElement>) => {
   return (
@@ -18,7 +18,7 @@ const AccountSettingsPage = React.forwardRef((props, ref: React.Ref<HTMLDivEleme
 });
 
 const UserDataChangeForm = () => {
-  const { user, updateData } = useUserContext();
+  const { user, updateData } = useAuth();
   const { register, handleSubmit, errors, formState, reset, setError } = useForm({ mode: 'onBlur' });
 
   const handleDataUpdate = async (values: Record<string, any>) => {
@@ -35,7 +35,7 @@ const UserDataChangeForm = () => {
   const loginButtonClasses = classnames(
     'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mr-2',
     {
-      'opacity-50 cursor-not-allowed': !formState.isValid || !formState.dirty
+      'opacity-50 cursor-not-allowed': !formState.isValid || !formState.dirty,
     }
   );
 
@@ -74,7 +74,7 @@ const UserDataChangeForm = () => {
 };
 
 const PasswordChangeForm = () => {
-  const { updatePassword } = useUserContext();
+  const { updatePassword } = useAuth();
   const { register, handleSubmit, errors, reset, formState, setError } = useForm({ mode: 'onChange' });
 
   const handleDataUpdate = async (values: Record<string, any>) => {
@@ -91,7 +91,7 @@ const PasswordChangeForm = () => {
   const loginButtonClasses = classnames(
     'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 mr-2',
     {
-      'opacity-50 cursor-not-allowed': !formState.isValid || !formState.dirty
+      'opacity-50 cursor-not-allowed': !formState.isValid || !formState.dirty,
     }
   );
   return (

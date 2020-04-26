@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import { useModelContext } from '../../contexts/modelcontext';
+import { useModelContext } from '../../contexts/ModelProvider';
 import AbstractModal, { useOverlayContext } from '../utility/AbstractModal';
 
 type LayersPopupProps = {};

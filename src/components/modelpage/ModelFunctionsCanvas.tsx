@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import useForm from 'react-hook-form';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { useModelContext } from '../../contexts/modelcontext';
+import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelFunction } from '../../data/models';
 import AbstractModal, { OverlayContextProvider, useOverlayContext } from '../utility/AbstractModal';
 

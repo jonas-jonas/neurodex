@@ -1,13 +1,13 @@
 import { faChevronCircleLeft, faCode, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DateTime } from 'luxon';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import ModelFunctionsCanvas from '../components/modelpage/ModelFunctionsCanvas';
 import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
-import { ModelContextProvider, useModelContext } from '../contexts/modelcontext';
-import { PageContext } from '../contexts/pagecontext';
+import { ModelContextProvider, useModelContext } from '../contexts/ModelProvider';
+import { usePage } from '../contexts/PageProvider';
 import { api } from '../util/api';
 
 export const Modelpage: React.FC = () => {
@@ -78,7 +78,7 @@ export const Modelpage: React.FC = () => {
 const ModelpageWrapper = () => {
   const { modelId } = useParams();
   const [model, setModel] = useState();
-  const { setPageTitle } = useContext(PageContext);
+  const { setPageTitle } = usePage();
 
   useEffect(() => {
     /**

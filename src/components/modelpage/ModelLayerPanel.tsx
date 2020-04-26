@@ -1,7 +1,7 @@
 import { faLayerGroup, faPlus, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import { useModelContext } from '../../contexts/modelcontext';
+import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelLayer } from '../../data/models';
 import { OverlayContextProvider } from '../utility/AbstractModal';
 import LayersModal from './LayersModal';

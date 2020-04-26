@@ -2,12 +2,12 @@ import classnames from 'classnames';
 import React from 'react';
 import useForm from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { useUserContext } from '../contexts/auth';
+import { useAuth } from '../contexts/AuthProvider';
 import FormField from './utility/FormField';
 
 const LoginForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
-  const { authenticate } = useUserContext();
+  const { authenticate } = useAuth();
 
   /**
    * Uses the current email and password to authenticate with the server
@@ -26,7 +26,7 @@ const LoginForm: React.FC = () => {
   const loginButtonClasses = classnames(
     'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
     {
-      'opacity-50 cursor-not-allowed': !formState.isValid
+      'opacity-50 cursor-not-allowed': !formState.isValid,
     }
   );
   return (

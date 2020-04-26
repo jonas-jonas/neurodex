@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import ky from 'ky';
 import React, { useState } from 'react';
 import useForm from 'react-hook-form';
-import { useUserContext } from '../contexts/auth';
+import { useAuth } from '../contexts/AuthProvider';
 import { LoginPageState } from '../pages/LoginPage';
 import FormField from './utility/FormField';
 
@@ -14,7 +14,7 @@ type RegisterFormProps = {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
-  const { registerUser } = useUserContext();
+  const { registerUser } = useAuth();
   const [isFinished, setFinished] = useState(false);
   const [email, setEmail] = useState('');
 

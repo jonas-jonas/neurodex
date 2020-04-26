@@ -1,17 +1,14 @@
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import { useUserContext } from '../contexts/auth';
 
 export enum LoginPageState {
   LOGIN,
-  REGISTER
+  REGISTER,
 }
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated } = useUserContext();
   const [loginPageState, setLoginPageState] = useState<LoginPageState>(LoginPageState.LOGIN);
 
   useEffect(() => {
@@ -20,10 +17,6 @@ const LoginPage: React.FC = () => {
     }
   }, []);
 
-  // If the user is already authenticated, he shouldn't see this page
-  if (isAuthenticated) {
-    return <Redirect to="/" />;
-  }
   return (
     <div className="w-full max-w-xs mx-auto pt-8">
       <div className="bg-white shadow-md rounded mb-4 mx-auto">
@@ -57,7 +50,7 @@ type LoginPageStateButtonProps = {
 const LoginPageStateButton: React.FC<LoginPageStateButtonProps> = React.memo(
   ({ state, currentState, onClick, children }) => {
     const classes = classnames('w-1/2 py-4 font-bold tracking-tight text-gray-700 focus:outline-none', {
-      'bg-gray-100 shadow-inner': state !== currentState
+      'bg-gray-100 shadow-inner': state !== currentState,
     });
 
     const handleOnClick = () => {

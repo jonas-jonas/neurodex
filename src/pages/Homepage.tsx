@@ -2,17 +2,15 @@ import { faArrowRight, faPlus, faSpinner } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DateTime, Settings } from 'luxon';
 import React, { useEffect, useState } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
-import { useUserContext } from '../contexts/auth';
 import { Model } from '../data/models';
 import { SWALClasses } from '../util/alert';
 import { api } from '../util/api';
 Settings.defaultLocale = 'de';
 
 const Homepage: React.FC = () => {
-  const { isAuthenticated } = useUserContext();
   const [creatingNewModel, setCreatingNewModel] = useState(false);
   const history = useHistory();
   const [models, setModels] = useState<Model[]>([]);
@@ -28,10 +26,8 @@ const Homepage: React.FC = () => {
       }
       setLoading(false);
     };
-    if (isAuthenticated) {
-      loadModels();
-    }
-  }, [isAuthenticated]);
+    loadModels();
+  }, []);
 
   /**
    * Handles the click on the "new" button
@@ -46,7 +42,7 @@ const Homepage: React.FC = () => {
       customClass: SWALClasses,
       inputAttributes: {
         autocapitalize: 'off',
-        placeholder: 'Name'
+        placeholder: 'Name',
       },
       inputValidator: (value: string) => {
         // if (!value.match(/([A-Z][a-z0-9]+)+/)) {
@@ -57,11 +53,11 @@ const Homepage: React.FC = () => {
         }
         return '';
       },
-      confirmButtonText: 'Erstellen'
+      confirmButtonText: 'Erstellen',
     });
     if (result.value) {
       const data = {
-        name: result.value
+        name: result.value,
       };
       const response = await api.post('models', { json: data });
       if (response.status === 200) {
@@ -72,9 +68,6 @@ const Homepage: React.FC = () => {
     setCreatingNewModel(false);
   };
 
-  if (!isAuthenticated) {
-    return <Redirect to="/login" />;
-  }
   return (
     <div className="container py-3">
       <div className="flex justify-between items-center ">

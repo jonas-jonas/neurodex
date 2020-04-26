@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthContext } from '../../contexts/auth';
+import { AuthContext } from '../../contexts/AuthProvider';
 import { User } from '../../data/models';
 
 type AuthContextData = {
@@ -16,7 +16,7 @@ export const MockAuthContextProvider: React.FC<AuthContextData> = ({
   isAuthenticated,
   authenticate,
   deauthenticate,
-  registerUser
+  registerUser,
 }) => {
   return (
     <AuthContext.Provider
@@ -28,7 +28,7 @@ export const MockAuthContextProvider: React.FC<AuthContextData> = ({
         registerUser: registerUser || jest.fn(),
         isLoadingUser: true,
         updateData: jest.fn(),
-        updatePassword: jest.fn()
+        updatePassword: jest.fn(),
       }}
     >
       {children}
