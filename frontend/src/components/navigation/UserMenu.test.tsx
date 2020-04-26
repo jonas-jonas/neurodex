@@ -1,18 +1,15 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import UserMenu from './UserMenu';
-import { User } from '../../data/models';
 import { MockAuthContextProvider } from '../../contexts/authcontext.mock';
+import generate from '../../util/generate';
+import UserMenu from './UserMenu';
 afterEach(cleanup);
 
 it('UserMenu section displays username', async () => {
-  const user: User = {
-    roles: [],
-    id: '3',
-    email: 'email@test.com',
+  const user = generate.user({
     name: 'user-name',
-  };
+  });
   render(
     <Router>
       <UserMenu onLogout={jest.fn()} user={user} />
@@ -23,12 +20,7 @@ it('UserMenu section displays username', async () => {
 });
 
 it('UserMenu expand triggers expand', async () => {
-  const user: User = {
-    roles: [],
-    id: '3',
-    email: 'email@test.com',
-    name: 'username',
-  };
+  const user = generate.user();
   render(
     <Router>
       <MockAuthContextProvider>
