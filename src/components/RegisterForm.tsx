@@ -22,7 +22,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
   const loginButtonClasses = classNames(
     'font-bold py-1 px-3 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
     {
-      'opacity-50 cursor-not-allowed': !(formState.dirty && formState.isValid)
+      'opacity-50 cursor-not-allowed': !(formState.dirty && formState.isValid),
     }
   );
 
@@ -41,7 +41,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
       }
     }
   };
-  // console.log(isFinished);
   if (isFinished) {
     return (
       <div className="text-center">

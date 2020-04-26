@@ -19,7 +19,7 @@ describe('dispatchModelApi', () => {
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'ADD_LAYER',
-      layerTypeId: '3'
+      layerTypeId: '3',
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers');
@@ -32,7 +32,7 @@ describe('dispatchModelApi', () => {
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'DELETE_LAYER',
-      modelLayerId: 3
+      modelLayerId: 3,
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3');
@@ -46,7 +46,7 @@ describe('dispatchModelApi', () => {
       type: 'UPDATE_LAYER',
       modelLayerId: 3,
       parameterName: 'some-parameter-name',
-      newValue: '3'
+      newValue: '3',
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/data/some-parameter-name');
@@ -60,7 +60,7 @@ describe('dispatchModelApi', () => {
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'UPDATE_LAYER_ORDER',
       modelLayerId: 3,
-      newIndex: 3
+      newIndex: 3,
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/order');
@@ -73,7 +73,7 @@ describe('dispatchModelApi', () => {
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'ADD_MODEL_FUNCTION',
-      activationFunctionId: 3
+      activationFunctionId: 3,
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions');
@@ -86,24 +86,10 @@ describe('dispatchModelApi', () => {
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'DELETE_MODEL_FUNCTION',
-      modelFunctionId: 3
+      modelFunctionId: 3,
     });
     expect(returnedModel).toStrictEqual(mockModel);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/3');
-  });
-
-  it('UpdateModelFunctionActivator', async () => {
-    const mock = jest.spyOn(api, 'put');
-    mock.mockResolvedValue(buildResponse(mockModel));
-
-    const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'UPDATE_MODEL_FUNCTION_ACTIVATOR',
-      functionId: 3,
-      modelFunctionId: 2
-    });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/activator');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 });
   });
 
   it('UpdateModelFunctionData', async () => {
@@ -112,12 +98,16 @@ describe('dispatchModelApi', () => {
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'UPDATE_MODEL_FUNCTION_DATA',
-      newData: 'some-data',
-      parameterName: 'some-parameter-name',
-      modelFunctionId: 2
+      parameters: { 'some-parameter': 'some-data' },
+      modelFunctionId: 2,
     });
     expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/2/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ value: 'some-data' });
+    expect(mock).toBeCalledWith('models/some-model-id/functions/2/parameters', {
+      json: {
+        parameters: {
+          'some-parameter': 'some-data',
+        },
+      },
+    });
   });
 });
