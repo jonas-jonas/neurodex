@@ -5,26 +5,26 @@ const refreshToken = async (request: Request, options: NormalizedOptions, respon
   if (response.status === 401) {
     const json = await response.json();
     const message = json['message'];
-    if (message === "access token expired") {
+    if (message === 'access token expired') {
       // Access tokens are set as cookies, just wait for the request to
       // finish and every subsequent request has the right tokens.
       await ky.post('/api/auth/refresh-token');
       return ky(request);
     }
   }
-}
+};
 
 export const api = ky.extend({
   prefixUrl: '/api',
   hooks: {
-    afterResponse: [refreshToken]
+    afterResponse: [refreshToken],
   },
 });
 
 const addLayer = async (modelId: string, layerTypeId: string) => {
   const data = {
-    layerId: layerTypeId
-  }
+    layerId: layerTypeId,
+  };
   const response = await api.post('models/' + modelId + '/layers', { json: data });
 
   const model = await response.json();
@@ -39,8 +39,8 @@ const deleteLayer = async (modelId: string, layerId: number): Promise<Model> => 
 
 const updateLayer = async (modelId: string, layerId: number, parameterName: string, newData: string) => {
   const data = {
-    value: newData
-  }
+    value: newData,
+  };
 
   const response = await api.put(`models/${modelId}/layers/${layerId}/data/${parameterName}`, { json: data });
 
@@ -51,8 +51,8 @@ const updateLayer = async (modelId: string, layerId: number, parameterName: stri
 
 const updateOrder = async (modelId: string, modelLayerId: number, newIndex: number) => {
   const data = {
-    index: newIndex
-  }
+    index: newIndex,
+  };
 
   const response = await api.put('models/' + modelId + '/layers/' + modelLayerId + '/order', { json: data });
   const model = await response.json();
@@ -62,11 +62,11 @@ const updateOrder = async (modelId: string, modelLayerId: number, newIndex: numb
 
 const addFunction = async (modelId: string, functionId: number) => {
   const data = {
-    functionId
-  }
+    functionId,
+  };
 
   const response = await api.post('models/' + modelId + '/functions', {
-    json: data
+    json: data,
   });
 
   const model = await response.json();
@@ -82,30 +82,13 @@ const deleteFunction = async (modelId: string, modelFunctionId: number) => {
   return model;
 };
 
-const updateModelFunctionActivator = async (modelId: string, modelFunctionId: number, functionId: number) => {
+const updateModelFunctionData = async (modelId: string, action: UpdateModelFunctionData) => {
   const data = {
-    functionId
-  }
+    parameters: action.parameters,
+  };
 
-  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/activator', { json: data });
-
-  const model = await response.json();
-
-  return model;
-};
-
-const updateModelFunctionData = async (
-  modelId: string,
-  modelFunctionId: number,
-  parameterName: string,
-  newData: any
-) => {
-  const data = {
-    value: newData
-  }
-
-  const response = await api.put('models/' + modelId + '/functions/' + modelFunctionId + '/data/' + parameterName, {
-    json: data
+  const response = await api.put('models/' + modelId + '/functions/' + action.modelFunctionId + '/parameters', {
+    json: data,
   });
 
   const model = await response.json();
@@ -127,15 +110,8 @@ export const dispatchModelApi = async (modelId: string, action: Actions) => {
       return await actions.addFunction(modelId, action.activationFunctionId);
     case 'DELETE_MODEL_FUNCTION':
       return await actions.deleteFunction(modelId, action.modelFunctionId);
-    case 'UPDATE_MODEL_FUNCTION_ACTIVATOR':
-      return await actions.updateModelFunctionActivator(modelId, action.modelFunctionId, action.functionId);
     case 'UPDATE_MODEL_FUNCTION_DATA':
-      return await actions.updateModelFunctionData(
-        modelId,
-        action.modelFunctionId,
-        action.parameterName,
-        action.newData
-      );
+      return await actions.updateModelFunctionData(modelId, action);
   }
 };
 
@@ -172,17 +148,10 @@ type DeleteModelFunction = {
   modelFunctionId: number;
 };
 
-type UpdateModelFunctionActivator = {
-  type: 'UPDATE_MODEL_FUNCTION_ACTIVATOR';
-  modelFunctionId: number;
-  functionId: number;
-};
-
 type UpdateModelFunctionData = {
   type: 'UPDATE_MODEL_FUNCTION_DATA';
   modelFunctionId: number;
-  parameterName: string;
-  newData: string;
+  parameters: Record<string, any>;
 };
 
 export type Actions =
@@ -192,7 +161,6 @@ export type Actions =
   | UpdateLayerOrder
   | AddModelFunction
   | DeleteModelFunction
-  | UpdateModelFunctionActivator
   | UpdateModelFunctionData;
 
 export const actions = {
@@ -202,6 +170,5 @@ export const actions = {
   updateOrder,
   addFunction,
   deleteFunction,
-  updateModelFunctionActivator,
-  updateModelFunctionData
+  updateModelFunctionData,
 };

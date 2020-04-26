@@ -45,7 +45,6 @@ export type Function = {
 
 export type FunctionParameter = {
   defaultValue: string;
-  id: number;
   name: string;
   type: string;
 };

@@ -13,21 +13,21 @@ it('Renders panel with model layer cards', () => {
       layerName: 'some-layer',
       parameterData: {
         in_features: { value: '0' },
-        bias: { value: 'true' }
+        bias: { value: 'true' },
       },
       layerType: {
         id: 'torch.nn.Linear',
         description: '',
         layerName: 'linear',
-        parameters: [{ name: 'in_features', type: 'number', defaultValue: '3' }]
-      }
+        parameters: [{ name: 'in_features', type: 'number', defaultValue: '3' }],
+      },
     },
     {
       id: 2,
       layerName: 'some-second-layer',
       parameterData: {
         in_features: { value: '2' },
-        bias: { value: 'false' }
+        bias: { value: 'false' },
       },
       layerType: {
         id: 'torch.nn.Linear',
@@ -35,10 +35,10 @@ it('Renders panel with model layer cards', () => {
         layerName: 'linear',
         parameters: [
           { name: 'in_features', type: 'number', defaultValue: '3' },
-          { name: 'bias', type: 'boolean', defaultValue: 'true' }
-        ]
-      }
-    }
+          { name: 'bias', type: 'boolean', defaultValue: 'true' },
+        ],
+      },
+    },
   ];
 
   render(
@@ -47,6 +47,6 @@ it('Renders panel with model layer cards', () => {
     </MockModelContextProvider>
   );
 
-  const layerNameInputs = screen.queryAllByPlaceholderText('Layername');
-  expect(layerNameInputs.length).toEqual(2);
+  expect(screen.getByText('some-layer')).toBeDefined();
+  expect(screen.getByText('some-second-layer')).toBeDefined();
 });

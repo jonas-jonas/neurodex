@@ -204,27 +204,9 @@ def delete_function(model: Model, function_id):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model:model>/functions/<model_function_id>/activator', methods=['PUT'])
+@model_blueprint.route('/<model:model>/functions/<model_function_id>/parameters', methods=['PUT'])
 @jwt_required
-def put_model_function(model, model_function_id):
-    data = request.json
-    function_id = data['functionId']
-
-    # function = db.session.query(ActivatorFunction).filter_by(id=activator_function_id).first()
-
-    function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
-
-    function.function_id = function_id
-
-    db.session.commit()
-    model.update_timestamp()
-
-    return model_schema.jsonify(model)
-
-
-@model_blueprint.route('/<model:model>/functions/<model_function_id>/data/<parameter_name>', methods=['PUT'])
-@jwt_required
-def put_model_function_parameter(model, model_function_id, parameter_name):
+def put_model_function_parameter(model, model_function_id):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
@@ -241,27 +223,34 @@ def put_model_function_parameter(model, model_function_id, parameter_name):
     """
     data = request.json
 
+    parameters = data['parameters']
+
     model_function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
 
     function_id = model_function.function.id
 
-    param = db.session.query(FunctionParameter).filter_by(function_id=function_id, name=parameter_name).first()
+    for parameter_name, value in parameters.items():
+        # TODO: Check if this can be broken
+        if value == '':
+            continue
 
-    if param.type == "layer":
-        value = LayerValue(value_id=data['value'])
-    else:
-        value = PrimitiveValue(value=data['value'])
+        param = db.session.query(FunctionParameter).filter_by(function_id=function_id, name=parameter_name).first()
 
-    param_data = db.session.query(ModelFunctionParameterData).filter_by(
-        model_function_id=model_function_id, parameter_name=param.name).first()
+        if param.type == "layer":
+            value_entity = LayerValue(value_id=value)
+        else:
+            value_entity = PrimitiveValue(value=value)
 
-    if(param_data is None):
-        param_data = ModelFunctionParameterData(model_function_id=model_function_id,
-                                                parameter_name=param.name, value=value)
+        param_data = db.session.query(ModelFunctionParameterData).filter_by(
+            model_function_id=model_function_id, parameter_name=param.name).first()
 
-        db.session.add(param_data)
-    else:
-        param_data.value = value
+        if(param_data is None):
+            param_data = ModelFunctionParameterData(model_function_id=model_function_id,
+                                                    parameter_name=param.name, value=value_entity)
+
+            db.session.add(param_data)
+        else:
+            param_data.value = value_entity
 
     model.update_timestamp()
 

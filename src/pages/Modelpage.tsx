@@ -1,75 +1,76 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faChevronCircleLeft, faCode, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { DateTime } from 'luxon';
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import CodeBlock from '../components/modelpage/CodeBlock';
-import ForwardPanel from '../components/modelpage/ForwardPanel';
+import { useHistory, useParams } from 'react-router';
+import ModelFunctionsCanvas from '../components/modelpage/ModelFunctionsCanvas';
 import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
-import { Panel } from '../components/utility/Panel';
 import { ModelContextProvider, useModelContext } from '../contexts/modelcontext';
-import { LayerType } from '../data/models';
-import { api } from '../util/api';
 import { PageContext } from '../contexts/pagecontext';
+import { api } from '../util/api';
 
 export const Modelpage: React.FC = () => {
-  const { model, availableLayers, updateModel } = useModelContext();
-
-  const [addingLayer, setAddingLayer] = useState(false);
-
-  const handleLayerAdd = async (id: string) => {
-    setAddingLayer(true);
-    await updateModel({
-      type: 'ADD_LAYER',
-      layerTypeId: id
-    });
-    setAddingLayer(false);
-  };
+  const { model } = useModelContext();
+  const history = useHistory();
 
   return (
-    <div className="flex h-full flex-auto pb-2">
-      <div className="w-7/12 flex">
-        <Panel>
-          <div className="px-3 py-2 rounded-t bg-gray-100 border-b border-gray-700 flex justify-between items-center shadow">
-            <h2 className="text-lg font-bold">Layers</h2>
-            <span className="text-sm italic text-gray-800 font-semibold">{availableLayers.length} Layer verfügbar</span>
+    <div className="flex h-full flex-auto pb-2 flex-col px-4">
+      <div className="flex flex-shrink-0 pb-4 justify-between items-center">
+        <div className="flex">
+          <button className="" onClick={history.goBack}>
+            <FontAwesomeIcon icon={faChevronCircleLeft} size="2x" />
+          </button>
+          <div className="pl-5">
+            <h1 className="text-2xl">{model.name}</h1>
+            <h2 className="text-gray-600">
+              Du · {DateTime.fromISO(model.createdAt, { zone: 'utc' }).toRelative({ padding: 1000 })} erstellt
+            </h2>
           </div>
-          <div className="p-2 flex-grow overflow-y-auto">
-            {availableLayers.map(layerType => {
-              return <LayerCard layerType={layerType} key={layerType.id} onAdd={handleLayerAdd} />;
-            })}
-            {addingLayer && (
-              <div className="w-full bg-white opacity-75 absolute inset-0">
-                <LoadingIndicator text="Updating..." />
-              </div>
-            )}
-          </div>
-        </Panel>
-        <ModelLayerPanel />
-
-        <ForwardPanel />
+        </div>
+        <div className="rounded shadow flex border border-gray-400 bg-white">
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 border-r rounded-l border-gray-400">
+            <FontAwesomeIcon icon={faCode} className="mr-2" />
+            Code Anzeigen
+          </button>
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 border-r border-gray-400">
+            <FontAwesomeIcon icon={faTrash} className="mr-2" />
+            Löschen
+          </button>
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 rounded-r">
+            <FontAwesomeIcon icon={faShare} className="mr-2" />
+            Teilen
+          </button>
+        </div>
       </div>
-      <CodeBlock model={model} />
-    </div>
-  );
-};
-
-type LayerCardProps = {
-  layerType: LayerType;
-  onAdd: (id: string) => void;
-};
-
-export const LayerCard: React.FC<LayerCardProps> = ({ layerType, onAdd }) => {
-  const handleAdd = () => {
-    onAdd(layerType.id);
-  };
-
-  return (
-    <div className="shadow bg-blue-800 text-white mb-2 p-3 rounded select-none border-b-2 border-transparent focus:border-gray-100 flex justify-between items-center">
-      <h2 className="font-mono mr-1">{layerType.id}</h2>
-      <button className="px-2 hover:bg-blue-700 focus:outline-none" onClick={handleAdd} title="Zum Modell hinzufügen">
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
+      <div className="flex-grow flex">
+        <ModelLayerPanel />
+        <div className="w-full h-full pl-6 overflow-x-auto">
+          <div className="flex justify-between mb-4 py-2">
+            <span className="font-bold tracking-wide">MODELL</span>
+          </div>
+          <ModelFunctionsCanvas axis="x" useDragHandle />
+        </div>
+        <div className="h-full flex flex-col relative w-1/6">
+          <span className="font-bold tracking-wide py-2">EINSTELLUNGEN</span>
+          <div className="rounded bg-white h-full shadow">
+            <div className="py-4 px-4 flex items-center border-b">
+              <label className="text-gray-700 font-bold w-1/2 block">Epochs</label>
+              <input className="ml-2 w-1/2 text-right border px-2 py-1" placeholder="0" type="number" />
+            </div>
+            <div className="py-4 px-4 flex items-center border-b">
+              <label className="text-gray-700 font-bold w-1/2 block">Learning Rate</label>
+              <input className="ml-2 text-right border px-2 py-1 w-1/2" placeholder="0" type="number" />
+            </div>
+            <div className="py-4 px-4 flex items-center">
+              <label className="text-gray-700 font-bold mb-2 w-1/2 block">Loss Function</label>
+              <select className="w-1/2 cursor-pointer border px-2 py-1">
+                <option>CrossEntropyLoss</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

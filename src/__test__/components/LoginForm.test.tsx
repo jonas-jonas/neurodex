@@ -9,7 +9,7 @@ afterEach(cleanup);
 it('Login form sign in trigger authenticate call', async () => {
   const authenticateMock = jest.fn();
   authenticateMock.mockResolvedValue({
-    status: 200
+    status: 200,
   });
   render(
     <Router>
@@ -46,7 +46,7 @@ it('Login form sign in trigger authenticate call', async () => {
     status: 500,
     json: () => {
       return { message: 'Some error message' };
-    }
+    },
   });
   render(
     <Router>
