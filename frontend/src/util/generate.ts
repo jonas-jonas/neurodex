@@ -53,7 +53,7 @@ export function modelLayer(overrides = {}): ModelLayer {
 
 export function layerType(overrides = {}, parameterCount = 1): LayerType {
   return {
-    id: helpers.randomize(),
+    id: lorem.slug().replace('-', '_'),
     description: lorem.words(10),
     layerName: helpers.randomize(),
     parameters: [...generate(layerParameter, parameterCount)],

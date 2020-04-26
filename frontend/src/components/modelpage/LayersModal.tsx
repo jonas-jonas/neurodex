@@ -36,7 +36,7 @@ const LayersModal: React.FC<LayersPopupProps> = () => {
               }
             );
             return (
-              <div className={classes} onClick={() => setActiveLayer(element.id)}>
+              <div className={classes} onClick={() => setActiveLayer(element.id)} key={element.id}>
                 <div>
                   <h3 className="font-mono text-xl">{element.id}</h3>
                   <h4 className="text-gray-500">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</h4>
