@@ -1,5 +1,8 @@
 #!/bin/bash
 
+FRONTEND_DIR="frontend"
+BACKEND_DIR="backend"
+
 # Start docker-based services via docker-compose
 DOCKER_COMPOSE="docker-compose"
 if [ -x "$(command -v docker-compose.exe)" ]; then
@@ -7,10 +10,14 @@ if [ -x "$(command -v docker-compose.exe)" ]; then
   echo "Using docker-compose.exe"
 fi
 
-eval $DOCKER_COMPOSE -f ./deploy/docker-compose.local.yml up -d
+if [[ $PWD != *backend ]]; then
+  cd ./backend
+fi
+
+eval $DOCKER_COMPOSE -f ../deploy/docker-compose.local.yml up -d
 
 if [ -z "${VIRTUAL_ENV}" ]; then
-  source ./neurodex_env/bin/activate
+  source ./.env/bin/activate
 fi
 
 export FLASK_ENV="development"
@@ -18,4 +25,4 @@ export DATABASE_URL="postgresql://postgres:docker@localhost:5432/postgres"
 source ./.env.local
 export SENDGRID_API_KEY=$SENDGRID_API_KEY
 
-gunicorn backend.main:app -c backend/gunicorn.py
+gunicorn neurodex.main:app -c ./gunicorn.py
