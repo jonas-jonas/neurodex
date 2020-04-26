@@ -2,27 +2,32 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - none
 jobs:
   build:
     name: neurodex
     runs-on: ubuntu-latest
+    env:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
+        working-directory: ./frontend
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install # will run `yarn install` command
       - name: Test
+        working-directory: ./frontend
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: test:ci # will run `yarn test` command
       - name: Codecov
+        working-directory: ./frontend
         uses: codecov/codecov-action@v1.0.5
         with:
           token: ${{ secrets.CODECOV_TOKEN }} #required
           file: ./coverage/coverage-final.json #optional
       - name: Build
+        working-directory: ./frontend
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: build
@@ -34,7 +39,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
           KEY: ${{ secrets.SSH_KEY_NEURODEX }}
         with:
-          source: './backend,./build,./requirements.txt'
+          source: './backend,./frontend/build'
           target: '/application/neurodex'
           overwrite: true
       - name: Install dependencies
@@ -45,7 +50,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
           KEY: ${{ secrets.SSH_KEY_NEURODEX }}
         with:
-          script: /bin/bash -c "/application/neurodex/neurodex_env/bin/pip install -r /application/neurodex/requirements.txt"
+          script: /bin/bash -c "/application/neurodex/neurodex_env/bin/pip install -r /application/neurodex/backend/requirements.txt"
       - name: Restart service
         uses: appleboy/ssh-action@master
         env:
