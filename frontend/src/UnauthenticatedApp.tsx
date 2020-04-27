@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Navigation from './components/navigation/NavigationBar';
 import ConfirmEmailPage from './pages/ConfirmEmailPage';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './pages/account/LoginPage';
 
 const UnauthenticatedApp = () => {
   return (
@@ -11,7 +11,10 @@ const UnauthenticatedApp = () => {
       <div className="pt-16 h-screen">
         <Switch>
           <Route path="/login">
-            <LoginPage />
+            <LoginPage pageState="LOGIN" />
+          </Route>
+          <Route path="/register">
+            <LoginPage pageState="REGISTER" />
           </Route>
           <Route path="/confirm-email/:id">
             <ConfirmEmailPage />

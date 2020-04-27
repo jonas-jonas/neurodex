@@ -9,6 +9,7 @@ import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { ModelContextProvider, useModelContext } from '../contexts/ModelProvider';
 import { usePage } from '../contexts/PageProvider';
 import { api } from '../util/api';
+import { Model } from '../data/models';
 
 export const Modelpage: React.FC = () => {
   const { model } = useModelContext();
@@ -29,15 +30,15 @@ export const Modelpage: React.FC = () => {
           </div>
         </div>
         <div className="rounded shadow flex border border-gray-400 bg-white">
-          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 border-r rounded-l border-gray-400">
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 font-bold border-r rounded-l border-gray-400">
             <FontAwesomeIcon icon={faCode} className="mr-2" />
             Code Anzeigen
           </button>
-          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 border-r border-gray-400">
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 font-bold border-r border-gray-400">
             <FontAwesomeIcon icon={faTrash} className="mr-2" />
             Löschen
           </button>
-          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 rounded-r">
+          <button className="hover:bg-gray-100 focus:bg-gray-100 focus:outline-none hover:text-black block py-2 px-5 transition-colors duration-150 text-gray-800 font-bold rounded-r">
             <FontAwesomeIcon icon={faShare} className="mr-2" />
             Teilen
           </button>
@@ -77,7 +78,7 @@ export const Modelpage: React.FC = () => {
 
 const ModelpageWrapper = () => {
   const { modelId } = useParams();
-  const [model, setModel] = useState();
+  const [model, setModel] = useState<Model | undefined>(undefined);
   const { setPageTitle } = usePage();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
+import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { User } from '../data/models';
 import { api } from '../util/api';
-import LoadingIndicator from '../components/utility/LoadingIndicator';
 
 type AuthContextData = {
   user?: User;
@@ -16,33 +16,57 @@ type AuthContextData = {
 
 export const AuthContext = React.createContext<AuthContextData | undefined>(undefined);
 
-export const AuthContextProvider: React.FC = ({ children }) => {
+type UserReducerAction =
+  | { type: 'LOADING_USER' }
+  | { type: 'AUTHENTICATED'; user: User }
+  | { type: 'NOT_AUTHENTICATED'; error?: string };
+
+type UserReducerState = {
+  loading: boolean;
+  user?: User;
+  error?: string;
+  authenticated: boolean;
+};
+
+function userReducer(state: UserReducerState, action: UserReducerAction): UserReducerState {
+  switch (action.type) {
+    case 'LOADING_USER':
+      return { loading: true, authenticated: false };
+    case 'AUTHENTICATED':
+      return { loading: false, user: action.user, authenticated: true };
+    case 'NOT_AUTHENTICATED':
+      return { loading: false, error: action.error, authenticated: false };
+  }
+}
+
+type AuthContextProviderProps = {
+  initialUser?: User;
+};
+
+export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children, initialUser }) => {
   /** The current user */
-  const [user, setUser] = useState<User>();
-  const [isLoadingUser, setLoadingUser] = useState(true);
+  const [userState, dispatch] = useReducer(userReducer, { loading: true, authenticated: false });
 
-  /** indicates whether the user is currently logged in */
-  const isAuthenticated = useMemo(() => {
-    return user != null;
-  }, [user]);
-
+  /**
+   * Initially tries to fetch the currently logged in user
+   */
   useEffect(() => {
-    /**
-     * Fetches the current user from the api.
-     */
-    const fetchCurrentUser = async (): Promise<void> => {
+    async function fetchCurrentUser() {
       try {
         const data = await api.get('users/current');
         const authenticationResponse = await data.json();
-        setUser(authenticationResponse);
+        dispatch({ type: 'AUTHENTICATED', user: authenticationResponse });
       } catch (error) {
-        setUser(undefined);
-      } finally {
-        setLoadingUser(false);
+        dispatch({ type: 'NOT_AUTHENTICATED', error: error });
       }
-    };
-    fetchCurrentUser();
-  }, []);
+    }
+    if (initialUser) {
+      dispatch({ type: 'AUTHENTICATED', user: initialUser });
+    } else {
+      dispatch({ type: 'LOADING_USER' });
+      fetchCurrentUser();
+    }
+  }, [initialUser]);
 
   /**
    * Authenticates the user with the api
@@ -66,10 +90,11 @@ export const AuthContextProvider: React.FC = ({ children }) => {
         });
         if (response.status === 200) {
           const authenticationResponse = await response.json();
-          setUser(authenticationResponse);
+          dispatch({ type: 'AUTHENTICATED', user: authenticationResponse });
         }
         return response;
       } catch (error) {
+        dispatch({ type: 'NOT_AUTHENTICATED', error: error.response });
         return error.response;
       }
     };
@@ -86,7 +111,7 @@ export const AuthContextProvider: React.FC = ({ children }) => {
         const response = await api.get('auth/logout');
         return response.status === 200;
       } finally {
-        setUser(undefined);
+        dispatch({ type: 'NOT_AUTHENTICATED' });
         return true;
       }
     };
@@ -117,7 +142,8 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     };
     try {
       const response = await api.put('users/update/data', { json: data });
-      setUser(await response.json());
+      const user = await response.json();
+      dispatch({ type: 'AUTHENTICATED', user: user });
       return undefined;
     } catch (error) {
       return error.response;
@@ -137,19 +163,19 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  if (isLoadingUser) {
+  if (userState.loading) {
     return <LoadingIndicator text="Lädt..." />;
   }
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isAuthenticated,
+        user: userState.user,
+        isAuthenticated: userState.authenticated,
         authenticate,
         deauthenticate,
         registerUser,
-        isLoadingUser,
+        isLoadingUser: userState.loading,
         updateData,
         updatePassword,
       }}

@@ -2,8 +2,10 @@ import classnames from 'classnames';
 import React from 'react';
 import useForm from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthProvider';
-import FormField from './utility/FormField';
+import { useAuth } from '../../contexts/AuthProvider';
+import FormField from '../utility/FormField';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 const LoginForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
@@ -22,13 +24,6 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  // The button should look "disabled" if the button is disabled
-  const loginButtonClasses = classnames(
-    'font-bold py-1 px-5 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
-    {
-      'opacity-50 cursor-not-allowed': !formState.isValid,
-    }
-  );
   return (
     <form onSubmit={handleSubmit(handleAuthenticate)}>
       <FormField
@@ -48,10 +43,7 @@ const LoginForm: React.FC = () => {
         validationMessage={errors.password?.message}
         required
       />
-      <div className="flex items-center justify-between">
-        <button className={loginButtonClasses} disabled={!formState.isValid} type="submit">
-          Login
-        </button>
+      <div className="flex items-center justify-between mb-4">
         <Link
           className="inline-block align-baseline font-bold text-sm text-blue-800 hover:text-blue-800 hover:underline"
           to="/"
@@ -59,6 +51,13 @@ const LoginForm: React.FC = () => {
           Passwort vergessen?
         </Link>
       </div>
+      <button
+        className="font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none font-bold focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
+        disabled={!(formState.dirty && formState.isValid && !formState.isSubmitting)}
+        type="submit"
+      >
+        {formState.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Login'}
+      </button>
     </form>
   );
 };

@@ -2,8 +2,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import LoginForm from '../../src/components/LoginForm';
-import { MockAuthContextProvider } from '../contexts/authcontext.mock';
+import LoginForm from './LoginForm';
+import { MockAuthContextProvider } from '../../contexts/authcontext.mock';
 
 afterEach(cleanup);
 

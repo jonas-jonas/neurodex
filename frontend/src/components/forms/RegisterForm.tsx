@@ -4,15 +4,11 @@ import classNames from 'classnames';
 import ky from 'ky';
 import React, { useState } from 'react';
 import useForm from 'react-hook-form';
-import { useAuth } from '../contexts/AuthProvider';
-import { LoginPageState } from '../pages/LoginPage';
-import FormField from './utility/FormField';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthProvider';
+import FormField from '../utility/FormField';
 
-type RegisterFormProps = {
-  setLoginPageState: (value: LoginPageState) => any;
-};
-
-const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
+const RegisterForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });
   const { registerUser } = useAuth();
   const [isFinished, setFinished] = useState(false);
@@ -20,7 +16,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
 
   // The button should look "disabled" if the button is disabled
   const loginButtonClasses = classNames(
-    'font-bold py-1 px-3 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100',
+    'font-bold py-2 px-3 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 w-full ',
     {
       'opacity-50 cursor-not-allowed': !(formState.dirty && formState.isValid),
     }
@@ -82,18 +78,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setLoginPageState }) => {
         ref={register({ required: true })}
         validationMessage={errors.repeatPassword?.message}
       />
-      <div className="flex items-center justify-between">
-        <button className={loginButtonClasses} disabled={!(formState.dirty && formState.isValid)} type="submit">
-          {formState.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Registrieren'}
-        </button>
-        <button
+      <div className="flex items-center justify-between mb-4">
+        <Link
+          to="/login"
           className="inline-block align-baseline font-bold text-sm text-blue-800 hover:text-blue-800 hover:underline focus:outline-none"
-          type="button"
-          onClick={() => setLoginPageState(LoginPageState.LOGIN)}
         >
           Lieber einloggen?
-        </button>
+        </Link>
       </div>
+      <button
+        className="font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none font-bold focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
+        disabled={!(formState.dirty && formState.isValid)}
+        type="submit"
+      >
+        {formState.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Registrieren'}
+      </button>
     </form>
   );
 };
