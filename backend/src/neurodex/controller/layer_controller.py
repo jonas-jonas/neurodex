@@ -42,7 +42,7 @@ def post_layer():
     return layer_type_schema.jsonify(layer)
 
 
-@layer_blueprint.route('<layer_id>/parameter/', methods=['POST'])
+@layer_blueprint.route('<layer_id>/parameter', methods=['POST'])
 def post_parameter(layer_id):
     data = request.json
     name = data['name']
