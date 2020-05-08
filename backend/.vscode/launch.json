@@ -15,14 +15,14 @@
       "env": {
         "FLASK_APP": "neurodex.main:app",
         "FLASK_ENV": "development",
-        "FLASK_DEBUG": "0",
+        "FLASK_DEBUG": "1",
         "DATABASE_URL": "postgresql://postgres:docker@localhost:5432/postgres"
       },
       "args": [
         "run",
-        "--port=8081"
+        "--port=8081",
       ],
-      "jinja": true
+      "jinja": true,
     }
   ]
 }
