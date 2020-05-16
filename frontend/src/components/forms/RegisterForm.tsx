@@ -1,6 +1,5 @@
 import { faCheckCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classNames from 'classnames';
 import ky from 'ky';
 import React, { useState } from 'react';
 import useForm from 'react-hook-form';
@@ -13,14 +12,6 @@ const RegisterForm: React.FC = () => {
   const { registerUser } = useAuth();
   const [isFinished, setFinished] = useState(false);
   const [email, setEmail] = useState('');
-
-  // The button should look "disabled" if the button is disabled
-  const loginButtonClasses = classNames(
-    'font-bold py-2 px-3 rounded focus:outline-none border border-blue-800 text-blue-800 font-bold focus:shadow-outline hover:bg-gray-100 w-full ',
-    {
-      'opacity-50 cursor-not-allowed': !(formState.dirty && formState.isValid),
-    }
-  );
 
   const handleRegister = async (values: Record<string, string>) => {
     try {

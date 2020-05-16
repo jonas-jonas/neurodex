@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 type ModelContextProps = {
   model: Model;
-  setModel: (model: Model) => void;
+  setModel: React.Dispatch<React.SetStateAction<Model>>;
   availableLayers: LayerType[];
   activationFunctions: Function[];
   updateModel: (action: Actions) => Promise<boolean>;
@@ -24,7 +24,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
 
   const updateModel = async (action: Actions) => {
     try {
-      const newModel = await dispatchModelApi(model.id, action);
+      const newModel = await dispatchModelApi(model.modelId, action);
       setModel(newModel);
     } catch (error) {
       toast.error('Fehler beim Update des Models');
@@ -70,7 +70,7 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
         model,
         setModel,
         availableLayers,
-        activationFunctions
+        activationFunctions,
       }}
     >
       {children}

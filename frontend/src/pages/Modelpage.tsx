@@ -3,17 +3,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DateTime } from 'luxon';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
-import ModelFunctionsCanvas from '../components/modelpage/ModelFunctionsCanvas';
+import ModelActivatorCanvas from '../components/modelpage/ModelActivatorCanvas';
 import ModelLayerPanel from '../components/modelpage/ModelLayerPanel';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { ModelContextProvider, useModelContext } from '../contexts/ModelProvider';
 import { usePage } from '../contexts/PageProvider';
 import { api } from '../util/api';
 import { Model } from '../data/models';
+import { SortEnd, SortEvent } from 'react-sortable-hoc';
 
 export const Modelpage: React.FC = () => {
-  const { model } = useModelContext();
+  const { model, updateModel } = useModelContext();
   const history = useHistory();
+
+  const updateModelActivatorOrder = async (sort: SortEnd, event: SortEvent) => {
+    const movedActivator = model.activators[sort.oldIndex];
+    await updateModel({
+      type: 'UPDATE_MODEL_ACTIVATOR_ORDER',
+      activatorId: movedActivator.modelActivatorId,
+      newIndex: sort.newIndex,
+    });
+  };
 
   return (
     <div className="flex h-full flex-auto pb-2 flex-col px-4">
@@ -50,7 +60,7 @@ export const Modelpage: React.FC = () => {
           <div className="flex justify-between mb-4 py-2">
             <span className="font-bold tracking-wide">MODELL</span>
           </div>
-          <ModelFunctionsCanvas axis="x" useDragHandle />
+          <ModelActivatorCanvas axis="x" useDragHandle onSortEnd={updateModelActivatorOrder} />
         </div>
         <div className="h-full flex flex-col relative w-1/6">
           <span className="font-bold tracking-wide py-2">EINSTELLUNGEN</span>

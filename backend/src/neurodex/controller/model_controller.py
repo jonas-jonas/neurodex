@@ -4,12 +4,11 @@ from flask import Blueprint, request
 from flask_jwt_extended import current_user, jwt_required
 
 from neurodex import db
-from neurodex.data.models import (FunctionParameter, LayerType, LayerValue,
-                                  Model, ModelFunction,
-                                  ModelFunctionParameterData, ModelLayer,
+from neurodex.data.models import (LayerType, Model, ModelActivator,
+                                  ModelActivatorParameterData, ModelLayer,
                                   ModelLayerParameterData, PrimitiveValue)
-from neurodex.data.schema import (model_functions_schema, model_layers_schema,
-                                  model_schema, models_schema)
+from neurodex.data.schema import (model_layers_schema, model_schema,
+                                  models_schema)
 from neurodex.util.decorators import own_model
 
 model_blueprint = Blueprint('model', __name__, url_prefix="/api/models")
@@ -18,7 +17,8 @@ model_blueprint = Blueprint('model', __name__, url_prefix="/api/models")
 @model_blueprint.route('', methods=['GET'])
 @jwt_required
 def get_models():
-    models = db.session.query(Model).filter_by(user_id=current_user.id).order_by(Model.updated_at.desc()).all()
+    models = db.session.query(Model).filter(
+        Model.fk_user_id == current_user.user_id).order_by(Model.updated_at.desc()).all()
 
     return models_schema.jsonify(models)
 
@@ -35,7 +35,7 @@ def get_model(model):
 def post_model():
     data = request.json
 
-    new_model = Model(id=str(uuid.uuid4()), name=data['name'], user_id=current_user.id)
+    new_model = Model(model_id=str(uuid.uuid4()), name=data['name'], fk_user_id=current_user.user_id)
 
     db.session.add(new_model)
     db.session.commit()
@@ -61,12 +61,8 @@ def post_model_layer(model):
     data = request.json
     layer_id = data['layerId']
 
-    layer = db.session.query(LayerType).filter_by(id=layer_id).first()
-
-    # TODO: Change to a better system
-    layer_count = db.session.query(ModelLayer).filter_by(model_id=model.id, layer_id=layer.id).count()
-
-    model_layer = ModelLayer(model_id=model.id, layer_id=layer.id, layer_name=f"{layer.layer_name}{layer_count+1}")
+    layer = db.session.query(LayerType).filter(LayerType.layer_type_id == layer_id).first()
+    model_layer = ModelLayer(fk_model_id=model.model_id, fk_layer_id=layer.layer_type_id, name=layer.layer_name)
 
     model.layers.append(model_layer)
     model.update_timestamp()
@@ -78,7 +74,7 @@ def post_model_layer(model):
 @model_blueprint.route('/<model_id>/layers', methods=['GET'])
 @jwt_required
 def get_model_layers(model_id):
-    model_layers = db.session.query(ModelLayer).filter_by(model_id=model_id).all()
+    model_layers = db.session.query(ModelLayer).filter(ModelLayer.fk_model_id == model_id).all()
 
     return model_layers_schema.jsonify(model_layers)
 
@@ -99,7 +95,8 @@ def delete_model_layer(model, model_layer_id):
         A json string containing the updated model
     """
 
-    db.session.query(ModelLayer).filter_by(model_id=model.id, id=model_layer_id).delete()
+    db.session.query(ModelLayer).filter(ModelLayer.fk_model_id == model.model_id,
+                                        ModelLayer.model_layer_id == model_layer_id).delete()
 
     model.layers.reorder()
     model.update_timestamp()
@@ -109,9 +106,9 @@ def delete_model_layer(model, model_layer_id):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/layers/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
+@model_blueprint.route('/<model:model>/layers/<model_layer_id>/data/<parameter_name>', methods=['PUT'])
 @jwt_required
-def put_parameter_data(model_id, model_layer_id, parameter_name):
+def put_parameter_data(model: Model, model_layer_id: str, parameter_name: str):
     """Changes data for a parameter.
 
     Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
@@ -119,7 +116,7 @@ def put_parameter_data(model_id, model_layer_id, parameter_name):
     If there is no data for the parameter of this layer present a new row is inserted into the database.
 
     Args:
-        model_id: The id of the enclosing model
+        model: The enclosing model
         model_layer_id: The id of enclosing layer
         parameter_name: The name of the parameter that was changed
 
@@ -127,21 +124,22 @@ def put_parameter_data(model_id, model_layer_id, parameter_name):
         A json string containing the updated model
     """
     data = request.json
+    new_value = data['newValue']
 
-    param_data = db.session.query(ModelLayerParameterData).filter_by(
-        model_layer_id=model_layer_id, parameter_name=parameter_name).first()
+    param_data = db.session.query(ModelLayerParameterData).filter(
+        ModelLayerParameterData.fk_model_layer_id == model_layer_id,
+        ModelLayerParameterData.parameter_name == parameter_name).first()
 
-    value = PrimitiveValue(value=data['value'])
+    value = PrimitiveValue(value=new_value)
 
     if(param_data is None):
-        param_data = ModelLayerParameterData(model_layer_id=model_layer_id,
+        param_data = ModelLayerParameterData(fk_model_layer_id=model_layer_id,
                                              parameter_name=parameter_name, value=value)
 
         db.session.add(param_data)
     else:
         param_data.value = value
 
-    model = db.session.query(Model).filter_by(id=model_id).first()
     model.update_timestamp()
 
     db.session.commit()
@@ -155,7 +153,7 @@ def put_model_layer_order(model, model_layer_id):
     data = request.json
     index = data['index']
 
-    model_layer = db.session.query(ModelLayer).filter_by(id=model_layer_id).first()
+    model_layer = db.session.query(ModelLayer).filter(ModelLayer.model_layer_id == model_layer_id).first()
 
     model.layers.remove(model_layer)
     model.layers.insert(int(index), model_layer)
@@ -167,15 +165,15 @@ def put_model_layer_order(model, model_layer_id):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model:model>/functions', methods=['POST'])
+@model_blueprint.route('/<model:model>/activators', methods=['POST'])
 @jwt_required
-def post_function(model):
+def post_model_activator(model: Model):
     data = request.json
-    function_id = data['functionId']
+    activator_id = data['activatorId']
 
-    model_function = ModelFunction(model_id=model.id, function_id=function_id)
+    activator = ModelActivator(fk_activator_target_id=activator_id)
 
-    model.functions.append(model_function)
+    model.activators.append(activator)
     model.update_timestamp()
 
     db.session.commit()
@@ -183,20 +181,19 @@ def post_function(model):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model_id>/functions', methods=['GET'])
+@model_blueprint.route('/<model:model>/activators/<model_activator_id>/data/<parameter_name>', methods=['PUT'])
 @jwt_required
-def get_model_functions(model_id):
-    model_functions = db.session.query(ModelFunction).filter_by(model_id=model_id).all()
+@own_model
+def put_activator_parameter_data(model: Model, model_activator_id: int, parameter_name: str):
+    data = request.json
+    new_value = data['newValue']
 
-    return model_functions_schema.jsonify(model_functions)
+    value_entity = PrimitiveValue(value=new_value)
+    parameter_data = ModelActivatorParameterData(
+        fk_model_activator_id=model_activator_id, value=value_entity, parameter_name=parameter_name,)
 
+    db.session.add(parameter_data)
 
-@model_blueprint.route('/<model:model>/functions/<function_id>', methods=['DELETE'])
-@jwt_required
-def delete_function(model: Model, function_id):
-    db.session.query(ModelFunction).filter_by(id=function_id).delete()
-
-    model.functions.reorder()
     model.update_timestamp()
 
     db.session.commit()
@@ -204,56 +201,31 @@ def delete_function(model: Model, function_id):
     return model_schema.jsonify(model)
 
 
-@model_blueprint.route('/<model:model>/functions/<model_function_id>/parameters', methods=['PUT'])
+@model_blueprint.route('/<model:model>/activators/<int:model_activator_id>/order', methods=['PUT'])
 @jwt_required
-def put_model_function_parameter(model, model_function_id):
-    """Changes data for a parameter.
-
-    Updates the data for a parameter in a layer of a model. The updated data should be included as the entry "value" in
-    the form of the request.
-    If there is no data for the parameter of this layer present a new row is inserted into the database.
-
-    Args:
-        model_id: The id of the enclosing model
-        model_function_id: The id of function
-        parameter_name: The name of the parameter that was changed (or added)
-
-    Returns:
-        A json string containing the updated model
-    """
+@own_model
+def put_activator_order(model: Model, model_activator_id: int):
     data = request.json
+    new_index = data['newIndex']
 
-    parameters = data['parameters']
+    model_activator = db.session.query(ModelActivator).filter(
+        ModelActivator.model_activator_id == model_activator_id).first()
 
-    model_function = db.session.query(ModelFunction).filter_by(id=model_function_id).first()
-
-    function_id = model_function.function.id
-
-    for parameter_name, value in parameters.items():
-        # TODO: Check if this can be broken
-        if value == '':
-            continue
-
-        param = db.session.query(FunctionParameter).filter_by(function_id=function_id, name=parameter_name).first()
-
-        if param.type == "layer":
-            value_entity = LayerValue(value_id=value)
-        else:
-            value_entity = PrimitiveValue(value=value)
-
-        param_data = db.session.query(ModelFunctionParameterData).filter_by(
-            model_function_id=model_function_id, parameter_name=param.name).first()
-
-        if(param_data is None):
-            param_data = ModelFunctionParameterData(model_function_id=model_function_id,
-                                                    parameter_name=param.name, value=value_entity)
-
-            db.session.add(param_data)
-        else:
-            param_data.value = value_entity
-
+    model.activators.remove(model_activator)
+    model.activators.insert(int(new_index), model_activator)
+    model.activators.reorder()
     model.update_timestamp()
 
+    db.session.commit()
+
+    return model_schema.jsonify(model)
+
+
+@model_blueprint.route('/<model:model>/activators/<int:model_activator_id>', methods=['DELETE'])
+@jwt_required
+@own_model
+def delete_model_activator(model: Model, model_activator_id: int):
+    db.session.query(ModelActivator).filter(ModelActivator.model_activator_id == model_activator_id).delete()
     db.session.commit()
 
     return model_schema.jsonify(model)

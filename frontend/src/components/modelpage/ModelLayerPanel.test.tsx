@@ -10,8 +10,8 @@ afterEach(cleanup);
 describe('ModeLayerPanel', () => {
   it('Renders panel with model layer cards', () => {
     const layers: ModelLayer[] = [
-      generate.modelLayer({ layerName: 'some-layer' }),
-      generate.modelLayer({ layerName: 'some-second-layer' }),
+      generate.modelLayer({ displayName: 'some-layer' }),
+      generate.modelLayer({ displayName: 'some-second-layer' }),
     ];
 
     render(

@@ -7,7 +7,7 @@ import {
   LayerParameter,
   Function,
   FunctionParameter,
-  ModelFunction,
+  ModelActivator,
 } from '../data/models';
 
 function generate<T>(fn: () => T, count: number): T[] {
@@ -20,7 +20,7 @@ function generate<T>(fn: () => T, count: number): T[] {
 
 export function user(overrides = {}): User {
   return {
-    id: random.uuid(),
+    userId: random.uuid(),
     email: internet.email(),
     name: name.firstName(),
     roles: [],
@@ -30,30 +30,32 @@ export function user(overrides = {}): User {
 
 export function model(overrides = {}): Model {
   return {
-    id: random.uuid(),
+    modelId: random.uuid(),
     name: lorem.word(),
     user: user(),
     createdAt: date.recent().toISOString(),
     updatedAt: date.recent().toISOString(),
     layers: [],
-    functions: [],
+    activators: [],
     ...overrides,
   };
 }
 
 export function modelLayer(overrides = {}): ModelLayer {
   return {
-    id: random.number(),
-    layerName: helpers.randomize(),
+    activatorTargetId: random.number(),
+    displayName: helpers.randomize(),
+    name: helpers.randomize(),
     parameterData: {},
     layerType: layerType(),
+    type: 'model_layer',
     ...overrides,
   };
 }
 
 export function layerType(overrides = {}, parameterCount = 1): LayerType {
   return {
-    id: lorem.slug().replace('-', '_'),
+    layerTypeId: lorem.slug().replace('-', '_'),
     description: lorem.words(10),
     layerName: helpers.randomize(),
     parameters: [...generate(layerParameter, parameterCount)],
@@ -72,10 +74,12 @@ export function layerParameter(overrides = {}): LayerParameter {
 
 export function function_(overrides = {}, parameterCount = 1): Function {
   return {
-    id: random.number(),
+    activatorTargetId: random.number(),
     description: lorem.words(10),
+    displayName: helpers.randomize(),
     name: random.word(),
     parameters: [...generate(functionParameter, parameterCount)],
+    type: 'function',
     ...overrides,
   };
 }
@@ -89,11 +93,11 @@ export function functionParameter(overrides = {}): FunctionParameter {
   };
 }
 
-export function modelFunction(overrides = {}): ModelFunction {
+export function modelFunction(overrides = {}): ModelActivator {
   return {
-    function: function_(),
-    id: random.number(),
+    modelActivatorId: random.number(),
     parameterData: {},
+    value: modelLayer(),
     ...overrides,
   };
 }

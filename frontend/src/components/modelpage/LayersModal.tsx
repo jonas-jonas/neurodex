@@ -28,7 +28,7 @@ const LayersModal: React.FC<LayersPopupProps> = () => {
       <div className="flex flex-grow items-stretch overflow-hidden">
         <div className="flex flex-col w-full h-full overflow-y-scroll">
           {availableLayers.map((element) => {
-            const active = activeLayer === element.id;
+            const active = activeLayer === element.layerTypeId;
             const classes = classNames(
               'px-2 py-4 w-full border-b cursor-pointer flex justify-between items-center group',
               {
@@ -36,14 +36,14 @@ const LayersModal: React.FC<LayersPopupProps> = () => {
               }
             );
             return (
-              <div className={classes} onClick={() => setActiveLayer(element.id)} key={element.id}>
+              <div className={classes} onClick={() => setActiveLayer(element.layerTypeId)} key={element.layerTypeId}>
                 <div>
-                  <h3 className="font-mono text-xl">{element.id}</h3>
+                  <h3 className="font-mono text-xl">{element.layerTypeId}</h3>
                   <h4 className="text-gray-500">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</h4>
                 </div>
                 <button
                   className="rounded px-2 py-1 hover:bg-gray-300 focus:bg-gray-300 focus:outline-none transition-colors duration-150 font-bold text-gray-700 group-hover:opacity-100 opacity-0"
-                  onClick={() => addLayer(element.id)}
+                  onClick={() => addLayer(element.layerTypeId)}
                 >
                   Verwenden
                 </button>

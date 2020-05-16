@@ -1,18 +1,9 @@
 from neurodex import ma
+from neurodex.util import camelcase
 
 from .models import (Function, FunctionParameter, LayerType,
-                     LayerTypeParameter, Model, ModelFunction,
-                     ModelFunctionParameterData, ModelLayer,
+                     LayerTypeParameter, Model, ModelActivator, ModelLayer,
                      ModelLayerParameterData, Role, User, Value)
-
-
-def camelcase(s):
-    if s.startswith("_"):
-        parts = iter(s[1:].split('_'))
-        return "_" + next(parts) + "".join(i.title() for i in parts)
-    else:
-        parts = iter(s.split("_"))
-        return next(parts) + "".join(i.title() for i in parts)
 
 
 class CamelCaseSchema(ma.SQLAlchemyAutoSchema):
@@ -40,18 +31,34 @@ class ParameterData(ma.Nested):
 # =================================================================
 
 
-class RoleSchema(CamelCaseSchema):
-    class Meta:
-        model = Role
-
-
 class UserSchema(CamelCaseSchema):
 
     class Meta:
         model = User
         exclude = ('password',)
 
-    roles = ma.Pluck(RoleSchema, 'id', many=True)
+    roles = ma.Pluck("RoleSchema", 'role_id', many=True)
+
+
+class RoleSchema(CamelCaseSchema):
+    class Meta:
+        model = Role
+
+
+class ModelSchema(CamelCaseSchema):
+    class Meta:
+        model = Model
+
+    user = ma.Nested("UserSchema")
+    activators = ma.List(ma.Nested("ModelActivatorSchema"))
+    layers = ma.List(ma.Nested("ModelLayerSchema"))
+
+
+class LayerTypeSchema(CamelCaseSchema):
+    class Meta:
+        model = LayerType
+
+    parameters = ma.List(ma.Nested("LayerParameterSchema"))
 
 
 class LayerParameterSchema(CamelCaseSchema):
@@ -59,23 +66,17 @@ class LayerParameterSchema(CamelCaseSchema):
         model = LayerTypeParameter
 
 
-class LayerTypeSchema(CamelCaseSchema):
-    class Meta:
-        model = LayerType
-
-    parameters = ma.List(ma.Nested(LayerParameterSchema))
-
-
-class ActivationFunctionParameterSchema(CamelCaseSchema):
+class FunctionParameterSchema(CamelCaseSchema):
     class Meta:
         model = FunctionParameter
 
 
-class ActivationFunctionSchema(CamelCaseSchema):
+class FunctionSchema(CamelCaseSchema):
     class Meta:
         model = Function
 
-    parameters = ma.List(ma.Nested(ActivationFunctionParameterSchema))
+    display_name = ma.String(attribute="name", dump_only=True)
+    parameters = ma.List(ma.Nested("FunctionParameterSchema"))
 
 
 class ValueSchema(CamelCaseSchema):
@@ -93,48 +94,41 @@ class ValueSchema(CamelCaseSchema):
             return {'value': value}
 
 
-class LayerValueSchema(CamelCaseSchema):
-    class Meta:
-        fields = ('id', 'layer_name')
-
-
-class ModelFunctionParameterDataSchema(CamelCaseSchema):
-    class Meta:
-        model = ModelFunctionParameterData
-
-    value = ma.Nested(ValueSchema)
-
-
-class ModelFunctionSchema(CamelCaseSchema):
-    class Meta:
-        model = ModelFunction
-
-    function = ma.Nested(ActivationFunctionSchema)
-    parameter_data = ParameterData(ModelFunctionParameterDataSchema, key="parameterName", value="value")
-
-
-class ModelLayerParameterDataSchema(CamelCaseSchema):
-    class Meta:
-        model = ModelLayerParameterData
-
-    value = ma.Nested(ValueSchema)
-
-
 class ModelLayerSchema(CamelCaseSchema):
     class Meta:
         model = ModelLayer
 
-    layer_type = ma.Nested(LayerTypeSchema)
-    parameter_data = ParameterData(ModelLayerParameterDataSchema, key="parameterName", value="value")
+    display_name = ma.Method("_display_name")
+
+    layer_type = ma.Nested("LayerTypeSchema")
+    parameter_data = ParameterData("ParamaterDataSchema", key="parameterName", value="value")
+
+    def _display_name(self, model_layer):
+        id = model_layer.model_layer_id
+        name = model_layer.name
+        return f"{name}{id}"
 
 
-class ModelSchema(CamelCaseSchema):
+class ParamaterDataSchema(CamelCaseSchema):
     class Meta:
-        model = Model
+        model = ModelLayerParameterData
 
-    user = ma.Nested(UserSchema)
-    functions = ma.List(ma.Nested(ModelFunctionSchema))
-    layers = ma.List(ma.Nested(ModelLayerSchema))
+    value = ma.Nested("ValueSchema")
+
+
+class ModelActivatorSchema(CamelCaseSchema):
+    class Meta:
+        model = ModelActivator
+
+    value = ma.Method('serialize_value')
+    parameter_data = ParameterData("ParamaterDataSchema", key="parameterName", value="value")
+
+    def serialize_value(self, obj):
+        value = obj.activator_target
+        if isinstance(value, ModelLayer):
+            return model_layer_schema.dump(value)
+        elif isinstance(value, Function):
+            return activation_function_schema.dump(value)
 
 
 user_schema = UserSchema()
@@ -146,19 +140,14 @@ models_schema = ModelSchema(many=True)
 model_layer_schema = ModelLayerSchema()
 model_layers_schema = ModelLayerSchema(many=True)
 
-model_function_schema = ModelFunctionSchema()
-model_functions_schema = ModelFunctionSchema(many=True)
-
 layer_type_schema = LayerTypeSchema()
 layer_types_schema = LayerTypeSchema(many=True)
 
 layer_parameter_schema = LayerParameterSchema()
 layer_parameters_schema = LayerParameterSchema(many=True)
 
-activation_function_schema = ActivationFunctionSchema()
-activation_functions_schema = ActivationFunctionSchema(many=True)
+activation_function_schema = FunctionSchema()
+activation_functions_schema = FunctionSchema(many=True)
 
-activation_function_parameter_schema = ActivationFunctionParameterSchema()
-activation_function_parameters_schema = ActivationFunctionParameterSchema(many=True)
-
-layer_value_schema = LayerValueSchema()
+activation_function_parameter_schema = FunctionParameterSchema()
+activation_function_parameters_schema = FunctionParameterSchema(many=True)

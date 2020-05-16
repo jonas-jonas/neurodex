@@ -1,11 +1,10 @@
-import classnames from 'classnames';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import useForm from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthProvider';
 import FormField from '../utility/FormField';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 const LoginForm: React.FC = () => {
   const { register, handleSubmit, errors, setError, formState } = useForm({ mode: 'onChange' });

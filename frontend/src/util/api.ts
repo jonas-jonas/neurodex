@@ -37,35 +37,12 @@ const deleteLayer = async (modelId: string, layerId: number): Promise<Model> => 
   return model;
 };
 
-const updateLayer = async (modelId: string, layerId: number, parameterName: string, newData: string) => {
+const updateModelLayerParameterData = async (modelId: string, action: UpdateModelLayerParameterData) => {
   const data = {
-    value: newData,
+    newValue: action.newValue,
   };
 
-  const response = await api.put(`models/${modelId}/layers/${layerId}/data/${parameterName}`, { json: data });
-
-  const model = await response.json();
-
-  return model;
-};
-
-const updateOrder = async (modelId: string, modelLayerId: number, newIndex: number) => {
-  const data = {
-    index: newIndex,
-  };
-
-  const response = await api.put('models/' + modelId + '/layers/' + modelLayerId + '/order', { json: data });
-  const model = await response.json();
-
-  return model;
-};
-
-const addFunction = async (modelId: string, functionId: number) => {
-  const data = {
-    functionId,
-  };
-
-  const response = await api.post('models/' + modelId + '/functions', {
+  const response = await api.put(`models/${modelId}/layers/${action.modelLayerId}/data/${action.parameterName}`, {
     json: data,
   });
 
@@ -74,22 +51,64 @@ const addFunction = async (modelId: string, functionId: number) => {
   return model;
 };
 
-const deleteFunction = async (modelId: string, modelFunctionId: number) => {
-  const response = await api.delete('models/' + modelId + '/functions/' + modelFunctionId);
+const updateModelActivatorOrder = async (modelId: string, action: UpdateModelActivatorOrder) => {
+  const data = {
+    newIndex: action.newIndex,
+  };
+
+  const response = await api.put('models/' + modelId + '/activators/' + action.activatorId + '/order', { json: data });
+  const model = await response.json();
+
+  return model;
+};
+
+const addModelActivator = async (modelId: string, action: AddModelActivator) => {
+  const data = {
+    activatorId: action.activatorId,
+  };
+
+  const response = await api.post('models/' + modelId + '/activators', {
+    json: data,
+  });
 
   const model = await response.json();
 
   return model;
 };
 
-const updateModelFunctionData = async (modelId: string, action: UpdateModelFunctionData) => {
+const deleteModelActivator = async (modelId: string, action: DeleteModelActivator) => {
+  const response = await api.delete('models/' + modelId + '/activators/' + action.modelActivatorId);
+
+  const model = await response.json();
+
+  return model;
+};
+
+// const updateModelFunctionData = async (modelId: string, action: UpdateModelFunctionData) => {
+//   const data = {
+//     parameters: action.parameters,
+//   };
+
+//   const response = await api.put('models/' + modelId + '/functions/' + action.modelFunctionId + '/parameters', {
+//     json: data,
+//   });
+
+//   const model = await response.json();
+
+//   return model;
+// };
+
+const updateModelActivatorParameterData = async (modelId: string, action: UpdateModelActivatorParameterData) => {
   const data = {
-    parameters: action.parameters,
+    newValue: action.newValue,
   };
 
-  const response = await api.put('models/' + modelId + '/functions/' + action.modelFunctionId + '/parameters', {
-    json: data,
-  });
+  const response = await api.put(
+    'models/' + modelId + '/activators/' + action.modelActivatorId + '/data/' + action.parameterName,
+    {
+      json: data,
+    }
+  );
 
   const model = await response.json();
 
@@ -102,16 +121,16 @@ export const dispatchModelApi = async (modelId: string, action: Actions) => {
       return await addLayer(modelId, action.layerTypeId);
     case 'DELETE_LAYER':
       return await actions.deleteLayer(modelId, action.modelLayerId);
-    case 'UPDATE_LAYER':
-      return await actions.updateLayer(modelId, action.modelLayerId, action.parameterName, action.newValue);
-    case 'UPDATE_LAYER_ORDER':
-      return await actions.updateOrder(modelId, action.modelLayerId, action.newIndex);
-    case 'ADD_MODEL_FUNCTION':
-      return await actions.addFunction(modelId, action.activationFunctionId);
-    case 'DELETE_MODEL_FUNCTION':
-      return await actions.deleteFunction(modelId, action.modelFunctionId);
-    case 'UPDATE_MODEL_FUNCTION_DATA':
-      return await actions.updateModelFunctionData(modelId, action);
+    case 'UPDATE_MODEL_LAYER_PARAMETER_DATA':
+      return await actions.updateModelLayerParameterData(modelId, action);
+    case 'UPDATE_MODEL_ACTIVATOR_ORDER':
+      return await actions.updateModelActivatorOrder(modelId, action);
+    case 'ADD_MODEL_ACTIVATOR':
+      return await actions.addModelActivator(modelId, action);
+    case 'DELETE_MODEL_ACTIVATOR':
+      return await actions.deleteModelActivator(modelId, action);
+    case 'UPDATE_MODEL_ACTIVATOR_PARAMETER_DATA':
+      return await actions.updateModelActivatorParameterData(modelId, action);
   }
 };
 
@@ -125,50 +144,51 @@ type DeleteLayer = {
   modelLayerId: number;
 };
 
-type UpdateLayer = {
-  type: 'UPDATE_LAYER';
+type UpdateModelLayerParameterData = {
+  type: 'UPDATE_MODEL_LAYER_PARAMETER_DATA';
   modelLayerId: number;
   parameterName: string;
   newValue: string;
 };
 
-type UpdateLayerOrder = {
-  type: 'UPDATE_LAYER_ORDER';
-  modelLayerId: number;
+type UpdateModelActivatorOrder = {
+  type: 'UPDATE_MODEL_ACTIVATOR_ORDER';
+  activatorId: number;
   newIndex: number;
 };
 
-type AddModelFunction = {
-  type: 'ADD_MODEL_FUNCTION';
-  activationFunctionId: number;
+type AddModelActivator = {
+  type: 'ADD_MODEL_ACTIVATOR';
+  activatorId: number;
 };
 
-type DeleteModelFunction = {
-  type: 'DELETE_MODEL_FUNCTION';
-  modelFunctionId: number;
+type DeleteModelActivator = {
+  type: 'DELETE_MODEL_ACTIVATOR';
+  modelActivatorId: number;
 };
 
-type UpdateModelFunctionData = {
-  type: 'UPDATE_MODEL_FUNCTION_DATA';
-  modelFunctionId: number;
-  parameters: Record<string, any>;
+type UpdateModelActivatorParameterData = {
+  type: 'UPDATE_MODEL_ACTIVATOR_PARAMETER_DATA';
+  modelActivatorId: number;
+  parameterName: string;
+  newValue: string | number | boolean; // Later: layer
 };
 
 export type Actions =
   | AddLayer
   | DeleteLayer
-  | UpdateLayer
-  | UpdateLayerOrder
-  | AddModelFunction
-  | DeleteModelFunction
-  | UpdateModelFunctionData;
+  | UpdateModelLayerParameterData
+  | UpdateModelActivatorOrder
+  | AddModelActivator
+  | DeleteModelActivator
+  | UpdateModelActivatorParameterData;
 
 export const actions = {
   addLayer,
   deleteLayer,
-  updateLayer,
-  updateOrder,
-  addFunction,
-  deleteFunction,
-  updateModelFunctionData,
+  updateModelLayerParameterData,
+  updateModelActivatorOrder,
+  addModelActivator,
+  deleteModelActivator,
+  updateModelActivatorParameterData,
 };

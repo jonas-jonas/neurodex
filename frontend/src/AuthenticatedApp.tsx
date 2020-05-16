@@ -7,7 +7,6 @@ import Homepage from './pages/Homepage';
 import ModelpageWrapper from './pages/Modelpage';
 
 const AuthenticatedApp = () => {
-  console.log('222');
   return (
     <Router>
       <Navigation />
