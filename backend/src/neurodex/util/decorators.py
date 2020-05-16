@@ -20,7 +20,7 @@ def needs_role(role):
     def needs_role(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-            if role.upper() not in list(map(lambda role: role.id.upper(), current_user.roles)):
+            if role.upper() not in list(map(lambda role: role.role_id.upper(), current_user.roles)):
                 abort(403)
 
             return fn(*args, **kwargs)
