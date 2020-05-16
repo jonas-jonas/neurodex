@@ -4,9 +4,10 @@ from flask import Blueprint, request
 from flask_jwt_extended import current_user, jwt_required
 
 from neurodex import db
-from neurodex.data.models import (LayerType, Model, ModelActivator,
-                                  ModelActivatorParameterData, ModelLayer,
-                                  ModelLayerParameterData, PrimitiveValue)
+from neurodex.data.models import (ActivatorTarget, LayerType, Model,
+                                  ModelActivator, ModelActivatorParameterData,
+                                  ModelLayer, ModelLayerParameterData,
+                                  PrimitiveValue)
 from neurodex.data.schema import (model_layers_schema, model_schema,
                                   models_schema)
 from neurodex.util.decorators import own_model
@@ -95,8 +96,7 @@ def delete_model_layer(model, model_layer_id):
         A json string containing the updated model
     """
 
-    db.session.query(ModelLayer).filter(ModelLayer.fk_model_id == model.model_id,
-                                        ModelLayer.model_layer_id == model_layer_id).delete()
+    db.session.query(ActivatorTarget).filter(ActivatorTarget.activator_target_id == model_layer_id).delete()
 
     model.layers.reorder()
     model.update_timestamp()
