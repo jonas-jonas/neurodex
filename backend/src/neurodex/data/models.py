@@ -1,5 +1,5 @@
 from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer,
-                        String, Table, Text, UniqueConstraint)
+                        String, Table, Text, UniqueConstraint, Boolean)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
@@ -83,7 +83,8 @@ class ModelLayer(ActivatorTarget):
     """
     __tablename__ = 'model_layer'
 
-    model_layer_id = Column(Integer, ForeignKey('activator_target.activator_target_id'), primary_key=True)
+    model_layer_id = Column(Integer, ForeignKey(
+        'activator_target.activator_target_id', ondelete='CASCADE'), primary_key=True)
     fk_model_id = Column(Text, ForeignKey('model.model_id', ondelete='CASCADE'))
     fk_layer_id = Column(Text, ForeignKey('layer_type.layer_type_id', ondelete='CASCADE'))
     name = Column(Text, nullable=False)
@@ -127,8 +128,10 @@ class LayerTypeParameter(Base):
 
     fk_layer_type_id = Column(Text, ForeignKey('layer_type.layer_type_id', ondelete="CASCADE"), primary_key=True)
     name = Column(Text, nullable=False, primary_key=True,)
-    type = Column(Text, nullable=False)
-    default_value = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
+    type = Column(Text)
+    default_value = Column(Text)
+    required = Column(Boolean)
 
 
 class Function(ActivatorTarget):
@@ -158,7 +161,7 @@ class ModelActivator(Base):
     __tablename__ = "model_activator"
     model_activator_id = Column(Integer, primary_key=True)
     fk_model_id = Column(Text, ForeignKey('model.model_id', ondelete='CASCADE'))
-    fk_activator_target_id = Column(Integer, ForeignKey("activator_target.activator_target_id"))
+    fk_activator_target_id = Column(Integer, ForeignKey("activator_target.activator_target_id", ondelete='CASCADE'))
     position = Column(Integer, nullable=False)
 
     model = relationship("Model", back_populates="activators")

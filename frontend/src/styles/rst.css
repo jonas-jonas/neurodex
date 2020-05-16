@@ -1,0 +1,13 @@
+.document dt {
+  font-weight: bold;
+}
+.document dl dt {
+  margin-top: 5px;
+}
+.document dl dd {
+  margin-left: 10px;
+}
+
+.document .system-message {
+  display: none;
+}

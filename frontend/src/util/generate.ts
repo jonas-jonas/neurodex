@@ -68,6 +68,8 @@ export function layerParameter(overrides = {}): LayerParameter {
     name: helpers.randomize(),
     type: helpers.randomize(),
     defaultValue: helpers.randomize(),
+    description: helpers.randomize(),
+    required: random.boolean(),
     ...overrides,
   };
 }

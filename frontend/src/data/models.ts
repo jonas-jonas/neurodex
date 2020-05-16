@@ -33,15 +33,17 @@ export type ModelLayer = {
 
 export type LayerType = {
   layerTypeId: string;
-  description: string;
+  description?: string;
   layerName: string;
   parameters: LayerParameter[];
 };
 
 export type LayerParameter = {
   name: string;
+  description: string;
   type: string;
   defaultValue: string;
+  required: boolean;
 };
 
 export type Function = {

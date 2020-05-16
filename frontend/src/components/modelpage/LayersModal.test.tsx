@@ -25,7 +25,7 @@ describe('LayersModal', () => {
       </MockModelContextProvider>
     );
 
-    expect(screen.getAllByText('Verwenden').length).toBe(5);
+    expect(screen.getAllByText('Verwenden').length).toBe(6);
   });
 
   it('adds layer with button click', async () => {
@@ -40,7 +40,7 @@ describe('LayersModal', () => {
       </MockModelContextProvider>
     );
 
-    const useButton = screen.getByText('Verwenden');
+    const useButton = screen.getAllByText('Verwenden')[0];
 
     await act(async () => {
       fireEvent.click(useButton);

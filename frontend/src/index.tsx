@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import 'react-toastify/dist/ReactToastify.min.css';
 import './styles/tailwind.css';
+import './styles/rst.css';
 import AppProviders from './contexts/AppProviders';
 import LoadingIndicator from './components/utility/LoadingIndicator';
 
