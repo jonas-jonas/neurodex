@@ -12,12 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: borales/actions-yarn@v2.0.0
+        working-directory: ./frontend
         with:
           cmd: install # will run `yarn install` command
       - uses: borales/actions-yarn@v2.0.0
+        working-directory: ./frontend
         with:
           cmd: test:ci # will run `yarn test` command
       - name: Codecov
+        working-directory: ./frontend
         uses: codecov/codecov-action@v1.0.5
         with:
           token: ${{ secrets.CODECOV_TOKEN }} #required
