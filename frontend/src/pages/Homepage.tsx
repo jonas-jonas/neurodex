@@ -61,8 +61,8 @@ const Homepage: React.FC = () => {
       };
       const response = await api.post('models', { json: data });
       if (response.status === 200) {
-        const { id } = await response.json();
-        history.push('/model/' + id);
+        const { modelId } = await response.json();
+        history.push('/model/' + modelId);
       }
     }
     setCreatingNewModel(false);
@@ -82,7 +82,7 @@ const Homepage: React.FC = () => {
       {loading && <LoadingIndicator text="Loading models..." />}
       {!loading &&
         models.map((model: Model) => {
-          return <ModelCard model={model} key={model.id} />;
+          return <ModelCard model={model} key={model.modelId} />;
         })}
     </div>
   );
@@ -96,7 +96,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
   return (
     <Link
       className="bg-white rounded py-2 px-5 mb-3 shadow border-b-4 border-transparent hover:border-blue-500 flex items-center justify-between"
-      to={'/model/' + model.id}
+      to={'/model/' + model.modelId}
     >
       <div className="">
         <h2 className="text-xl font-bold">{model.name}</h2>

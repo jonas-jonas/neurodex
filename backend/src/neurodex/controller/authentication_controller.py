@@ -13,7 +13,7 @@ auth_blueprint = Blueprint('auth', __name__, url_prefix="/api/auth")
 
 @jwt.user_loader_callback_loader
 def user_loader_callback(identity):
-    user = db.session.query(User).filter_by(id=identity).first()
+    user = db.session.query(User).filter(User.user_id == identity).first()
     return user
 
 
@@ -33,7 +33,7 @@ def post_login():
     if not auth or not auth['email'] or not auth['password']:
         return jsonify(message='Email or password incorrect'), 401
 
-    user = db.session.query(User).filter_by(email=auth['email']).first()
+    user = db.session.query(User).filter(User.email == auth['email']).first()
 
     if not user:
         return jsonify(message='Email not found'), 404
@@ -41,8 +41,8 @@ def post_login():
     if not bcrypt.check_password_hash(user.password, auth['password']):
         return jsonify(message='Email or password incorrect'), 401
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=user.user_id)
+    refresh_token = create_refresh_token(identity=user.user_id)
 
     response = user_schema.jsonify(user)
     set_access_cookies(response, access_token)

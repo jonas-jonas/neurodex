@@ -34,7 +34,7 @@ def post_layer():
     description = data['description']
     layer_name = data['layerName']
 
-    layer = LayerType(id=id, description=description, layer_name=layer_name)
+    layer = LayerType(layer_type_id=id, description=description, layer_name=layer_name)
 
     db.session.add(layer)
     db.session.commit()
@@ -49,11 +49,11 @@ def post_parameter(layer_id):
     type = data['type']
     default_value = data['defaultValue']
 
-    layer_parameter = LayerTypeParameter(layer_type_id=layer_id, name=name, type=type, default_value=default_value)
+    layer_parameter = LayerTypeParameter(fk_layer_type_id=layer_id, name=name, type=type, default_value=default_value)
 
     db.session.add(layer_parameter)
     db.session.commit()
 
-    layer = db.session.query(LayerType).filter_by(id=layer_id).first()
+    layer = db.session.query(LayerType).filter(LayerType.layer_type_id == layer_id).first()
 
     return layer_type_schema.jsonify(layer)

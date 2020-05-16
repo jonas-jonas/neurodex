@@ -1,5 +1,5 @@
 export type User = {
-  id: string;
+  userId: string;
   email: string;
   name: string;
   // password: string;
@@ -7,24 +7,32 @@ export type User = {
 };
 
 export type Model = {
-  id: string;
+  modelId: string;
   name: string;
   user: User;
   createdAt: string;
   updatedAt: string;
   layers: ModelLayer[];
-  functions: ModelFunction[];
+  activators: ModelActivator[];
+};
+
+export type ModelActivator = {
+  modelActivatorId: number;
+  value: Function | ModelLayer;
+  parameterData: Record<string, Value>;
 };
 
 export type ModelLayer = {
-  id: number;
-  layerName: string;
+  activatorTargetId: number;
+  displayName: string;
+  name: string;
   parameterData: Record<string, Value>;
   layerType: LayerType;
+  type: 'model_layer';
 };
 
 export type LayerType = {
-  id: string;
+  layerTypeId: string;
   description: string;
   layerName: string;
   parameters: LayerParameter[];
@@ -37,10 +45,12 @@ export type LayerParameter = {
 };
 
 export type Function = {
+  activatorTargetId: number;
   description: string;
-  id: number;
   name: string;
   parameters: FunctionParameter[];
+  type: 'function';
+  displayName: string;
 };
 
 export type FunctionParameter = {
@@ -49,13 +59,7 @@ export type FunctionParameter = {
   type: string;
 };
 
-export type ModelFunction = {
-  function: Function;
-  id: number;
-  parameterData: Record<string, Value>;
-};
-
 export type Value = {
-  id?: number;
+  value_id?: number;
   value: string;
 };

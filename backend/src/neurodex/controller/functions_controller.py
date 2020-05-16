@@ -36,9 +36,11 @@ def post_parameter(function_id):
     name = data['name']
     default_value = data['defaultValue']
 
-    parameter = FunctionParameter(function_id=function_id, type=type, name=name, default_value=default_value)
+    parameter = FunctionParameter(fk_function_id=function_id, type=type, name=name, default_value=default_value)
 
     db.session.add(parameter)
     db.session.commit()
 
-    return activation_function_schema.jsonify(db.session.query(Function).filter_by(id=function_id).first())
+    function = db.session.query(Function).filter(Function.function_id == function_id).first()
+
+    return activation_function_schema.jsonify(function)

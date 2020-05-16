@@ -46,6 +46,6 @@ describe('LayersModal', () => {
       fireEvent.click(useButton);
     });
 
-    expect(updateModel).toBeCalledWith({ type: 'ADD_LAYER', layerTypeId: layer.id });
+    expect(updateModel).toBeCalledWith({ type: 'ADD_LAYER', layerTypeId: layer.layerTypeId });
   });
 });

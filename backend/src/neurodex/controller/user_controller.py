@@ -32,13 +32,13 @@ def get_current_user():
     return user_schema.jsonify(current_user)
 
 
-@user_blueprint.route('/<id>', methods=['GET'])
+@user_blueprint.route('/<user_id>', methods=['GET'])
 @jwt_required
-def get_user(id):
-    user = db.session.query(User).filter_by(id=id).first()
+def get_user(user_id):
+    user = db.session.query(User).filter(User.user_id == user_id).first()
 
     if not user:
-        return jsonify({'message': f'User with id {id} not found'}), 404
+        return jsonify({'message': f'User with id {user_id} not found'}), 404
 
     return user_schema.jsonify(user)
 
@@ -55,7 +55,7 @@ def post_user():
     if not re.search(email_regex, email):
         return jsonify({'message': 'Keine gültige E-Mail Adresse', 'field': 'email'}), 400
 
-    if db.session.query(User.id).filter_by(email=email).scalar() is not None:
+    if db.session.query(User.user_id).filter(User.email == email).scalar() is not None:
         return jsonify({'message': 'E-Mail Adresse wird bereits benutzt', 'field': 'email'}), 400
 
     confirmation_id = str(uuid.uuid4())
@@ -71,7 +71,7 @@ def post_user():
 
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf8')
 
-    new_user = User(id=str(uuid.uuid4()), email=email,
+    new_user = User(user_id=str(uuid.uuid4()), email=email,
                     password=hashed_password, name=data['name'])
 
     user_metadata = UserMetadata(confirmation_id=confirmation_id)
@@ -85,7 +85,7 @@ def post_user():
 @user_blueprint.route('/confirm-email', methods=['POST'])
 def post_confirmation_id():
     data = request.json
-    metadata = db.session.query(UserMetadata).filter_by(confirmation_id=data['confirmationId']).first()
+    metadata = db.session.query(UserMetadata).filter(UserMetadata.confirmation_id == data['confirmationId']).first()
     if metadata is None:
         return jsonify({'message': 'Dieser Bestätigungslink ist abgelaufen.'}), 400
 

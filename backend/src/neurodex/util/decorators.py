@@ -8,7 +8,7 @@ def own_model(fn):
     @wraps(fn)
     def wrapped_function(*args, **kwargs):
         model = kwargs['model']
-        if model.user_id != current_user.id:
+        if model is None or model.fk_user_id != current_user.user_id:
             abort(404)
 
         return fn(*args, **kwargs)

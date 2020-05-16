@@ -1,6 +1,6 @@
 import { api, dispatchModelApi } from './api';
 import { Model } from '../data/models';
-import { mockModel } from '../contexts/modelcontext.mock';
+import generate from './generate';
 
 const modelId = 'some-model-id';
 
@@ -13,101 +13,84 @@ afterEach(() => {
 });
 
 describe('dispatchModelApi', () => {
-  it('AddLayer', async () => {
-    const mock = jest.spyOn(api, 'post');
-    mock.mockResolvedValue(buildResponse(mockModel));
+  let model: Model;
 
-    const returnedModel: Model = await dispatchModelApi(modelId, {
+  beforeEach(() => {
+    model = generate.model({ modelId: 'some-model-id' });
+  });
+
+  it('AddLayer', async () => {
+    const apiMock = jest.spyOn(api, 'post');
+    apiMock.mockResolvedValue(buildResponse(model));
+
+    const returnedModel: Model = await dispatchModelApi(model.modelId, {
       type: 'ADD_LAYER',
       layerTypeId: '3',
     });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ layerId: '3' });
+    expect(returnedModel).toStrictEqual(model);
+    expect(apiMock).toBeCalledWith('models/some-model-id/layers', { json: { layerId: '3' } });
   });
 
   it('DeleteLayer', async () => {
     const mock = jest.spyOn(api, 'delete');
-    mock.mockResolvedValue(buildResponse(mockModel));
+    mock.mockResolvedValue(buildResponse(model));
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
       type: 'DELETE_LAYER',
       modelLayerId: 3,
     });
-    expect(returnedModel).toStrictEqual(mockModel);
+    expect(returnedModel).toStrictEqual(model);
     expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3');
   });
 
   it('UpdateLayer', async () => {
     const mock = jest.spyOn(api, 'put');
-    mock.mockResolvedValue(buildResponse(mockModel));
+    mock.mockResolvedValue(buildResponse(model));
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'UPDATE_LAYER',
+      type: 'UPDATE_MODEL_LAYER_PARAMETER_DATA',
       modelLayerId: 3,
       parameterName: 'some-parameter-name',
       newValue: '3',
     });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/data/some-parameter-name');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ value: '3' });
+    expect(returnedModel).toStrictEqual(model);
+    expect(mock).toBeCalledWith('models/some-model-id/layers/3/data/some-parameter-name', { json: { newValue: '3' } });
   });
 
-  it('UpdateOrder', async () => {
+  it('UpdateActivatorOrder', async () => {
     const mock = jest.spyOn(api, 'put');
-    mock.mockResolvedValue(buildResponse(mockModel));
+    mock.mockResolvedValue(buildResponse(model));
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'UPDATE_LAYER_ORDER',
-      modelLayerId: 3,
+      type: 'UPDATE_MODEL_ACTIVATOR_ORDER',
+      activatorId: 3,
       newIndex: 3,
     });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/layers/3/order');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ index: 3 });
+    expect(returnedModel).toStrictEqual(model);
+    expect(mock).toBeCalledWith('models/some-model-id/activators/3/order', { json: { newIndex: 3 } });
   });
 
-  it('AddFunction', async () => {
+  it('AddModelActivator', async () => {
     const mock = jest.spyOn(api, 'post');
-    mock.mockResolvedValue(buildResponse(mockModel));
+    mock.mockResolvedValue(buildResponse(model));
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'ADD_MODEL_FUNCTION',
-      activationFunctionId: 3,
+      type: 'ADD_MODEL_ACTIVATOR',
+      activatorId: 3,
     });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions');
-    expect(mock.mock.calls[0][1]?.json).toEqual({ functionId: 3 });
+    expect(returnedModel).toStrictEqual(model);
+    expect(mock).toBeCalledWith('models/some-model-id/activators', { json: { activatorId: 3 } });
   });
 
-  it('DeleteFunction', async () => {
+  it('DeleteActivator', async () => {
     const mock = jest.spyOn(api, 'delete');
-    mock.mockResolvedValue(buildResponse(mockModel));
+    mock.mockResolvedValue(buildResponse(model));
 
     const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'DELETE_MODEL_FUNCTION',
-      modelFunctionId: 3,
+      type: 'DELETE_MODEL_ACTIVATOR',
+      modelActivatorId: 3,
     });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock.mock.calls[0][0]).toBe('models/some-model-id/functions/3');
-  });
-
-  it('UpdateModelFunctionData', async () => {
-    const mock = jest.spyOn(api, 'put');
-    mock.mockResolvedValue(buildResponse(mockModel));
-
-    const returnedModel: Model = await dispatchModelApi(modelId, {
-      type: 'UPDATE_MODEL_FUNCTION_DATA',
-      parameters: { 'some-parameter': 'some-data' },
-      modelFunctionId: 2,
-    });
-    expect(returnedModel).toStrictEqual(mockModel);
-    expect(mock).toBeCalledWith('models/some-model-id/functions/2/parameters', {
-      json: {
-        parameters: {
-          'some-parameter': 'some-data',
-        },
-      },
-    });
+    expect(returnedModel).toStrictEqual(model);
+    expect(mock).toBeCalledWith('models/some-model-id/activators/3');
   });
 });
