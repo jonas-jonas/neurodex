@@ -4,7 +4,7 @@ import { FieldError } from 'react-hook-form/dist/types';
 
 type FormFieldProps = {
   label: string;
-  validationMessage?: string | FieldError;
+  validationMessage?: string | FieldError | null;
   wide?: boolean;
 };
 

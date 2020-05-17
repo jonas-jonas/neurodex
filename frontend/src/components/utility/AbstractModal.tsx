@@ -15,11 +15,12 @@ type ModalContextProps = {
 
 const ModalContext = React.createContext<ModalContextProps | null>(null);
 
-type OverlayContextProviderProps = {
+type ModalProps = {
   onClose?: () => void;
+  component: React.ReactNode;
 };
 
-export const OverlayContextProvider: React.FC<OverlayContextProviderProps> = ({ children, onClose }) => {
+export const Modal = ({ onClose, component }: ModalProps) => {
   const [rendered, setRendered] = useState(false);
 
   const handleClose = () => {
@@ -30,7 +31,7 @@ export const OverlayContextProvider: React.FC<OverlayContextProviderProps> = ({ 
   };
 
   useEffect(() => setRendered(true), []);
-  return <ModalContext.Provider value={{ rendered, handleClose }}>{children}</ModalContext.Provider>;
+  return <ModalContext.Provider value={{ rendered, handleClose }}>{component}</ModalContext.Provider>;
 };
 
 const AbstractModal: React.FC<AbstractModalProps> = ({ children, size }) => {

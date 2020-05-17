@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import current_user, jwt_required
 
 from neurodex import db
@@ -35,6 +35,16 @@ def get_model(model):
 @jwt_required
 def post_model():
     data = request.json
+    name = data['name']
+
+    if not name:
+        return jsonify({'message': 'Der Modellname ist erforderlich'}), 422
+
+    name_exists = db.session.query(Model).filter(
+        Model.name == name, Model.fk_user_id == current_user.user_id).first() is not None
+
+    if name_exists:
+        return jsonify({'message': 'Du verwendest diesen Namen bereits'}), 422
 
     new_model = Model(model_id=str(uuid.uuid4()), name=data['name'], fk_user_id=current_user.user_id)
 

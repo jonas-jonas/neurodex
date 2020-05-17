@@ -2,17 +2,17 @@ import { faArrowRight, faPlus, faSpinner } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DateTime, Settings } from 'luxon';
 import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import AbstractModal, { Modal, useOverlayContext } from '../components/utility/AbstractModal';
+import FormField from '../components/utility/FormField';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { Model } from '../data/models';
-import { SWALClasses } from '../util/alert';
 import { api } from '../util/api';
 Settings.defaultLocale = 'de';
 
 const Homepage: React.FC = () => {
   const [creatingNewModel, setCreatingNewModel] = useState(false);
-  const history = useHistory();
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,44 +29,8 @@ const Homepage: React.FC = () => {
     loadModels();
   }, []);
 
-  /**
-   * Handles the click on the "new" button
-   *
-   *
-   */
-  const handleNewModel = async () => {
-    setCreatingNewModel(true);
-    const result = await Swal.fire({
-      title: 'Modellname',
-      input: 'text',
-      customClass: SWALClasses,
-      inputAttributes: {
-        autocapitalize: 'off',
-        placeholder: 'Name',
-      },
-      inputValidator: (value: string) => {
-        // if (!value.match(/([A-Z][a-z0-9]+)+/)) {
-        //   return 'Der Name muss in PascalCase geschrieben sein.';
-        // }
-        if (value.includes(' ')) {
-          return 'Der Name darf keine Leerzeichen enthalten.';
-        }
-        return '';
-      },
-      confirmButtonText: 'Erstellen',
-    });
-    if (result.value) {
-      const data = {
-        name: result.value,
-      };
-      const response = await api.post('models', { json: data });
-      if (response.status === 200) {
-        const { modelId } = await response.json();
-        history.push('/model/' + modelId);
-      }
-    }
-    setCreatingNewModel(false);
-  };
+  const showAddModelModal = () => setCreatingNewModel(true);
+  const hideAddModelModal = () => setCreatingNewModel(false);
 
   return (
     <div className="container py-3">
@@ -74,7 +38,7 @@ const Homepage: React.FC = () => {
         <h1 className="text-3xl">
           {models.length} Modell{models.length !== 1 && 'e'}
         </h1>
-        <button className="p-3" title="Neues Modell" onClick={handleNewModel} disabled={creatingNewModel}>
+        <button className="p-3" title="Neues Modell" onClick={showAddModelModal} disabled={creatingNewModel}>
           <FontAwesomeIcon icon={creatingNewModel ? faSpinner : faPlus} spin={creatingNewModel} />
         </button>
       </div>
@@ -84,6 +48,7 @@ const Homepage: React.FC = () => {
         models.map((model: Model) => {
           return <ModelCard model={model} key={model.modelId} />;
         })}
+      {creatingNewModel && <Modal component={<CreateModelModal />} onClose={hideAddModelModal} />}
     </div>
   );
 };
@@ -107,6 +72,60 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
       </div>
       <FontAwesomeIcon icon={faArrowRight} />
     </Link>
+  );
+};
+
+const CreateModelModal = () => {
+  const { register, handleSubmit, errors, setError, formState, setValue } = useForm({ mode: 'onChange' });
+
+  const { handleClose } = useOverlayContext();
+
+  const history = useHistory();
+
+  const createModel = async (values: Record<string, any>) => {
+    const data = {
+      name: values.name,
+    };
+    try {
+      const response = await api.post('models', { json: data });
+      const { modelId } = await response.json();
+      handleClose();
+      history.push('/model/' + modelId);
+    } catch (error) {
+      if (error instanceof api.HTTPError) {
+        const response = error.response;
+        const { message } = await response.json();
+        setError('name', 'notMatch', message);
+        setValue('name', '');
+      }
+    }
+  };
+
+  return (
+    <AbstractModal size="SMALL">
+      <div className="bg-gray-100 rounded-t p-4 flex-shrink-0 border-b-4 border-blue-700 flex-shrink-0">
+        <h1 className="font-serif text-3xl text-center">Neues Modell erstellen</h1>
+      </div>
+      <form className="flex-grow flex flex-col pt-6 pb-8 w-64 mx-auto" onSubmit={handleSubmit(createModel)}>
+        <div className="flex-grow">
+          <FormField
+            label="Name"
+            placeholder="Modellname"
+            ref={register({ required: true })}
+            name="name"
+            validationMessage={errors.name?.message}
+            autoFocus
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={formState.isSubmitting || !formState.isValid || !formState.dirty}
+          className="mt-4 font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none font-bold focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
+        >
+          {formState.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Erstellen'}
+        </button>
+      </form>
+    </AbstractModal>
   );
 };
 

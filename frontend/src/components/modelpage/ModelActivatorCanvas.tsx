@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelActivator } from '../../data/models';
-import AbstractModal, { OverlayContextProvider, useOverlayContext } from '../utility/AbstractModal';
+import AbstractModal, { Modal, useOverlayContext } from '../utility/AbstractModal';
 import { ParameterInput } from '../utility/ParameterInput';
 
 const ModelActivatorCanvas = SortableContainer(() => {
@@ -35,11 +35,7 @@ const ModelActivatorCanvas = SortableContainer(() => {
       <button className="mx-3" onClick={showAddActivatorModal}>
         <FontAwesomeIcon icon={faPlus} />
       </button>
-      {isAddingActivator && (
-        <OverlayContextProvider onClose={hideAddActivatorModal}>
-          <AddModelActivatorModal />
-        </OverlayContextProvider>
-      )}
+      {isAddingActivator && <Modal onClose={hideAddActivatorModal} component={<AddModelActivatorModal />} />}
     </div>
   );
 });

@@ -3,7 +3,7 @@ import React from 'react';
 import MockModelContextProvider from '../../contexts/modelcontext.mock';
 import generate from '../../util/generate';
 import LayersModal from './LayersModal';
-import { OverlayContextProvider } from '../utility/AbstractModal';
+import { Modal } from '../utility/AbstractModal';
 
 afterEach(cleanup);
 
@@ -19,9 +19,7 @@ describe('LayersModal', () => {
 
     render(
       <MockModelContextProvider availableLayers={layers}>
-        <OverlayContextProvider>
-          <LayersModal />
-        </OverlayContextProvider>
+        <Modal component={<LayersModal />} />
       </MockModelContextProvider>
     );
 
@@ -34,9 +32,7 @@ describe('LayersModal', () => {
 
     render(
       <MockModelContextProvider availableLayers={[layer]} updateModel={updateModel}>
-        <OverlayContextProvider>
-          <LayersModal />
-        </OverlayContextProvider>
+        <Modal component={<LayersModal />} />
       </MockModelContextProvider>
     );
 

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelLayer } from '../../data/models';
-import { OverlayContextProvider } from '../utility/AbstractModal';
+import { Modal } from '../utility/AbstractModal';
 import LayersModal from './LayersModal';
 import { ParameterInput } from '../utility/ParameterInput';
 
@@ -137,11 +137,7 @@ const ModelLayerPanel = () => {
         </div>
       </div>
 
-      {isAdding && (
-        <OverlayContextProvider onClose={() => setAdding(false)}>
-          <LayersModal />
-        </OverlayContextProvider>
-      )}
+      {isAdding && <Modal onClose={() => setAdding(false)} component={<LayersModal />} />}
     </div>
   );
 };
