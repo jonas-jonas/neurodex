@@ -4,14 +4,16 @@ from neurodex import db
 from neurodex.data.models import Function, FunctionParameter
 from neurodex.data.schema import activation_functions_schema, activation_function_schema
 
+from neurodex.service.functions_service import get_all_functions
+
 functions_blueprint = Blueprint('functions', __name__, url_prefix="/api/functions")
 
 
 @functions_blueprint.route('', methods=['GET'])
 def get_functions():
-    functions = db.session.query(Function).all()
+    # functions = db.session.query(Function).all()
 
-    return activation_functions_schema.jsonify(functions)
+    return get_all_functions()
 
 
 @functions_blueprint.route('', methods=['POST'])
