@@ -11,6 +11,8 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CACHE_TYPE = "redis"
+    CACHE_KEY_PREFIX = "neurodex-cache"
 
 
 class ProductionConfig(Config):
@@ -22,3 +24,6 @@ class DevelopmentConfig(Config):
     DEBUG = True
     JWT_SECRET_KEY = 'dev-key'
     BASE_URL = "http://localhost:8080"
+    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_PORT = 6379
+    CACHE_REDIS_DB = 0

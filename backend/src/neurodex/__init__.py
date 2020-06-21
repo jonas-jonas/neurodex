@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_compress import Compress
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import (JWTManager)
-from redis import Redis
+from flask_caching import Cache
 
 from sendgrid import SendGridAPIClient
 
@@ -32,4 +32,4 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 jwt = JWTManager(app)
 sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-redis = Redis(host="localhost", port=6379, db=0)
+cache = Cache(app)
