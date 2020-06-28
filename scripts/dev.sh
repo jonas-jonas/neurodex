@@ -25,4 +25,4 @@ export DATABASE_URL="postgresql://postgres:docker@localhost:5432/postgres"
 source ./.env.local
 export SENDGRID_API_KEY=$SENDGRID_API_KEY
 
-gunicorn neurodex.main:app -c ./gunicorn.py
+gunicorn --worker-class eventlet -w 1 neurodex.main:app -c ./gunicorn.py
