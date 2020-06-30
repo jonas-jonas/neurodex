@@ -3,7 +3,7 @@ import React from 'react';
 import MockModelContextProvider from '../../contexts/modelcontext.mock';
 import generate from '../../util/generate';
 import LayersModal from './LayersModal';
-import { Modal } from '../utility/AbstractModal';
+import { Modal } from '../utility/Modal';
 
 afterEach(cleanup);
 
@@ -23,7 +23,7 @@ describe('LayersModal', () => {
       </MockModelContextProvider>
     );
 
-    expect(screen.getAllByText('Verwenden').length).toBe(6);
+    expect(screen.getAllByText('Verwenden').length).toBe(5);
   });
 
   it('adds layer with button click', async () => {

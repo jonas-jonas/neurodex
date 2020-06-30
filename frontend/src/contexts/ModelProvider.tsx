@@ -27,7 +27,12 @@ export const ModelContextProvider: React.FC<ModelContextProviderProps> = ({ chil
       const newModel = await dispatchModelApi(model.modelId, action);
       setModel(newModel);
     } catch (error) {
-      toast.error('Fehler beim Update des Models');
+      const errorJson = await error.response.json();
+      if (errorJson.message) {
+        toast.error(errorJson.message);
+      } else {
+        toast.error('Fehler beim Update des Models');
+      }
       return false;
     }
     return true;

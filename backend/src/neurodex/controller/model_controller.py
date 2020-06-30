@@ -59,8 +59,15 @@ def post_model():
 @own_model
 def put_model_name(model):
     data = request.json
+    name = data['name']
 
-    model.name = data['name']
+    name_exists = db.session.query(Model).filter(
+        Model.name == name, Model.fk_user_id == current_user.user_id).first() is not None
+
+    if name_exists:
+        return jsonify({'message': 'Du verwendest diesen Namen bereits'}), 422
+
+    model.name = name
     db.session.commit()
     return model_schema.jsonify(model)
 

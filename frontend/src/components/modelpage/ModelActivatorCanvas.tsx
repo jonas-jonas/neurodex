@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelActivator } from '../../data/models';
-import AbstractModal, { Modal, useOverlayContext } from '../utility/AbstractModal';
+import { Modal, useModal } from '../utility/Modal';
 import { ParameterInput } from '../utility/ParameterInput';
 
 const ModelActivatorCanvas = SortableContainer(() => {
@@ -76,7 +76,7 @@ const ModelActivatorCard = SortableElement(({ modelActivator }: ModelActivatorCa
             <span className="font-bold text-sm text-gray-600">#{modelActivator.modelActivatorId}</span>
           </h3>
           <button
-            className="focus:text-error transition-colors transition-opacity duration-150 opacity-0 group-hover:opacity-100 focus:outline-none focus:opacity-100 ml-2"
+            className="focus:text-error transition-all duration-150 opacity-0 group-hover:opacity-100 focus:outline-none focus:opacity-100 ml-2"
             title="Aktivator Löschen"
             onClick={deleteActivator}
           >
@@ -118,7 +118,7 @@ const Handle = SortableHandle(() => (
 ));
 
 const AddModelActivatorModal = () => {
-  const { handleClose } = useOverlayContext();
+  const modal = useModal();
   const { activationFunctions, model, updateModel } = useModelContext();
 
   const handleAddActivator = async (activatorId: number) => {
@@ -127,15 +127,13 @@ const AddModelActivatorModal = () => {
       activatorId: activatorId,
     });
     if (result) {
-      handleClose();
+      modal.close();
     }
   };
 
   return (
-    <AbstractModal size="SMALL">
-      <div className="bg-gray-100 rounded-t p-4 flex-shrink-0 border-b-4 border-blue-700 flex-shrink-0">
-        <h1 className="font-serif text-2xl">Verfügbare Aktivatoren</h1>
-      </div>
+    <>
+      <Modal.Title title="Verfügbare Aktivatoren" closeTooltip="Verfügbare Aktivatoren schließen" />
       <div className="flex-grow overflow-y-scroll">
         <h2 className="p-4">
           <span className="font-bold text-gray-700 text-lg">Definitierte Layer</span>
@@ -165,7 +163,7 @@ const AddModelActivatorModal = () => {
           );
         })}
       </div>
-    </AbstractModal>
+    </>
   );
 };
 

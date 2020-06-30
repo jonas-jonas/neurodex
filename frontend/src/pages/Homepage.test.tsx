@@ -5,6 +5,7 @@ import Homepage from './Homepage';
 import { api } from '../util/api';
 import { MockAuthContextProvider } from '../contexts/authcontext.mock';
 import { mockModel } from '../contexts/modelcontext.mock';
+import { MockPageContextProvider } from '../contexts/pagecontext.mock';
 
 afterEach(cleanup);
 
@@ -18,7 +19,9 @@ describe('Homepage', () => {
       render(
         <Router>
           <MockAuthContextProvider isAuthenticated={true}>
-            <Homepage />
+            <MockPageContextProvider>
+              <Homepage />
+            </MockPageContextProvider>
           </MockAuthContextProvider>
         </Router>
       );

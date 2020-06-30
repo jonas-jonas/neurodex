@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
         </Link>
       </div>
       <button
-        className="font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none font-bold focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
+        className="font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
         disabled={!(formState.dirty && formState.isValid && !formState.isSubmitting)}
         type="submit"
       >
