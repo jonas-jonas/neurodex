@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelLayer } from '../../data/models';
-import { Modal } from '../utility/Modal';
-import LayersModal from './LayersModal';
 import { ParameterInput } from '../utility/ParameterInput';
 
 type ModelLayerPanelItemProps = {
@@ -79,11 +77,14 @@ const ModelLayerPanelItem = ({ modelLayer, deleteModelLayer }: ModelLayerPanelIt
   );
 };
 
-const ModelLayerPanel = () => {
+type ModelLayerPanelProps = {
+  showAddLayerModal: () => void;
+};
+
+const ModelLayerPanel = ({ showAddLayerModal }: ModelLayerPanelProps) => {
   const { model, updateModel } = useModelContext();
   const [layers, setLayers] = useState(model.layers);
   const [filterText, setFilterText] = useState('');
-  const [isAdding, setAdding] = useState(false);
 
   useEffect(() => {
     const filteredLayers = model.layers.filter((layer) => layer.displayName.includes(filterText));
@@ -93,8 +94,6 @@ const ModelLayerPanel = () => {
   const handleFilterInput = (event: ChangeEvent<HTMLInputElement>) => {
     setFilterText(event.target.value);
   };
-
-  const showPopup = () => setAdding(true);
 
   const deleteModelLayer = async (modelLayerId: number) => {
     await updateModel({
@@ -107,7 +106,7 @@ const ModelLayerPanel = () => {
     <div className="h-full flex flex-col relative w-1/6">
       <div className="flex justify-between items-center flex-shrink-0">
         <span className="font-bold tracking-wide">LAYERS</span>
-        <button className="p-2" onClick={showPopup} title="Layer hinzufügen">
+        <button className="p-2" onClick={showAddLayerModal} title="Layer hinzufügen">
           <FontAwesomeIcon icon={faPlus} />
         </button>
       </div>
@@ -136,8 +135,6 @@ const ModelLayerPanel = () => {
           )}
         </div>
       </div>
-
-      {isAdding && <Modal onClose={() => setAdding(false)} component={<LayersModal />} />}
     </div>
   );
 };

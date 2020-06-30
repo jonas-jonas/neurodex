@@ -18,6 +18,7 @@ import { exitFullscreen, requestFullscreen } from '../util/functions';
 import { Modal } from '../components/utility/Modal';
 import SettingsModal from '../components/modelpage/SettingsModal';
 import CollaborationModal from '../components/modelpage/CollaborationModal';
+import LayersModal from '../components/modelpage/LayersModal';
 
 enum ModelpageView {
   listView,
@@ -28,6 +29,7 @@ enum ModelpageView {
 enum ModalType {
   settings,
   collaboration,
+  addLayer,
 }
 
 type ModalStateReducerAction = { type: 'SHOW_MODAL'; modalType: ModalType } | { type: 'HIDE_CURRENT_MODAL' };
@@ -97,6 +99,10 @@ export const Modelpage: React.FC = () => {
     updateModalState({ type: 'SHOW_MODAL', modalType: ModalType.collaboration });
   };
 
+  const showAddLayerModal = () => {
+    updateModalState({ type: 'SHOW_MODAL', modalType: ModalType.addLayer });
+  };
+
   const hideModals = () => updateModalState({ type: 'HIDE_CURRENT_MODAL' });
 
   return (
@@ -137,7 +143,7 @@ export const Modelpage: React.FC = () => {
       </div>
       {currentView === ModelpageView.canvasView && (
         <div className="flex-grow flex px-4 pt-2">
-          <ModelLayerPanel />
+          <ModelLayerPanel showAddLayerModal={showAddLayerModal} />
           <div className="w-full h-full pl-6 overflow-x-auto">
             <div className="flex justify-between mb-4 py-2">
               <span className="font-bold tracking-wide">MODELL</span>
@@ -153,6 +159,7 @@ export const Modelpage: React.FC = () => {
             <Modal component={<CollaborationModal />} onClose={hideModals} />
           )}
           {modalState.modal === ModalType.settings && <Modal component={<SettingsModal />} onClose={hideModals} />}
+          {modalState.modal === ModalType.addLayer && <Modal component={<LayersModal />} onClose={hideModals} />}
         </>
       )}
     </div>
