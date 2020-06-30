@@ -23,7 +23,7 @@ describe('LayersModal', () => {
       </MockModelContextProvider>
     );
 
-    expect(screen.getAllByText('Verwenden').length).toBe(6);
+    expect(screen.getAllByText('Verwenden').length).toBe(5);
   });
 
   it('adds layer with button click', async () => {
