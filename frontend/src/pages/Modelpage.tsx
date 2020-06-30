@@ -1,7 +1,7 @@
 import { faCog, faCompressAlt, faExpandAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useReducer } from 'react';
 import { useParams } from 'react-router';
 import { SortEnd, SortEvent } from 'react-sortable-hoc';
 import AButton from '../atoms/AButton';
@@ -15,6 +15,9 @@ import { usePage } from '../contexts/PageProvider';
 import { Model } from '../data/models';
 import { api } from '../util/api';
 import { exitFullscreen, requestFullscreen } from '../util/functions';
+import { Modal } from '../components/utility/Modal';
+import SettingsModal from '../components/modelpage/SettingsModal';
+import CollaborationModal from '../components/modelpage/CollaborationModal';
 
 enum ModelpageView {
   listView,
@@ -22,10 +25,35 @@ enum ModelpageView {
   codeView,
 }
 
+enum ModalType {
+  settings,
+  collaboration,
+}
+
+type ModalStateReducerAction = { type: 'SHOW_MODAL'; modalType: ModalType } | { type: 'HIDE_CURRENT_MODAL' };
+
+type ModalStateReducerState = {
+  modal: ModalType | null;
+  currentlyShowing: boolean;
+};
+
+function modalStateReducer(state: ModalStateReducerState, action: ModalStateReducerAction): ModalStateReducerState {
+  switch (action.type) {
+    case 'SHOW_MODAL':
+      return { modal: action.modalType, currentlyShowing: true };
+    case 'HIDE_CURRENT_MODAL':
+      return { modal: null, currentlyShowing: false };
+  }
+}
+
 export const Modelpage: React.FC = () => {
   const { model, updateModel } = useModelContext();
   const { user } = useAuth();
   const [isFullscreen, setFullscreen] = useState(false);
+  const [modalState, updateModalState] = useReducer(modalStateReducer, {
+    modal: ModalType.settings,
+    currentlyShowing: true,
+  });
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [currentView, setCurrentView] = useState<ModelpageView>(ModelpageView.canvasView);
@@ -61,9 +89,19 @@ export const Modelpage: React.FC = () => {
     };
   };
 
+  const showSettingsModal = () => {
+    updateModalState({ type: 'SHOW_MODAL', modalType: ModalType.settings });
+  };
+
+  const showCollaborationModal = () => {
+    updateModalState({ type: 'SHOW_MODAL', modalType: ModalType.collaboration });
+  };
+
+  const hideModals = () => updateModalState({ type: 'HIDE_CURRENT_MODAL' });
+
   return (
     <div className="flex h-full flex-auto pb-2 flex-col bg-gray-200" ref={wrapperRef}>
-      <ModelPageNavigation model={model} user={user!} />
+      <ModelPageNavigation model={model} user={user!} showCollaborationModal={showCollaborationModal} />
       <div className="bg-white px-4 py-2 flex justify-between">
         <div className="flex">
           <AButton
@@ -87,7 +125,7 @@ export const Modelpage: React.FC = () => {
           </div>
         </div>
         <div>
-          <AButton additionalClasses="mr-4">
+          <AButton additionalClasses="mr-4" onClick={showSettingsModal}>
             <FontAwesomeIcon icon={faCog} className="mr-2" />
             Einstellungen
           </AButton>
@@ -106,28 +144,17 @@ export const Modelpage: React.FC = () => {
             </div>
             <ModelActivatorCanvas axis="x" useDragHandle onSortEnd={updateModelActivatorOrder} />
           </div>
-          <div className="h-full flex flex-col relative w-1/6">
-            <span className="font-bold tracking-wide py-2">EINSTELLUNGEN</span>
-            <div className="rounded bg-white h-full shadow">
-              <div className="py-4 px-4 flex items-center border-b">
-                <label className="text-gray-700 font-bold w-1/2 block">Epochs</label>
-                <input className="ml-2 w-1/2 text-right border px-2 py-1" placeholder="0" type="number" />
-              </div>
-              <div className="py-4 px-4 flex items-center border-b">
-                <label className="text-gray-700 font-bold w-1/2 block">Learning Rate</label>
-                <input className="ml-2 text-right border px-2 py-1 w-1/2" placeholder="0" type="number" />
-              </div>
-              <div className="py-4 px-4 flex items-center">
-                <label className="text-gray-700 font-bold mb-2 w-1/2 block">Loss Function</label>
-                <select className="w-1/2 cursor-pointer border px-2 py-1">
-                  <option>CrossEntropyLoss</option>
-                </select>
-              </div>
-            </div>
-          </div>
         </div>
       )}
       {currentView === ModelpageView.codeView && <h1>Code View</h1>}
+      {modalState.currentlyShowing && (
+        <>
+          {modalState.modal === ModalType.collaboration && (
+            <Modal component={<CollaborationModal />} onClose={hideModals} />
+          )}
+          {modalState.modal === ModalType.settings && <Modal component={<SettingsModal />} onClose={hideModals} />}
+        </>
+      )}
     </div>
   );
 };

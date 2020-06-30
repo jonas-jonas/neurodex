@@ -13,9 +13,10 @@ import { Model, User } from '../../data/models';
 export interface ModelPageNavigationProps {
   model: Model;
   user: User;
+  showCollaborationModal?: () => void;
 }
 
-const ModelPageNavigation: React.FC<ModelPageNavigationProps> = ({ model, user }) => {
+const ModelPageNavigation: React.FC<ModelPageNavigationProps> = ({ model, user, showCollaborationModal }) => {
   const { updateModel } = useModelContext();
   const [isUserNavigationOpen, setUserNavigationOpen] = useState(false);
   const history = useHistory();
@@ -53,7 +54,11 @@ const ModelPageNavigation: React.FC<ModelPageNavigationProps> = ({ model, user }
         </div>
       </div>
       <div className="flex items-center">
-        <AButton colorClasses="bg-blue-700 hover:bg-blue-800 text-white" additionalClasses="mr-4">
+        <AButton
+          colorClasses="bg-blue-700 hover:bg-blue-800 text-white"
+          additionalClasses="mr-4"
+          onClick={showCollaborationModal}
+        >
           <FontAwesomeIcon icon={faUsers} className="mr-2" />
           Kollaboration
         </AButton>
