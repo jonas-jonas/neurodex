@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useModelContext } from '../../contexts/ModelProvider';
 import { ModelLayer } from '../../data/models';
-import { Modal } from '../utility/AbstractModal';
+import { Modal } from '../utility/Modal';
 import LayersModal from './LayersModal';
 import { ParameterInput } from '../utility/ParameterInput';
 

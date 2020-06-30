@@ -3,7 +3,7 @@ import React from 'react';
 import MockModelContextProvider from '../../contexts/modelcontext.mock';
 import generate from '../../util/generate';
 import LayersModal from './LayersModal';
-import { Modal } from '../utility/AbstractModal';
+import { Modal } from '../utility/Modal';
 
 afterEach(cleanup);
 

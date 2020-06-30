@@ -115,12 +115,25 @@ const updateModelActivatorParameterData = async (modelId: string, action: Update
   return model;
 };
 
+const updateModelName = async (modelId: string, action: UpdateModelName) => {
+  const data = {
+    name: action.newName,
+  };
+
+  const response = await api.put(`models/${modelId}/name`, { json: data });
+  const model = await response.json();
+
+  return model;
+};
+
 export const dispatchModelApi = async (modelId: string, action: Actions) => {
   switch (action.type) {
     case 'ADD_LAYER':
       return await addLayer(modelId, action.layerTypeId);
     case 'DELETE_LAYER':
       return await actions.deleteLayer(modelId, action.modelLayerId);
+    case 'UPDATE_MODEL_NAME':
+      return await actions.updateModelName(modelId, action);
     case 'UPDATE_MODEL_LAYER_PARAMETER_DATA':
       return await actions.updateModelLayerParameterData(modelId, action);
     case 'UPDATE_MODEL_ACTIVATOR_ORDER':
@@ -174,6 +187,11 @@ type UpdateModelActivatorParameterData = {
   newValue: string | number | boolean; // Later: layer
 };
 
+type UpdateModelName = {
+  type: 'UPDATE_MODEL_NAME';
+  newName: string;
+};
+
 export type Actions =
   | AddLayer
   | DeleteLayer
@@ -181,7 +199,8 @@ export type Actions =
   | UpdateModelActivatorOrder
   | AddModelActivator
   | DeleteModelActivator
-  | UpdateModelActivatorParameterData;
+  | UpdateModelActivatorParameterData
+  | UpdateModelName;
 
 export const actions = {
   addLayer,
@@ -191,4 +210,5 @@ export const actions = {
   addModelActivator,
   deleteModelActivator,
   updateModelActivatorParameterData,
+  updateModelName,
 };

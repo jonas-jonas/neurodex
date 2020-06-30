@@ -4,7 +4,8 @@ import { DateTime, Settings } from 'luxon';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
-import AbstractModal, { Modal, useOverlayContext } from '../components/utility/AbstractModal';
+import Navigation from '../components/navigation/NavigationBar';
+import { Modal, useModal } from '../components/utility/Modal';
 import FormField from '../components/utility/FormField';
 import LoadingIndicator from '../components/utility/LoadingIndicator';
 import { Model } from '../data/models';
@@ -33,23 +34,26 @@ const Homepage: React.FC = () => {
   const hideAddModelModal = () => setCreatingNewModel(false);
 
   return (
-    <div className="container py-3">
-      <div className="flex justify-between items-center ">
-        <h1 className="text-3xl">
-          {models.length} Modell{models.length !== 1 && 'e'}
-        </h1>
-        <button className="p-3" title="Neues Modell" onClick={showAddModelModal} disabled={creatingNewModel}>
-          <FontAwesomeIcon icon={creatingNewModel ? faSpinner : faPlus} spin={creatingNewModel} />
-        </button>
-      </div>
+    <>
+      <Navigation />
+      <div className="container py-3 pt-16 h-screen">
+        <div className="flex justify-between items-center ">
+          <h1 className="text-3xl">
+            {models.length} Modell{models.length !== 1 && 'e'}
+          </h1>
+          <button className="p-3" title="Neues Modell" onClick={showAddModelModal} disabled={creatingNewModel}>
+            <FontAwesomeIcon icon={creatingNewModel ? faSpinner : faPlus} spin={creatingNewModel} />
+          </button>
+        </div>
 
-      {loading && <LoadingIndicator text="Loading models..." />}
-      {!loading &&
-        models.map((model: Model) => {
-          return <ModelCard model={model} key={model.modelId} />;
-        })}
-      {creatingNewModel && <Modal component={<CreateModelModal />} onClose={hideAddModelModal} />}
-    </div>
+        {loading && <LoadingIndicator text="Loading models..." />}
+        {!loading &&
+          models.map((model: Model) => {
+            return <ModelCard model={model} key={model.modelId} />;
+          })}
+        {creatingNewModel && <Modal component={<CreateModelModal />} onClose={hideAddModelModal} />}
+      </div>
+    </>
   );
 };
 
@@ -78,7 +82,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
 const CreateModelModal = () => {
   const { register, handleSubmit, errors, setError, formState, setValue } = useForm({ mode: 'onChange' });
 
-  const { handleClose } = useOverlayContext();
+  const modal = useModal();
 
   const history = useHistory();
 
@@ -89,7 +93,7 @@ const CreateModelModal = () => {
     try {
       const response = await api.post('models', { json: data });
       const { modelId } = await response.json();
-      handleClose();
+      modal.close();
       history.push('/model/' + modelId);
     } catch (error) {
       if (error instanceof api.HTTPError) {
@@ -102,10 +106,8 @@ const CreateModelModal = () => {
   };
 
   return (
-    <AbstractModal size="SMALL">
-      <div className="bg-gray-100 rounded-t p-4 flex-shrink-0 border-b-4 border-blue-700 flex-shrink-0">
-        <h1 className="font-serif text-3xl text-center">Neues Modell erstellen</h1>
-      </div>
+    <>
+      <Modal.Title title="Neues Modell erstellen" />
       <form className="flex-grow flex flex-col pt-6 pb-8 w-64 mx-auto" onSubmit={handleSubmit(createModel)}>
         <div className="flex-grow">
           <FormField
@@ -120,12 +122,12 @@ const CreateModelModal = () => {
         <button
           type="submit"
           disabled={formState.isSubmitting || !formState.isValid || !formState.dirty}
-          className="mt-4 font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none font-bold focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
+          className="mt-4 font-bold py-1 px-5 border border-blue-800 rounded focus:outline-none focus:shadow-outline hover:bg-gray-100 w-full disabled:opacity-50"
         >
           {formState.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Erstellen'}
         </button>
       </form>
-    </AbstractModal>
+    </>
   );
 };
 
