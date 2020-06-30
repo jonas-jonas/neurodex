@@ -53,7 +53,7 @@ export const Modelpage: React.FC = () => {
   const { user } = useAuth();
   const [isFullscreen, setFullscreen] = useState(false);
   const [modalState, updateModalState] = useReducer(modalStateReducer, {
-    modal: ModalType.settings,
+    modal: null,
     currentlyShowing: true,
   });
   const wrapperRef = useRef<HTMLDivElement>(null);
