@@ -14,7 +14,7 @@ import { ModelContextProvider, useModelContext } from '../contexts/ModelProvider
 import { usePage } from '../contexts/PageProvider';
 import { Model } from '../data/models';
 import { api } from '../util/api';
-import { exitFullscreen, requestFullscreen } from '../util/functions';
+import { exitFullscreen, requestFullscreen } from '../util/fullscreen';
 import { Modal } from '../components/utility/Modal';
 import SettingsModal from '../components/modelpage/SettingsModal';
 import CollaborationModal from '../components/modelpage/CollaborationModal';
