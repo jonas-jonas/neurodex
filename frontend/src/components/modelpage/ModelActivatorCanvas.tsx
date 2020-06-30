@@ -76,7 +76,7 @@ const ModelActivatorCard = SortableElement(({ modelActivator }: ModelActivatorCa
             <span className="font-bold text-sm text-gray-600">#{modelActivator.modelActivatorId}</span>
           </h3>
           <button
-            className="focus:text-error transition-colors transition-opacity duration-150 opacity-0 group-hover:opacity-100 focus:outline-none focus:opacity-100 ml-2"
+            className="focus:text-error transition-all duration-150 opacity-0 group-hover:opacity-100 focus:outline-none focus:opacity-100 ml-2"
             title="Aktivator Löschen"
             onClick={deleteActivator}
           >
