@@ -13,23 +13,20 @@ const Adminpanel: React.FC = () => {
       <div className="container py-3 flex pt-16 h-screen">
         <div>
           <div className="w-56 block bg-white rounded p-1">
-            <Link
-              to="/admin"
-              className="block hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center"
-            >
+            <Link to="/admin" className="hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center">
               <FontAwesomeIcon icon={faColumns} className="absolute left-0 ml-3" />
               Übersicht
             </Link>
             <Link
               to="/admin/users"
-              className="block hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center"
+              className="hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center"
             >
               <FontAwesomeIcon icon={faUsersCog} className="absolute left-0 ml-3" />
               Benutzer
             </Link>
             <Link
               to="/admin/courses"
-              className="block hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center"
+              className="hover:bg-gray-200 hover:underline pl-10 pr-3 py-2 relative flex items-center"
             >
               <FontAwesomeIcon icon={faDiscourse} className="absolute left-0 ml-3" />
               Kurse
