@@ -2,7 +2,7 @@ name: Run Tests [on PR]
 on:
   pull_request:
     branches:
-      - master
+      - development
 jobs:
   build:
     name: neurodex
