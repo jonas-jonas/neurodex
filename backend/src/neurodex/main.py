@@ -11,6 +11,8 @@ from neurodex.controller.user_controller import user_blueprint
 from neurodex.converter.model_converter import ModelConverter
 from neurodex.data.models import Base
 from neurodex.util import CustomJSONEncoder, init_db
+from flask_graphql import GraphQLView
+from neurodex.graphql import schema as graphql_schema
 
 app.url_map.converters['model'] = ModelConverter
 app.register_blueprint(auth_blueprint)
@@ -20,6 +22,15 @@ app.register_blueprint(layer_blueprint)
 app.register_blueprint(functions_blueprint)
 app.register_blueprint(admin_blueprint)
 app.json_encoder = CustomJSONEncoder
+
+app.add_url_rule(
+    '/graphql',
+    view_func=GraphQLView.as_view(
+        'graphql',
+        schema=graphql_schema,
+        graphiql=True,
+        get_context=lambda: {'session': db.session}
+    ))
 
 
 @app.before_first_request

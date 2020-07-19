@@ -101,7 +101,7 @@ class ModelLayerSchema(CamelCaseSchema):
     display_name = ma.Method("_display_name")
 
     layer_type = ma.Nested("LayerTypeSchema")
-    parameter_data = ParameterData("ParamaterDataSchema", key="parameterName", value="value")
+    parameter_data = ParameterData("ParamaterDataSchema", key="fkLayerTypeParameterId", value="value")
 
     def _display_name(self, model_layer):
         id = model_layer.model_layer_id

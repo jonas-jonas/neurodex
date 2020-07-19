@@ -71,6 +71,8 @@ class Model(Base):
     activators = relationship("ModelActivator", order_by="ModelActivator.position",
                               collection_class=ordering_list('position'))
 
+    user = relationship("User")
+
     def update_timestamp(self):
         self.updated_at = func.now()
 
@@ -103,12 +105,14 @@ class ModelLayerParameterData(Base):
     """Represents parameter data of a parameter in a layer."""
     __tablename__ = 'model_layer_parameter_data'
 
+    fk_layer_type_parameter_id = Column(Integer, ForeignKey(
+        "layer_type_parameter.layer_type_parameter_id", ondelete="CASCADE"), primary_key=True)
     fk_model_layer_id = Column(Integer, ForeignKey("model_layer.model_layer_id", ondelete='CASCADE'), primary_key=True)
-    parameter_name = Column(Text, nullable=False, primary_key=True)
     fk_value_id = Column(Integer, ForeignKey("value.value_id"))
     value = relationship('Value')
 
-    __table_args__ = (UniqueConstraint('fk_model_layer_id', 'parameter_name', name='model_layer_parameter_name_uc'),)
+    __table_args__ = (UniqueConstraint('fk_model_layer_id', 'fk_layer_type_parameter_id',
+                                       name='model_layer_parameter_name_uc'),)
 
 
 class LayerType(Base):
@@ -126,8 +130,9 @@ class LayerTypeParameter(Base):
     """Represents a parameter in a layer."""
     __tablename__ = 'layer_type_parameter'
 
-    fk_layer_type_id = Column(Text, ForeignKey('layer_type.layer_type_id', ondelete="CASCADE"), primary_key=True)
-    name = Column(Text, nullable=False, primary_key=True,)
+    layer_type_parameter_id = Column(Integer, nullable=False, primary_key=True)
+    fk_layer_type_id = Column(Text, ForeignKey('layer_type.layer_type_id', ondelete="CASCADE"))
+    name = Column(Text, nullable=False)
     description = Column(Text, nullable=True)
     type = Column(Text)
     default_value = Column(Text)
@@ -151,33 +156,77 @@ class Function(ActivatorTarget):
 class FunctionParameter(Base):
     __tablename__ = "function_parameter"
 
-    fk_function_id = Column(Integer, ForeignKey('function.function_id', ondelete="CASCADE"), primary_key=True)
+    function_parameter_id = Column(Integer, nullable=False, primary_key=True)
+    fk_function_id = Column(Integer, ForeignKey('function.function_id', ondelete="CASCADE"))
     type = Column(Text, nullable=False)
-    name = Column(Text, nullable=False, primary_key=True)
+    name = Column(Text, nullable=False)
     default_value = Column(Text, nullable=False)
+
+    function = relationship("Function")
+
+    __table_args__ = (UniqueConstraint('fk_function_id', 'name',
+                                       name='function_parameter_name_uc'),)
 
 
 class ModelActivator(Base):
     __tablename__ = "model_activator"
+
     model_activator_id = Column(Integer, primary_key=True)
+
     fk_model_id = Column(Text, ForeignKey('model.model_id', ondelete='CASCADE'))
-    fk_activator_target_id = Column(Integer, ForeignKey("activator_target.activator_target_id", ondelete='CASCADE'))
+
     position = Column(Integer, nullable=False)
+    type = Column(String(50), nullable=False)
 
     model = relationship("Model", back_populates="activators")
-    parameter_data = relationship("ModelActivatorParameterData")
-    activator_target = relationship("ActivatorTarget")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'name',
+        'polymorphic_on': type
+    }
 
 
-class ModelActivatorParameterData(Base):
-    __tablename__ = "model_activator_parameter"
+class FunctionModelActivator(ModelActivator):
+    __tablename__ = "function_model_activator"
 
-    fk_model_activator_id = Column(Integer, ForeignKey(
-        'model_activator.model_activator_id', ondelete='CASCADE'), primary_key=True,)
-    fk_value_id = Column(Integer, ForeignKey("value.value_id"), primary_key=True)
-    parameter_name = Column(Text, nullable=False, primary_key=True)
+    function_model_activator_id = Column(Integer, ForeignKey(
+        'model_activator.model_activator_id'), primary_key=True)
+    fk_function_id = Column(Integer, ForeignKey('function.function_id'), nullable=False)
 
-    model_activator = relationship("ModelActivator", back_populates="parameter_data")
+    function = relationship("Function")
+    parameter_data = relationship("FunctionModelActivatorParameterData")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'function_model_activator',
+    }
+
+
+class LayerModelActivator(ModelActivator):
+    __tablename__ = "layer_model_activator"
+
+    function_model_activator_id = Column(Integer, ForeignKey(
+        'model_activator.model_activator_id'), primary_key=True)
+    fk_model_layer_id = Column(Integer, ForeignKey('model_layer.model_layer_id'), nullable=False)
+
+    model_layer = relationship("ModelLayer")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'layer_model_activator',
+    }
+
+
+class FunctionModelActivatorParameterData(Base):
+    __tablename__ = "function_model_activator_parameter_data"
+
+    function_model_activator_parameter_data_id = Column(Integer, nullable=False, primary_key=True)
+    fk_function_model_activator_id = Column(Integer, ForeignKey(
+        'function_model_activator.function_model_activator_id', ondelete='CASCADE'))
+    fk_function_parameter_id = Column(Integer, ForeignKey(
+        'function_parameter.function_parameter_id', ondelete='CASCADE'))
+
+    function_model_activator = relationship("FunctionModelActivator", back_populates="parameter_data")
+
+    fk_value_id = Column(Integer, ForeignKey("value.value_id"))
     value = relationship('Value')
 
 

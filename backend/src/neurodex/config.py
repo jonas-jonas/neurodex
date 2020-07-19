@@ -4,7 +4,7 @@ import os
 class Config(object):
     DEBUG = False
     JWT_TOKEN_LOCATION = ['cookies']
-    JWT_ACCESS_COOKIE_PATH = '/api/'
+    JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/api/auth/refresh-token'
     # JWT_ACCESS_TOKEN_EXPIRES = 10
     JWT_COOKIE_CSRF_PROTECT = False
