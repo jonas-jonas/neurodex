@@ -33,7 +33,7 @@ pycparser==2.19
 pyflakes==2.1.1
 PyJWT==1.7.1
 python-http-client==3.2.6
-PyYAML==5.3
+PyYAML==5.4
 rope==0.14.0
 sendgrid==6.2.0
 six==1.13.0
